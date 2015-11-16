@@ -8,6 +8,39 @@
 
 namespace glutils {
 
+class BoundingBox {
+	glm::vec3 minPt;
+	glm::vec3 maxPt;
+
+public:
+	BoundingBox() {}
+	BoundingBox(const std::vector<glm::vec2>& points);
+	BoundingBox(const std::vector<glm::vec3>& points);
+	BoundingBox(const std::vector<std::vector<glm::vec3> >& points);
+	void addPoint(const glm::vec3& point);
+	float sx() { return maxPt.x - minPt.x; }
+	float sy() { return maxPt.y - minPt.y; }
+	float sz() { return maxPt.z - minPt.z; }
+	glm::vec3 center() { return (maxPt + minPt) * 0.5f; }
+};
+
+class Face {
+public:
+	std::string name;
+	std::vector<Vertex> vertices;
+	std::string texture;
+	glm::vec4 backupColor;
+	BoundingBox bbox;
+
+public:
+	Face() {}
+	Face(const std::string& name, const std::vector<Vertex>& vertices);
+	Face(const std::string& name, const std::vector<Vertex>& vertices, const std::string& texture);
+
+	void select();
+	void unselect();
+};
+
 // geometry computation
 bool isWithinPolygon(const glm::vec2& p, const std::vector<glm::vec2>& points);
 void offsetPolygon(const std::vector<glm::vec2>& points, float offsetDistance, std::vector<glm::vec2>& offset_points);

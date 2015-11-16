@@ -166,8 +166,14 @@
     <ClCompile Include="InsertOperator.cpp">
       <Filter>Source Files\rule</Filter>
     </ClCompile>
+    <ClCompile Include="UShape.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="UShapePrism.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
     <ClCompile Include="Scene.cpp">
-      <Filter>Generated Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -384,8 +390,14 @@
     <ClInclude Include="InsertOperator.h">
       <Filter>Source Files\rule</Filter>
     </ClInclude>
+    <ClInclude Include="UShape.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="UShapePrism.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Generated Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

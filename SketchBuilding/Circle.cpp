@@ -24,7 +24,7 @@ boost::shared_ptr<Shape> Circle::extrude(const std::string& name, float height) 
 	return boost::shared_ptr<Shape>(new Cylinder(name, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
 }
 
-void Circle::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Circle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
@@ -58,7 +58,7 @@ void Circle::generateGeometry(RenderManager* renderManager, float opacity) const
 		}
 	}
 
-	renderManager->addObject(_name.c_str(), "", vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

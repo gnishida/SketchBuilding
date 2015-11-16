@@ -111,13 +111,13 @@ boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, f
 	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, _points, _center, height, top_ratio, _color, _texture));
 }
 
-void Polygon::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Polygon::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
 	glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
 
-	renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

@@ -149,7 +149,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 	}
 }
 
-void GableRoof::generateGeometry(RenderManager* renderManager, float opacity) const {
+void GableRoof::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	std::vector<Vertex> vertices;
 
 	Polygon_2 poly;
@@ -244,7 +244,7 @@ void GableRoof::generateGeometry(RenderManager* renderManager, float opacity) co
 		} while ((edge = edge->next()) != edge0);
 	}
 
-	renderManager->addObject(_name.c_str(), "", vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

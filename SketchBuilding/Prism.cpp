@@ -105,12 +105,10 @@ void Prism::split(int splitAxis, const std::vector<float>& sizes, const std::vec
 	}
 }
 
-void Prism::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Prism::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
-	std::vector<Vertex> vertices;//((_points.size() - 2) * 6 + _points.size() * 6);
-
-	int num = 0;
+	std::vector<Vertex> vertices;
 
 	// top
 	if (_scope.z >= 0) {
@@ -137,7 +135,7 @@ void Prism::generateGeometry(RenderManager* renderManager, float opacity) const 
 			p4 = _pivot * _modelMat * p4;
 
 			glm::vec3 normal = glm::normalize(glm::cross(glm::vec3(p3) - glm::vec3(p1), glm::vec3(p2) - glm::vec3(p1)));
-			
+	
 			vertices.push_back(Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity)));
 			vertices.push_back(Vertex(glm::vec3(p3), normal, glm::vec4(_color, opacity), 1));
 			vertices.push_back(Vertex(glm::vec3(p4), normal, glm::vec4(_color, opacity)));
@@ -146,12 +144,14 @@ void Prism::generateGeometry(RenderManager* renderManager, float opacity) const 
 			vertices.push_back(Vertex(glm::vec3(p4), normal, glm::vec4(_color, opacity)));
 			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), 1));
 
+			faces.push_back(glutils::Face(_name, vertices));
+
 			p1 = p3;
 			p2 = p4;
 		}
 	}
 
-	renderManager->addObject(_name.c_str(), "", vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

@@ -86,21 +86,21 @@ void MainWindow::onNewLayer() {
 
 void MainWindow::onStageChanged() {
 	if (actionStages["building"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_BUILDING;
+		glWidget->changeStage(GLWidget3D::STAGE_BUILDING);
 	}
 	else if (actionStages["roof"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_ROOF;
+		glWidget->changeStage(GLWidget3D::STAGE_ROOF);
 	}
 	else if (actionStages["facade"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_FACADE;
+		glWidget->changeStage(GLWidget3D::STAGE_FACADE);
 	}
 	else if (actionStages["floor"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_FLOOR;
+		glWidget->changeStage(GLWidget3D::STAGE_FLOOR);
 	}
 	else if (actionStages["window"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_WINDOW;
+		glWidget->changeStage(GLWidget3D::STAGE_WINDOW);
 	}
 	else if (actionStages["ledge"]->isChecked()) {
-		glWidget->stage = GLWidget3D::STAGE_LEDGE;
+		glWidget->changeStage(GLWidget3D::STAGE_LEDGE);
 	}
 }

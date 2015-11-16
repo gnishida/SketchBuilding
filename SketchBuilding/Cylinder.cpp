@@ -21,30 +21,32 @@ boost::shared_ptr<Shape> Cylinder::clone(const std::string& name) const {
 	return copy;
 }
 
-void Cylinder::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Cylinder::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
-
-	std::vector<Vertex> vertices;
 
 	// top
 	{
+		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z));
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+		faces.push_back(glutils::Face(_name, vertices));
 	}
 
 	// base
 	if (_scope.z >= 0) {
+		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+		faces.push_back(glutils::Face(_name, vertices));
 	}
 
 	// side
 	{
+		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 		glutils::drawCylinderZ(_scope.x * 0.5f, _scope.y * 0.5f, _scope.x * 0.5f, _scope.y * 0.5f, _scope.z, glm::vec4(_color, opacity), mat, vertices, 24);
+		faces.push_back(glutils::Face(_name, vertices));
 	}
-
-	renderManager->addObject(_name.c_str(), "", vertices);
 }
 
 }

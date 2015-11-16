@@ -22,7 +22,7 @@ public:
 	void setupProjection(float texWidth, float texHeight);
 	void size(float xSize, float ySize, float zSize);
 	void split(int splitAxis, const std::vector<float>& sizes, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
-	void generateGeometry(RenderManager* renderManager, float opacity) const;
+	void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
 };
 
 }

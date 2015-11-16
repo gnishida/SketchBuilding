@@ -277,6 +277,8 @@
     <ClCompile Include="TaperOperator.cpp" />
     <ClCompile Include="TextureOperator.cpp" />
     <ClCompile Include="TranslateOperator.cpp" />
+    <ClCompile Include="UShape.cpp" />
+    <ClCompile Include="UShapePrism.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\caffelib\caffelib.vcxproj">
@@ -390,6 +392,8 @@
     <ClInclude Include="TaperOperator.h" />
     <ClInclude Include="TextureOperator.h" />
     <ClInclude Include="TranslateOperator.h" />
+    <ClInclude Include="UShape.h" />
+    <ClInclude Include="UShapePrism.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="CenterOperator.h" />
     <ClInclude Include="ColorOperator.h" />

@@ -114,7 +114,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 	}
 }
 
-void Pyramid::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Pyramid::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	if (_top_ratio == 0.0f) {
@@ -139,7 +139,7 @@ void Pyramid::generateGeometry(RenderManager* renderManager, float opacity) cons
 			p1 = p2;
 		}
 
-		renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
 	} else {
 		std::vector<Vertex> vertices(_points.size() * 6);
 
@@ -171,10 +171,11 @@ void Pyramid::generateGeometry(RenderManager* renderManager, float opacity) cons
 			p0 = p2;
 			p1 = p3;
 		}
+		faces.push_back(glutils::Face(_name, vertices));
 
+		vertices.clear();
 		glutils::drawPolygon(pts3, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-
-		renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
 	}
 }
 

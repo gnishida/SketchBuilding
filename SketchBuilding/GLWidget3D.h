@@ -24,19 +24,21 @@ class Regression;
 
 class GLWidget3D : public QGLWidget {
 public:
-	static enum { STAGE_BUILDING, STAGE_ROOF, STAGE_FACADE, STAGE_FLOOR, STAGE_WINDOW, STAGE_LEDGE };
+	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_FLOOR, STAGE_WINDOW, STAGE_LEDGE };
 
 	MainWindow* mainWin;
 	QImage sketch;
 	QPoint lastPos;
 	bool dragging;
 	bool ctrlPressed;
+	bool shiftPressed;
 	
 	int stage;
 	std::vector<Regression*> regressions;
-	std::vector<cga::Grammar> grammars;
+	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	int shapeType;
-	Scene scene;
+	sc::Scene scene;
+	float current_z;
 
 	Camera camera;
 	glm::vec3 light_dir;
@@ -51,9 +53,12 @@ public:
 	void clearGeometry();
 	void drawScene(int drawMode);
 	//void loadCGA(char* filename);
-	void predict();
+	void predictBuilding();
+	void predictFacade();
 	void fixGeometry();
 	void newLayer();
+	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
+	void changeStage(int stage);
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 

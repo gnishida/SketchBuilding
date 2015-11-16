@@ -16,7 +16,7 @@ namespace cga {
 		Circle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color);
 		boost::shared_ptr<Shape> clone(const std::string& name) const;
 		boost::shared_ptr<Shape> extrude(const std::string& name, float height);
-		void generateGeometry(RenderManager* renderManager, float opacity) const;
+		void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
 	};
 
 }

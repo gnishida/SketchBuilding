@@ -37,6 +37,99 @@ typedef boost::shared_ptr<Polygon_2>						PolygonPtr;
 //typedef boost::geometry::model::polygon<point_type>			polygon_type;
 typedef boost::geometry::model::d2::point_xy<double>		point_2d;
 
+BoundingBox::BoundingBox(const std::vector<glm::vec2>& points) {
+	minPt.x = (std::numeric_limits<float>::max)();
+	minPt.y = (std::numeric_limits<float>::max)();
+	minPt.z = 0.0f;
+	maxPt.x = -(std::numeric_limits<float>::max)();
+	maxPt.y = -(std::numeric_limits<float>::max)();
+	maxPt.z = 0.0f;
+
+	for (int i = 0; i < points.size(); ++i) {
+		minPt.x = std::min(minPt.x, points[i].x);
+		minPt.y = std::min(minPt.y, points[i].y);
+		maxPt.x = std::max(maxPt.x, points[i].x);
+		maxPt.y = std::max(maxPt.y, points[i].y);
+	}
+}
+
+BoundingBox::BoundingBox(const std::vector<glm::vec3>& points) {
+	minPt.x = (std::numeric_limits<float>::max)();
+	minPt.y = (std::numeric_limits<float>::max)();
+	minPt.z = (std::numeric_limits<float>::max)();
+	maxPt.x = -(std::numeric_limits<float>::max)();
+	maxPt.y = -(std::numeric_limits<float>::max)();
+	maxPt.z = -(std::numeric_limits<float>::max)();
+
+	for (int i = 0; i < points.size(); ++i) {
+		minPt.x = std::min(minPt.x, points[i].x);
+		minPt.y = std::min(minPt.y, points[i].y);
+		minPt.z = std::min(minPt.z, points[i].z);
+		maxPt.x = std::max(maxPt.x, points[i].x);
+		maxPt.y = std::max(maxPt.y, points[i].y);
+		maxPt.z = std::max(maxPt.z, points[i].z);
+	}
+}
+
+BoundingBox::BoundingBox(const std::vector<std::vector<glm::vec3> >& points) {
+	minPt.x = (std::numeric_limits<float>::max)();
+	minPt.y = (std::numeric_limits<float>::max)();
+	minPt.z = (std::numeric_limits<float>::max)();
+	maxPt.x = -(std::numeric_limits<float>::max)();
+	maxPt.y = -(std::numeric_limits<float>::max)();
+	maxPt.z = -(std::numeric_limits<float>::max)();
+
+	for (int i = 0; i < points.size(); ++i) {
+		for (int k = 0; k < points[i].size(); ++k) {
+			minPt.x = std::min(minPt.x, points[i][k].x);
+			minPt.y = std::min(minPt.y, points[i][k].y);
+			minPt.z = std::min(minPt.z, points[i][k].z);
+			maxPt.x = std::max(maxPt.x, points[i][k].x);
+			maxPt.y = std::max(maxPt.y, points[i][k].y);
+			maxPt.z = std::max(maxPt.z, points[i][k].z);
+		}
+	}
+}
+
+void BoundingBox::addPoint(const glm::vec3& point) {
+	minPt.x = std::min(minPt.x, point.x);
+	minPt.y = std::min(minPt.y, point.y);
+	minPt.z = std::min(minPt.z, point.z);
+	maxPt.x = std::max(maxPt.x, point.x);
+	maxPt.y = std::max(maxPt.y, point.y);
+	maxPt.z = std::max(maxPt.z, point.z);
+}
+
+Face::Face(const std::string& name, const std::vector<Vertex>& vertices) {
+	this->name = name;
+	this->vertices = vertices;
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		bbox.addPoint(vertices[i].position);
+	}
+}
+
+Face::Face(const std::string& name, const std::vector<Vertex>& vertices, const std::string& texture) {
+	this->name = name;
+	this->vertices = vertices;
+	this->texture = texture;
+}
+
+void Face::select() {
+	backupColor = vertices[0].color;
+	
+	for (int i = 0; i < vertices.size(); ++i) {
+		vertices[i].color = glm::vec4(1, 0, 0, 1);
+		std::cout << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << std::endl;
+	}
+}
+
+void Face::unselect() {
+	for (int i = 0; i < vertices.size(); ++i) {
+		vertices[i].color = backupColor;
+	}
+}
+
 /**
  * Test if the point is inside the polygon
  */

@@ -74,7 +74,7 @@ void OffsetPolygon::comp(const std::map<std::string, std::string>& name_map, std
 	}
 }
 
-void OffsetPolygon::generateGeometry(RenderManager* renderManager, float opacity) const {
+void OffsetPolygon::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<glm::vec2> offset_points;
@@ -82,7 +82,9 @@ void OffsetPolygon::generateGeometry(RenderManager* renderManager, float opacity
 
 	std::vector<Vertex> vertices;
 	glutils::drawConcavePolygon(offset_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 
+	vertices.clear();
 	for (int i = 0; i < _points.size(); ++i) {
 		std::vector<glm::vec2> pts(4);
 		pts[0] = offset_points[i];
@@ -91,8 +93,7 @@ void OffsetPolygon::generateGeometry(RenderManager* renderManager, float opacity
 		pts[3] = offset_points[(i+1) % offset_points.size()];
 		glutils::drawPolygon(pts, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
 	}
-
-	renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

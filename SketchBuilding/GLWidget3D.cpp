@@ -17,6 +17,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	mainWin = (MainWindow*)parent;
 	dragging = false;
 	ctrlPressed = false;
+	shiftPressed = false;
 
 	// これがないと、QPainterによって、OpenGLによる描画がクリアされてしまう
 	setAutoFillBackground(false);
@@ -31,10 +32,12 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	light_mvpMatrix = light_pMatrix * light_mvMatrix;
 
 	// load grammar
-	grammars.resize(2);
+	grammars["building"].resize(2);
+	grammars["facade"].resize(1);
 	try {
-		cga::parseGrammar("../cga/simple_shapes/shape_01.xml", grammars[0]);
-		cga::parseGrammar("../cga/simple_shapes/shape_02.xml", grammars[1]);
+		cga::parseGrammar("../cga/simple_shapes/shape_01.xml", grammars["building"][0]);
+		cga::parseGrammar("../cga/simple_shapes/shape_02.xml", grammars["building"][1]);
+		cga::parseGrammar("../cga/facade/facade_01.xml", grammars["facade"][0]);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -48,7 +51,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions[0] = new Regression("../models/cuboid_43/deploy.prototxt", "../models/cuboid_43/train_iter_64000.caffemodel");
 	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
 
-	stage = STAGE_BUILDING;
+	changeStage(STAGE_BUILDING);
 	shapeType = 0;
 }
 
@@ -134,7 +137,7 @@ void GLWidget3D::loadCGA(char* filename) {
  * Use the sketch as an input to the pretrained network, and obtain the probabilities as output.
  * Then, display the options ordered by the probabilities.
  */
-void GLWidget3D::predict() {
+void GLWidget3D::predictBuilding() {
 	time_t start = clock();
 
 	renderManager.removeObjects();
@@ -166,7 +169,7 @@ void GLWidget3D::predict() {
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
-	scene.building.currentLayer().setFootprint(offset_x, offset_y, object_width, object_depth);
+	scene.building.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 
 	std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
@@ -174,11 +177,10 @@ void GLWidget3D::predict() {
 	params.erase(params.begin(), params.begin() + 4);
 
 	// set parameter values
-	scene.building.currentLayer().setGrammar(grammars[shapeType], params);
-	//system.setParamValues(scene.building.currentLayer().grammar(), params);
+	scene.building.currentLayer().setGrammar(grammars["building"][shapeType], params);
 
 	// set height
-	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars[shapeType]);
+	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][shapeType]);
 	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
 	scene.generateGeometry(&renderManager);
@@ -189,8 +191,22 @@ void GLWidget3D::predict() {
 	update();
 }
 
-void GLWidget3D::fixGeometry() {
+void GLWidget3D::predictFacade() {
 
+}
+
+void GLWidget3D::fixGeometry() {
+	if (stage == STAGE_BUILDING) {
+		clearSketch();
+		scene.building.newLayer();
+		update();
+	}
+	else if (stage == STAGE_ROOF) {
+
+	}
+	else {
+
+	}
 }
 
 void GLWidget3D::newLayer() {
@@ -200,12 +216,41 @@ void GLWidget3D::newLayer() {
 	update();
 }
 
+glm::vec3 GLWidget3D::viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect) {
+	glm::vec3 dir((point.x - width() * 0.5f) * 2.0f / width() * aspect, (height() * 0.5f - point.y) * 2.0f / height(), -focalLength);
+	return glm::vec3(glm::inverse(mvMatrix) * glm::vec4(dir, 0));
+}
+
+void GLWidget3D::changeStage(int stage) {
+	this->stage = stage;
+	clearSketch();
+
+	switch (stage) {
+	case STAGE_BUILDING:
+		camera.pos = glm::vec3(0, 0, 40);
+		camera.xrot = 30.0f;
+		camera.yrot = -45.0f;
+		camera.zrot = 0.0f;
+		current_z = 0.0f;
+		break;
+	case STAGE_FACADE:
+		break;
+	}
+
+	camera.updateMVPMatrix();
+	update();
+}
+
+
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
 
 	switch (e->key()) {
 	case Qt::Key_Control:
 		ctrlPressed = true;
+		break;
+	case Qt::Key_Shift:
+		shiftPressed = true;
 		break;
 	default:
 		break;
@@ -214,38 +259,100 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 
 void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 	ctrlPressed = false;
+	shiftPressed = false;
 }
 
 /**
- * This event handler is called when the mouse press events occur.
+ * This event handler is called when the mouse button is pressed.
  */
 void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 	if (ctrlPressed) { // move camera
 		camera.mousePress(e->x(), e->y());
 	}
-	else {
+	else if (shiftPressed) { // select a face
+		std::cout << "shift clicked" << std::endl;
+		// camera position in the world coordinates
+		glm::vec3 cameraPos = camera.cameraPosInWorld();
+
+		// view vector
+		glm::vec3 view_v1 = viewVector(glm::vec2(e->x(), e->y()), camera.mvMatrix, camera.f(), camera.aspect());
+
+		if (stage == STAGE_BUILDING) {
+			glutils::Face* selectedFace;
+			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
+				// shift the camera such that the selected face becomes a ground plane.
+				camera.pos.y = selectedFace->vertices[0].position.y;
+				current_z = selectedFace->vertices[0].position.y;
+			}
+			else {
+				// shift the camera such that the ground plane becomes really a ground plane.
+				camera.pos.y = 0;
+				current_z = 0;
+			}
+			camera.updateMVPMatrix();
+		}
+		else if (stage == STAGE_FACADE) {
+			glutils::Face* selectedFace;
+			if (scene.building.selectSideFace(cameraPos, view_v1, &selectedFace)) {
+				// shift the camera such that the selected face becomes parallel to the image plane.
+				camera.pos.y = selectedFace->bbox.center().y;
+				camera.xrot = 0.0f;
+				camera.yrot = -atan2f(selectedFace->vertices[0].normal.x, selectedFace->vertices[0].normal.z) / 3.141592653 * 180;
+				camera.zrot = 0.0f;
+			}
+			camera.updateMVPMatrix();
+		}
+		else {
+
+		}
+		scene.updateGeometry(&renderManager);
+		update();
+	}
+	else { // start drawing a stroke
 		lastPos = e->pos();
 		dragging = true;
 	}
 }
 
 /**
- * This event handler is called when the mouse release events occur.
+ * This event handler is called when the mouse button is released.
  */
 void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	if (ctrlPressed) {
+		// do nothing
+	}
+	else if (shiftPressed) {
+		// do nothing
 	}
 	else {
 		dragging = false;
-		predict();
+
+		if (stage == STAGE_BUILDING) {
+			predictBuilding();
+		}
+		else if (stage == STAGE_ROOF) {
+			// To Do
+		}
+		else if (stage == STAGE_FACADE) {
+			predictFacade();
+		}
+		else if (stage == STAGE_FLOOR) {
+			// To Do
+		}
+		else if (stage == STAGE_WINDOW) {
+			// To Do
+		}
+		else if (stage == STAGE_LEDGE) {
+			// To Do
+		}
 	}
 }
 
 /**
- * This event handler is called when the mouse move events occur.
+ * This event handler is called when the mouse is dragged.
  */
 void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
-	if (ctrlPressed) {
+	if (ctrlPressed) { // movign a camera
 		if (e->buttons() & Qt::LeftButton) { // Rotate
 			camera.rotate(e->x(), e->y());
 		}
@@ -257,7 +364,10 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 		}
 		clearSketch();
 	}
-	else {
+	else if (shiftPressed) {
+		// do nothing
+	}
+	else { // keep drawing a stroke
 		drawLineTo(e->pos());
 	}
 
@@ -274,8 +384,6 @@ void GLWidget3D::initializeGL() {
 
 	//glClearColor(1, 1, 1, 0.0);
 	glClearColor(0.9, 0.9, 0.9, 0.0);
-
-	//system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
 
 	sketch = QImage(this->width(), this->height(), QImage::Format_RGB888);
 	sketch.fill(qRgba(255, 255, 255, 255));

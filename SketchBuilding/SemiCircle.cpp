@@ -34,7 +34,7 @@ boost::shared_ptr<Shape> SemiCircle::offset(const std::string& name, float offse
 	}
 }
 
-void SemiCircle::generateGeometry(RenderManager* renderManager, float opacity) const {
+void SemiCircle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
@@ -66,7 +66,7 @@ void SemiCircle::generateGeometry(RenderManager* renderManager, float opacity) c
 		}
 	}
 
-	renderManager->addObject(_name.c_str(), "", vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

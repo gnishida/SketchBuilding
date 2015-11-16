@@ -29,7 +29,7 @@ boost::shared_ptr<Shape> HipRoof::clone(const std::string& name) const {
 	return copy;
 }
 
-void HipRoof::generateGeometry(RenderManager* renderManager, float opacity) const {
+void HipRoof::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	std::vector<Vertex> vertices;
 
 	Polygon_2 poly;
@@ -98,7 +98,7 @@ void HipRoof::generateGeometry(RenderManager* renderManager, float opacity) cons
 		}
 	}
 
-	renderManager->addObject(_name.c_str(), "", vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

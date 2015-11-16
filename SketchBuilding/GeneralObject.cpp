@@ -76,19 +76,19 @@ void GeneralObject::size(float xSize, float ySize, float zSize) {
 	}
 }
 
-void GeneralObject::generateGeometry(RenderManager* renderManager, float opacity) const {
+void GeneralObject::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
-	std::vector<Vertex> vertices;
 	for (int i = 0; i < _points.size(); ++i) {
+		std::vector<Vertex> vertices;
 		if (_textureEnabled) {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _texCoords[i], _pivot * _modelMat, vertices);
+			faces.push_back(glutils::Face(_name, vertices, _texture));
 		} else {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+			faces.push_back(glutils::Face(_name, vertices));
 		}
 	}
-
-	renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
 }
 
 }

@@ -6,6 +6,7 @@
 #include "Vertex.h"
 #include "ShadowMapping.h"
 #include "SketchyRenderingBuffer.h"
+#include "GLUtils.h"
 
 class GeometryObject {
 public:
@@ -46,6 +47,7 @@ public:
 	RenderManager();
 
 	void init(const std::string& vertex_file, const std::string& geometry_file, const std::string& fragment_file, bool useShadow, int shadowMapSize = 4096);
+	void addFaces(const std::vector<glutils::Face>& faces);
 	void addObject(const QString& object_name, const QString& texture_file, const std::vector<Vertex>& vertices);
 	void removeObjects();
 	void removeObject(const QString& object_name);

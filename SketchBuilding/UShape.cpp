@@ -104,40 +104,31 @@ void UShape::size(float xSize, float ySize, float zSize, bool centered) {
 	_scope.z = zSize;
 }
 
-void UShape::generateGeometry(RenderManager* renderManager, float opacity) const {
+void UShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
-	std::vector<Vertex> vertices;
-
 	if (_textureEnabled) {
+		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[7]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
+		faces.push_back(glutils::Face(_name, vertices, _texture));
+		vertices.clear();
 		glutils::drawQuad(_scope.x, _back_height, (_texCoords[0] + _texCoords[7]) * 0.5f, (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[6], _texCoords[7], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
+		faces.push_back(glutils::Face(_name, vertices, _texture));
+		vertices.clear();
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[4], _texCoords[5], (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[3], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+		faces.push_back(glutils::Face(_name, vertices, _texture));
 	}
 	else {
+		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
+		vertices.clear();
 		glutils::drawQuad(_scope.x, _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
+		vertices.clear();
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		renderManager->addObject(_name.c_str(), "", vertices);
+		faces.push_back(glutils::Face(_name, vertices));
 	}
-
-
-	/*
-	std::vector<glm::vec2> pts(8);
-	pts[0] = glm::vec2(0, 0);
-	pts[1] = glm::vec2(_front_width, 0);
-	pts[2] = glm::vec2(_front_width, _scope.y - _back_height);
-	pts[3] = glm::vec2(_scope.x - _front_width, _scope.y - _back_height);
-	pts[4] = glm::vec2(_scope.x - _front_width, 0);
-	pts[5] = glm::vec2(_scope.x, 0);
-	pts[6] = glm::vec2(_scope.x, _scope.y);
-	pts[7] = glm::vec2(0, _scope.y);
-
-	glutils::drawConcavePolygon(pts, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-
-	renderManager->addObject(_name.c_str(), "", vertices);
-	*/
 }
 
 }

@@ -196,7 +196,7 @@ void Shape::translate(int mode, int coordSystem, float x, float y, float z) {
 	}
 }
 
-void Shape::generateGeometry(RenderManager* renderManager, float opacity) const {
+void Shape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	throw "render() is not supported.";
 }
 

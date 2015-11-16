@@ -73,12 +73,15 @@ void OffsetRectangle::comp(const std::map<std::string, std::string>& name_map, s
 	}
 }
 
-void OffsetRectangle::generateGeometry(RenderManager* renderManager, float opacity) const {
+void OffsetRectangle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
 	glm::mat4 mat = glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0.0f));
 	glutils::drawQuad(_scope.x - _offsetDistance * 2.0f, _scope.y  - _offsetDistance * 2.0f, glm::vec4(_color, opacity), mat, vertices);
+	faces.push_back(glutils::Face(_name, vertices));
+
+	vertices.clear();
 
 	std::vector<glm::vec3> pts(4);
 	std::vector<glm::vec3> pts2(4);
@@ -111,7 +114,7 @@ void OffsetRectangle::generateGeometry(RenderManager* renderManager, float opaci
 		vertices.push_back(Vertex(pts2[next], normal, glm::vec4(_color, opacity), 1));
 	}
 
-	renderManager->addObject(_name.c_str(), _texture.c_str(), vertices);
+	faces.push_back(glutils::Face(_name, vertices));
 }
 
 }

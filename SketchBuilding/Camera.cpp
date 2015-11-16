@@ -11,6 +11,7 @@ Camera::Camera() {
 	zrot = 0.0f;
 	pos = glm::vec3(0, 0, 40);
 	fovy = 45.0f;
+	_f = 1.0f / tan(fovy * M_PI / 360.0f);
 }
 
 /**
@@ -56,17 +57,16 @@ void Camera::move(int mouse_x, int mouse_y) {
  * Update perspective projection matrix, and then, update the model view projection matrix.
  */
 void Camera::updatePMatrix(int width,int height) {
-	float aspect = (float)width / (float)height;
+	_aspect = (float)width / (float)height;
 	float zfar = 3000.0f;
 	float znear = 0.1f;
-	float f = 1.0f / tan(fovy * M_PI / 360.0f);
 
 	// projection行列
 	// ただし、mat4はcolumn majorなので、転置した感じで初期構築する。
 	// つまり、下記の一行目は、mat4の一列目に格納されるのだ。
 	pMatrix = glm::mat4(
-		 f/aspect,	0,								0,									0,
-				0,	f,								0,						 			0,
+		 _f/_aspect,	0,								0,									0,
+				0,	_f,								0,						 			0,
 			    0,	0,		(zfar+znear)/(znear-zfar),		                           -1,
 			    0,	0, (2.0f*zfar*znear)/(znear-zfar),									0);
 
@@ -86,4 +86,8 @@ void Camera::updateMVPMatrix() {
 
 	// create model view projection matrix
 	mvpMatrix = pMatrix * mvMatrix;
+}
+
+glm::vec3 Camera::cameraPosInWorld() {
+	return glm::vec3(glm::inverse(mvMatrix) * glm::vec4(0, 0, 0, 1));
 }

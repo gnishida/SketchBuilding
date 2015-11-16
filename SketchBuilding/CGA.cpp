@@ -87,9 +87,9 @@ void CGA::derive(const Grammar& grammar, bool suppressWarning) {
 /**
  * Generate a geometry and add it to the render manager.
  */
-void CGA::generateGeometry(RenderManager* renderManager) {
+void CGA::generateGeometry(std::vector<glutils::Face>& faces) {
 	for (int i = 0; i < shapes.size(); ++i) {
-		shapes[i]->generateGeometry(renderManager, 1.0f);
+		shapes[i]->generateGeometry(faces, 1.0f);
 	}
 }
 

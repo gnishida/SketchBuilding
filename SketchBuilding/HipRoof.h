@@ -18,7 +18,7 @@ private:
 public:
 	HipRoof(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
-	void generateGeometry(RenderManager* renderManager, float opacity) const;
+	void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
 };
 
 }

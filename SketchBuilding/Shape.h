@@ -7,6 +7,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include "Asset.h"
+#include "GLUtils.h"
 
 class RenderManager;
 
@@ -48,7 +49,7 @@ public:
 	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
 	void texture(const std::string& tex);
 	void translate(int mode, int coordSystem, float x, float y, float z);
-	virtual void generateGeometry(RenderManager* renderManager, float opacity) const;
+	virtual void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
 
 protected:
 	//void drawAxes(RenderManager* renderManager, const glm::mat4& modelMat) const;

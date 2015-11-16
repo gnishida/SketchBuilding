@@ -98,6 +98,12 @@ void RenderManager::init(const std::string& vertex_file, const std::string& geom
 	rb.init(program, 4, 5, 100, 100);
 }
 
+void RenderManager::addFaces(const std::vector<glutils::Face>& faces) {
+	for (int i = 0; i < faces.size(); ++i) {
+		addObject(faces[i].name.c_str(), faces[i].texture.c_str(), faces[i].vertices);
+	}
+}
+
 void RenderManager::addObject(const QString& object_name, const QString& texture_file, const std::vector<Vertex>& vertices) {
 	GLuint texId;
 	
