@@ -11,12 +11,41 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	shapeGroup->addAction(ui.actionLShape);
 	ui.actionCuboid->setChecked(true);
 
+	QActionGroup* stageGroup = new QActionGroup(this);
+	actionStages["building"] = ui.mainToolBar->addAction("Building");
+	actionStages["building"]->setCheckable(true);
+	actionStages["building"]->setChecked(true);
+	stageGroup->addAction(actionStages["building"]);
+	actionStages["roof"] = ui.mainToolBar->addAction("Roof");
+	actionStages["roof"]->setCheckable(true);
+	stageGroup->addAction(actionStages["roof"]);
+	actionStages["facade"] = ui.mainToolBar->addAction("Facade");
+	actionStages["facade"]->setCheckable(true);
+	stageGroup->addAction(actionStages["facade"]);
+	actionStages["floor"] = ui.mainToolBar->addAction("Floor");
+	actionStages["floor"]->setCheckable(true);
+	stageGroup->addAction(actionStages["floor"]);
+	actionStages["window"] = ui.mainToolBar->addAction("Window");
+	actionStages["window"]->setCheckable(true);
+	stageGroup->addAction(actionStages["window"]);
+	actionStages["ledge"] = ui.mainToolBar->addAction("Ledge");
+	actionStages["ledge"]->setCheckable(true);
+	stageGroup->addAction(actionStages["ledge"]);
+
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionPredict, SIGNAL(triggered()), this, SLOT(onPredict()));
+	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
 	connect(ui.actionCuboid, SIGNAL(triggered()), this, SLOT(onSelectShape()));
 	connect(ui.actionLShape, SIGNAL(triggered()), this, SLOT(onSelectShape()));
 	connect(ui.actionNewLayer, SIGNAL(triggered()), this, SLOT(onNewLayer()));
+
+	connect(actionStages["building"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	connect(actionStages["roof"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	connect(actionStages["facade"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	connect(actionStages["floor"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	connect(actionStages["window"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	connect(actionStages["ledge"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
 
 	glWidget = new GLWidget3D(this);
 
@@ -38,6 +67,10 @@ void MainWindow::onPredict() {
 	glWidget->predict();
 }
 
+void MainWindow::onFixGeometry() {
+	glWidget->fixGeometry();
+}
+
 void MainWindow::onSelectShape() {
 	if (ui.actionCuboid->isChecked()) {
 		glWidget->shapeType = 0;
@@ -49,4 +82,25 @@ void MainWindow::onSelectShape() {
 
 void MainWindow::onNewLayer() {
 	glWidget->newLayer();
+}
+
+void MainWindow::onStageChanged() {
+	if (actionStages["building"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_BUILDING;
+	}
+	else if (actionStages["roof"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_ROOF;
+	}
+	else if (actionStages["facade"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_FACADE;
+	}
+	else if (actionStages["floor"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_FLOOR;
+	}
+	else if (actionStages["window"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_WINDOW;
+	}
+	else if (actionStages["ledge"]->isChecked()) {
+		glWidget->stage = GLWidget3D::STAGE_LEDGE;
+	}
 }

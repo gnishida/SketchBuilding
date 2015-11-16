@@ -35,9 +35,10 @@
    </widget>
    <widget class="QMenu" name="menuTool">
     <property name="title">
-     <string>Tool</string>
+     <string>Command</string>
     </property>
     <addaction name="actionPredict"/>
+    <addaction name="actionFixGeometry"/>
    </widget>
    <widget class="QMenu" name="menuShape">
     <property name="title">
@@ -114,6 +115,14 @@
   <action name="actionNewLayer">
    <property name="text">
     <string>New Layer</string>
+   </property>
+  </action>
+  <action name="actionFixGeometry">
+   <property name="text">
+    <string>Fix</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

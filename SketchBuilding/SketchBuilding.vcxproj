@@ -264,12 +264,12 @@
     <ClCompile Include="RoofGableOperator.cpp" />
     <ClCompile Include="RoofHipOperator.cpp" />
     <ClCompile Include="RotateOperator.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SemiCircle.cpp" />
     <ClCompile Include="SetupProjectionOperator.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowMapping.cpp" />
     <ClCompile Include="Shape.cpp" />
-    <ClCompile Include="ShapeLayer.cpp" />
     <ClCompile Include="ShapeLOperator.cpp" />
     <ClCompile Include="SizeOperator.cpp" />
     <ClCompile Include="SketchyRenderingBuffer.cpp" />
@@ -377,12 +377,12 @@
     <ClInclude Include="RoofGableOperator.h" />
     <ClInclude Include="RoofHipOperator.h" />
     <ClInclude Include="RotateOperator.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="SemiCircle.h" />
     <ClInclude Include="SetupProjectionOperator.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapping.h" />
     <ClInclude Include="Shape.h" />
-    <ClInclude Include="ShapeLayer.h" />
     <ClInclude Include="ShapeLOperator.h" />
     <ClInclude Include="SizeOperator.h" />
     <ClInclude Include="SketchyRenderingBuffer.h" />

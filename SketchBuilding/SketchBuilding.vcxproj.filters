@@ -166,8 +166,8 @@
     <ClCompile Include="InsertOperator.cpp">
       <Filter>Source Files\rule</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeLayer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -384,8 +384,8 @@
     <ClInclude Include="InsertOperator.h">
       <Filter>Source Files\rule</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeLayer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Scene.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

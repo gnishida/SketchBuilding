@@ -34,6 +34,35 @@ std::vector<float> CGA::randomParamValues(Grammar& grammar) {
 	return param_values;
 }
 
+std::vector<std::pair<float, float> > CGA::getParamRanges(const Grammar& grammar) {
+	std::vector<std::pair<float, float> > ranges;
+
+	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it) {
+		if (it->second.hasRange) {
+			ranges.push_back(std::make_pair(it->second.range_start, it->second.range_end));
+		}
+	}
+
+	return ranges;
+
+}
+
+/**
+* Set parameter values.
+* Each value is normalized to [0, 1], so it has to be populated based on the range.
+* If the parameter value is out of [0, 1], it is forced to be between [0, 1].
+*/
+void CGA::setParamValues(Grammar& grammar, const std::vector<float>& params) {
+	int count = 0;
+	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it, ++count) {
+		if (it->second.hasRange) {
+			float param = std::min(1.0f, std::max(0.0f, params[count]));
+			grammar.attrs[it->first].value = std::to_string((it->second.range_end - it->second.range_start) * param + it->second.range_start);
+			//grammar.attrs[it->first].value = std::to_string(params[count]);
+		}
+	}
+}
+
 /**
  * Execute a derivation of the grammar
  */

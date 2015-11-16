@@ -5,6 +5,8 @@
 #include "ui_MainWindow.h"
 #include "GLWidget3D.h"
 #include <QListWidget>
+#include <map>
+#include <QAction>
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -13,6 +15,7 @@ private:
 	Ui::MainWindowClass ui;
 	GLWidget3D* glWidget;
 	QListWidget *thumbsList;
+	std::map<std::string, QAction*> actionStages;
 
 public:
 	MainWindow(QWidget *parent = 0);
@@ -20,8 +23,10 @@ public:
 public slots:
 	void onNew();
 	void onPredict();
+	void onFixGeometry();
 	void onSelectShape();
 	void onNewLayer();
+	void onStageChanged();
 };
 
 #endif // MAINWINDOW_H

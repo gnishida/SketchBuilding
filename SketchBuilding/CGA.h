@@ -30,7 +30,9 @@ public:
 public:
 	CGA();
 
-	std::vector<float> randomParamValues(Grammar& grammar);
+	static std::vector<float> randomParamValues(Grammar& grammar);
+	static std::vector<std::pair<float, float> > getParamRanges(const Grammar& grammar);
+	static void setParamValues(Grammar& grammar, const std::vector<float>& params);
 	void derive(const Grammar& grammar, bool suppressWarning = false);
 	void generateGeometry(RenderManager* renderManager);
 };

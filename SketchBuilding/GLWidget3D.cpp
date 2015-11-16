@@ -48,9 +48,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions[0] = new Regression("../models/cuboid_43/deploy.prototxt", "../models/cuboid_43/train_iter_64000.caffemodel");
 	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
 
+	stage = STAGE_BUILDING;
 	shapeType = 0;
-	layers.resize(1);
-	currentLayer = 0;
 }
 
 void GLWidget3D::drawLineTo(const QPoint &endPoint) {
@@ -76,29 +75,10 @@ void GLWidget3D::clearSketch() {
 }
 
 void GLWidget3D::clearGeometry() {
-	layers.clear();
-	layers.push_back(ShapeLayer());
-	currentLayer = 0;
-	generateGeometry();
+	scene.clear();
+	scene.generateGeometry(&renderManager);
 	update();
 }
-
-/**
- * Load a sketch image from a file, and display options order by their probabilities.
- * This is for test usage.
- */
-/*void GLWidget3D::loadImage(const QString& filename) {
-	QImage newImage;
-	newImage.load(filename);
-	newImage = newImage.scaled(width(), height());
-
-	QPainter painter(&sketch);
-	painter.drawImage(0, 0, newImage);
-
-	predict();
-	// predict function calls update(), so we do not need to call it twice.
-	//update();
-}*/
 
 /**
 * Draw the scene.
@@ -118,6 +98,7 @@ void GLWidget3D::drawScene(int drawMode) {
  * Load a grammar from a file and generate a 3d geometry.
  * This is only for test usage.
  */
+/*
 void GLWidget3D::loadCGA(char* filename) {
 	renderManager.removeObjects();
 
@@ -147,6 +128,7 @@ void GLWidget3D::loadCGA(char* filename) {
 
 	updateGL();
 }
+*/
 
 /**
  * Use the sketch as an input to the pretrained network, and obtain the probabilities as output.
@@ -177,28 +159,29 @@ void GLWidget3D::predict() {
 	std::cout << std::endl;
 	*/
 
-	layers[currentLayer].offset_x = params[0] * 12 - 6;
-	layers[currentLayer].offset_y = params[1] * 12 - 6;
-	layers[currentLayer].object_width = params[2] * 8 + 8;
-	layers[currentLayer].object_depth = params[3] * 8 + 8;
-	layers[currentLayer].offset_x -= layers[currentLayer].object_width * 0.5f;
-	layers[currentLayer].offset_y -= layers[currentLayer].object_depth * 0.5f;
-	alignLayers();
+	float offset_x = params[0] * 12 - 6;
+	float offset_y = params[1] * 12 - 6;
+	float object_width = params[2] * 8 + 8;
+	float object_depth = params[3] * 8 + 8;
+	offset_x -= object_width * 0.5f;
+	offset_y -= object_depth * 0.5f;
 
-	std::cout << layers[currentLayer].offset_x << "," << layers[currentLayer].offset_y << "," << layers[currentLayer].object_width << "," << layers[currentLayer].object_depth << std::endl;
+	scene.building.currentLayer().setFootprint(offset_x, offset_y, object_width, object_depth);
+
+	std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
 
 	// set parameter values
-	layers[currentLayer].grammar = grammars[shapeType];
-	system.setParamValues(layers[currentLayer].grammar, params);
+	scene.building.currentLayer().setGrammar(grammars[shapeType], params);
+	//system.setParamValues(scene.building.currentLayer().grammar(), params);
 
 	// set height
-	std::vector<std::pair<float, float> > ranges = system.getParamRanges(grammars[shapeType]);
-	layers[currentLayer].height = (ranges[0].second - ranges[0].first) * params[0] + ranges[0].first;
+	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars[shapeType]);
+	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
-	generateGeometry();
+	scene.generateGeometry(&renderManager);
 
 	time_t end = clock();
 	std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -206,52 +189,14 @@ void GLWidget3D::predict() {
 	update();
 }
 
-void GLWidget3D::generateGeometry() {
-	renderManager.removeObjects();
+void GLWidget3D::fixGeometry() {
 
-	float currentHeight = 0.0f;
-	for (int i = 0; i < currentLayer; ++i) {
-		if (layers[i].height == 0.0f) continue;
-		currentHeight += layers[i].height;
-	}
-
-	float height = 0.0f;
-	for (int i = 0; i < layers.size(); ++i) {
-		if (layers[i].height == 0.0f) continue;
-
-		// footprint
-		cga::Rectangle* footprint = new cga::Rectangle("Start", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(layers[i].offset_x, layers[i].offset_y, height - currentHeight)), glm::mat4(), layers[i].object_width, layers[i].object_depth, glm::vec3(1, 1, 1));
-		system.stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
-
-		system.derive(layers[i].grammar, true);
-		system.generateGeometry(&renderManager);
-
-		height += layers[i].height;
-	}
-}
-
-void GLWidget3D::alignLayers() {
-	if (currentLayer == 0) return;
-
-	if (fabs(layers[currentLayer].offset_x - layers[currentLayer - 1].offset_x) < 2.0f) {
-		layers[currentLayer].offset_x = layers[currentLayer - 1].offset_x;
-	}
-	if (fabs(layers[currentLayer].offset_y - layers[currentLayer - 1].offset_y) < 2.0f) {
-		layers[currentLayer].offset_y = layers[currentLayer - 1].offset_y;
-	}
-	if (fabs(layers[currentLayer].offset_x + layers[currentLayer].object_width - layers[currentLayer - 1].offset_x - layers[currentLayer - 1].object_width) < 2.0f) {
-		layers[currentLayer].object_width = layers[currentLayer - 1].offset_x + layers[currentLayer - 1].object_width - layers[currentLayer].offset_x;
-	}
-	if (fabs(layers[currentLayer].offset_y + layers[currentLayer].object_depth - layers[currentLayer - 1].offset_y - layers[currentLayer - 1].object_depth) < 2.0f) {
-		layers[currentLayer].object_depth = layers[currentLayer - 1].offset_y + layers[currentLayer - 1].object_depth - layers[currentLayer].offset_y;
-	}
 }
 
 void GLWidget3D::newLayer() {
 	clearSketch();
-	layers.push_back(ShapeLayer());
-	currentLayer++;
-	generateGeometry();
+	scene.building.newLayer();
+	scene.generateGeometry(&renderManager);
 	update();
 }
 
@@ -330,7 +275,7 @@ void GLWidget3D::initializeGL() {
 	//glClearColor(1, 1, 1, 0.0);
 	glClearColor(0.9, 0.9, 0.9, 0.0);
 
-	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
+	//system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
 
 	sketch = QImage(this->width(), this->height(), QImage::Format_RGB888);
 	sketch.fill(qRgba(255, 255, 255, 255));
