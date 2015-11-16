@@ -110,6 +110,9 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 				} else if (operator_name == "translate") {
 					grammar.addOperator(name, parseTranslateOperator(operator_node));
 				}
+				else {
+					throw std::string("Unknown operator name: ") + operator_name;
+				}
 
 				operator_node = operator_node.nextSibling();
 			}
@@ -281,19 +284,10 @@ boost::shared_ptr<Operator> parseOffsetOperator(const QDomNode& node) {
 	}
 
 	std::string offsetDistance = node.toElement().attribute("offsetDistance").toUtf8().constData();
+	std::string inside = node.toElement().attribute("inside").toUtf8().constData();
+	std::string border = node.toElement().attribute("border").toUtf8().constData();
 
-	int offsetSelector = SELECTOR_ALL;
-	if (node.toElement().hasAttribute("offsetSelector")) {
-		if (node.toElement().attribute("offsetSelector") == "all") {
-			offsetSelector = SELECTOR_ALL;
-		} else if (node.toElement().attribute("offsetSelector") == "inside") {
-			offsetSelector = SELECTOR_INSIDE;
-		} else {
-			offsetSelector = SELECTOR_BORDER;
-		}
-	}
-
-	return boost::shared_ptr<Operator>(new OffsetOperator(offsetDistance, offsetSelector));
+	return boost::shared_ptr<Operator>(new OffsetOperator(offsetDistance, inside, border));
 }
 
 boost::shared_ptr<Operator> parseRoofGableOperator(const QDomNode& node) {
@@ -419,6 +413,13 @@ boost::shared_ptr<Operator> parseSizeOperator(const QDomNode& node) {
 	Value xSize;
 	Value ySize;
 	Value zSize;
+	bool centered = false;
+
+	if (node.toElement().hasAttribute("centered")) {
+		if (node.toElement().attribute("centered") == "true") {
+			centered = true;
+		}
+	}
 
 	QDomNode child = node.firstChild();
 	while (!child.isNull()) {
@@ -463,7 +464,7 @@ boost::shared_ptr<Operator> parseSizeOperator(const QDomNode& node) {
 		child = child.nextSibling();
 	}
 
-	return boost::shared_ptr<Operator>(new SizeOperator(xSize, ySize, zSize));
+	return boost::shared_ptr<Operator>(new SizeOperator(xSize, ySize, zSize, centered));
 }
 
 boost::shared_ptr<Operator> parseSplitOperator(const QDomNode& node) {

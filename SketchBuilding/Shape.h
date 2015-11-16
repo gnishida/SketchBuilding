@@ -37,13 +37,13 @@ public:
 	virtual boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
 	boost::shared_ptr<Shape> insert(const std::string& name, const std::string& geometryPath);
 	void nil();
-	virtual boost::shared_ptr<Shape> offset(const std::string& name, float offsetDistance, int offsetSelector);
+	virtual void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	virtual boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	virtual boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void rotate(const std::string& name, float xAngle, float yAngle, float zAngle);
 	virtual void setupProjection(int axesSelector, float texWidth, float texHeight);
 	virtual boost::shared_ptr<Shape> shapeL(const std::string& name, float frontWidth, float leftWidth);
-	virtual void size(float xSize, float ySize, float zSize);
+	virtual void size(float xSize, float ySize, float zSize, bool centered);
 	virtual void split(int splitAxis, const std::vector<float>& sizes, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
 	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
 	void texture(const std::string& tex);

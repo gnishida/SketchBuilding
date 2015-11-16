@@ -11,9 +11,7 @@ Cuboid::Cuboid(const std::string& name, const glm::mat4& pivot, const glm::mat4&
 	this->_removed = false;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
-	this->_scope.x = width;
-	this->_scope.y = depth;
-	this->_scope.z = height;
+	this->_scope = glm::vec3(width, depth, height);
 	this->_color = color;
 }
 
@@ -106,6 +104,15 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 	}
 }
 
+void Cuboid::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	if (offsetDistance >= 0) {
+		shapes.push_back(boost::shared_ptr<Shape>(new Cuboid(inside, _pivot, glm::translate(_modelMat, glm::vec3(-offsetDistance, -offsetDistance, 0)), _scope.x + offsetDistance * 2, _scope.y + offsetDistance * 2, _scope.z, _color)));
+	}
+	else {
+		// not supported
+	}
+}
+
 void Cuboid::setupProjection(float texWidth, float texHeight) {
 }
 
@@ -155,8 +162,12 @@ void Cuboid::generateGeometry(RenderManager* renderManager, float opacity) const
 	std::vector<Vertex> vertices;
 
 	// top
-	{
+	if (_scope.x >= 0) {
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z));
+		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
+	}
+	else {
+		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z)), M_PI, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
 	}
 

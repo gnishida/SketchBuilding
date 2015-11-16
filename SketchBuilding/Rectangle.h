@@ -20,12 +20,12 @@ public:
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
 	boost::shared_ptr<Shape> innerCircle(const std::string& name);
 	boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
-	boost::shared_ptr<Shape> offset(const std::string& name, float offsetDistance, int offsetSelector);
+	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void setupProjection(int axesSelector, float texWidth, float texHeight);
 	boost::shared_ptr<Shape> shapeL(const std::string& name, float frontWidth, float leftWidth);
-	void size(float xSize, float ySize, float zSize);
+	void size(float xSize, float ySize, float zSize, bool centered);
 	void split(int splitAxis, const std::vector<float>& ratios, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
 	boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
 	void generateGeometry(RenderManager* renderManager, float opacity) const;

@@ -21,7 +21,7 @@ boost::shared_ptr<Shape> SetupProjectionOperator::apply(boost::shared_ptr<Shape>
 		actual_texWidth = grammar.evalFloat(texWidth.value, shape);
 	}
 	if (texHeight.type == Value::TYPE_RELATIVE) {
-		actual_texHeight = shape->_scope.x * grammar.evalFloat(texHeight.value, shape);
+		actual_texHeight = shape->_scope.y * grammar.evalFloat(texHeight.value, shape);
 	} else {
 		actual_texHeight = grammar.evalFloat(texHeight.value, shape);
 	}

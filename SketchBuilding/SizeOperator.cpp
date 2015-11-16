@@ -4,11 +4,12 @@
 
 namespace cga {
 
-SizeOperator::SizeOperator(const Value& xSize, const Value& ySize, const Value& zSize) {
+SizeOperator::SizeOperator(const Value& xSize, const Value& ySize, const Value& zSize, bool centered) {
 	this->name = "size";
 	this->xSize = xSize;
 	this->ySize = ySize;
 	this->zSize = zSize;
+	this->centered = centered;
 }
 
 boost::shared_ptr<Shape> SizeOperator::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack) {
@@ -34,7 +35,7 @@ boost::shared_ptr<Shape> SizeOperator::apply(boost::shared_ptr<Shape>& shape, co
 		actual_zSize = grammar.evalFloat(zSize.value, shape);
 	}
 
-	shape->size(actual_xSize, actual_ySize, actual_zSize);
+	shape->size(actual_xSize, actual_ySize, actual_zSize, centered);
 	return shape;
 }
 

@@ -82,10 +82,9 @@ boost::shared_ptr<Shape> Rectangle::innerSemiCircle(const std::string& name) {
 	return boost::shared_ptr<Shape>(new SemiCircle(name, _pivot, _modelMat, _scope.x, _scope.y, _color));
 }
 
-boost::shared_ptr<Shape> Rectangle::offset(const std::string& name, float offsetDistance, int offsetSelector) {
-	if (offsetSelector == SELECTOR_ALL) {
-		return boost::shared_ptr<Shape>(new OffsetRectangle(name, _pivot, _modelMat, _scope.x, _scope.y, offsetDistance, _color, _texture));
-	} else if (offsetSelector == SELECTOR_INSIDE) {
+void Rectangle::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// inner shape
+	if (!inside.empty()) {
 		float offset_width = _scope.x + offsetDistance * 2.0f;
 		float offset_height = _scope.y + offsetDistance * 2.0f;
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(-offsetDistance, -offsetDistance, 0));
@@ -100,12 +99,19 @@ boost::shared_ptr<Shape> Rectangle::offset(const std::string& name, float offset
 				float offset_u2 = (_texCoords[2].x - _texCoords[0].x) * (_scope.x + offsetDistance) / _scope.x + _texCoords[0].x;
 				float offset_v2 = (_texCoords[2].y - _texCoords[0].y) * (_scope.y + offsetDistance) / _scope.y + _texCoords[0].y;
 			}
-			return boost::shared_ptr<Shape>(new Rectangle(name, _pivot, mat, offset_width, offset_height, _color, _texture, offset_u1, offset_v1, offset_u2, offset_v2));
-		} else {
-			return boost::shared_ptr<Shape>(new Rectangle(name, _pivot, mat, offset_width, offset_height, _color));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(inside, _pivot, mat, offset_width, offset_height, _color, _texture, offset_u1, offset_v1, offset_u2, offset_v2)));
 		}
-	} else {
-		throw "border of offset is not supported by rectangle.";
+		else {
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(inside, _pivot, mat, offset_width, offset_height, _color)));
+		}
+	}
+
+	// border shape
+	if (!border.empty()) {
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, _modelMat, _scope.x, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, -offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _scope.x, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2, -offsetDistance, _color)));
 	}
 }
 
@@ -147,8 +153,12 @@ boost::shared_ptr<Shape> Rectangle::shapeL(const std::string& name, float frontW
 	return boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, points, _color, _texture));
 }
 
-void Rectangle::size(float xSize, float ySize, float zSize) {
+void Rectangle::size(float xSize, float ySize, float zSize, bool centered) {
 	_prev_scope = _scope;
+
+	if (centered) {
+		_modelMat = glm::translate(_modelMat, glm::vec3((_scope.x - xSize) * 0.5, (_scope.y - ySize) * 0.5, (_scope.z - zSize) * 0.5));
+	}
 
 	_scope.x = xSize;
 	_scope.y = ySize;

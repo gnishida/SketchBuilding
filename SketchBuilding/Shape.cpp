@@ -133,7 +133,7 @@ void Shape::nil() {
 	_removed = true;
 }
 
-boost::shared_ptr<Shape> Shape::offset(const std::string& name, float offsetDistance, int offsetSelector) {
+void Shape::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	throw "offset() is not supported.";
 }
 
@@ -159,7 +159,7 @@ boost::shared_ptr<Shape> Shape::shapeL(const std::string& name, float frontWidth
 	throw "shapeL() is not supported.";
 }
 
-void Shape::size(float xSize, float ySize, float zSize) {
+void Shape::size(float xSize, float ySize, float zSize, bool centered) {
 	throw "size() is not supported.";
 }
 

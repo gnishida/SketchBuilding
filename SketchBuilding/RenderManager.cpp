@@ -175,7 +175,7 @@ void RenderManager::centerObjects() {
 
 void RenderManager::renderAll() {
 	if (renderingMode == RENDERING_MODE_REGULAR || renderingMode == RENDERING_MODE_WIREFRAME) {
-		//glClearColor(0.443, 0.439, 0.458, 1.0);
+		glClearColor(0.443, 0.439, 0.458, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_TEXTURE_2D);
