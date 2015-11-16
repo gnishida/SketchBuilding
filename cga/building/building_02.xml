@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="building_height" value="6" range="4,7"/>
+	<attr name="roof_slope" value="30" range="20,35"/>
+	
+	<rule name="Start">
+		<extrude height="building_height"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="Roof"/>
+		</comp>
+	</rule>
+	<rule name="Roof">
+		<roofHip angle="roof_slope"/>
+	</rule>
+</rules>

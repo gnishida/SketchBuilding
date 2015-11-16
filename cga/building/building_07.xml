@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="building_height" value="6" range="5,8"/>
+	<attr name="building_corner_width" value="2" range="1.8,3"/>
+	<attr name="building_column_width" value="2" range="1.8,3"/>
+	<attr name="building_between_column_length" value="2" range="1.8,3"/>
+	<attr name="building_offset" value="-1" range="-0.5,-1.5"/>
+	
+	<rule name="Start">
+		<copy name="Start2"/>
+		<split splitAxis="x">
+			<param type="absolute" value="building_corner_width" name="Start4"/>
+			<param type="floating" value="building_column_width+building_between_column_length" name="Start3" repeat="true"/>
+			<param type="absolute" value="building_between_column_length" name="NIL"/>
+			<param type="absolute" value="building_corner_width" name="Start4"/>
+		</split>
+	</rule>
+	<rule name="Start2">
+		<offset offsetDistance="building_offset" offsetSelector="inside"/>
+		<split splitAxis="x">
+			<param type="floating" value="building_corner_width+building_offset" name="Start6"/>
+			<param type="floating" value="building_between_column_length+building_column_width" name="Start8" repeat="true"/>
+			<param type="floating" value="building_between_column_length" name="LongBetweenBase"/>
+			<param type="floating" value="building_corner_width+building_offset" name="Start6"/>
+		</split>
+	</rule>
+	<rule name="Start3">
+		<split splitAxis="x">
+			<param type="floating" value="building_between_column_length" name="NIL"/>
+			<param type="floating" value="building_column_width" name="LongColumnBase"/>
+		</split>
+	</rule>
+	<rule name="Start4">
+		<split splitAxis="y">
+			<param type="absolute" value="building_corner_width" name="CornerBase"/>
+			<param type="floating" value="building_column_width+building_between_column_length" name="Start5" repeat="true"/>
+			<param type="absolute" value="building_between_column_length" name="NIL"/>
+			<param type="absolute" value="building_corner_width" name="CornerBase"/>
+		</split>
+	</rule>
+	<rule name="Start5">
+		<split splitAxis="y">
+			<param type="floating" value="building_between_column_length" name="NIL"/>
+			<param type="floating" value="building_column_width" name="ColumnBase"/>
+		</split>
+	</rule>
+	<rule name="Start6">
+		<split splitAxis="y">
+			<param type="absolute" value="building_corner_width+building_offset" name="NIL"/>
+			<param type="floating" value="building_column_width+building_between_column_length" name="Start7" repeat="true"/>
+			<param type="absolute" value="building_between_column_length" name="BetweenBase"/>
+			<param type="absolute" value="building_corner_width+building_offset" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="Start7">
+		<split splitAxis="y">
+			<param type="floating" value="building_between_column_length" name="BetweenBase"/>
+			<param type="floating" value="building_column_width" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="Start8">
+		<split splitAxis="x">
+			<param type="floating" value="building_between_column_length" name="LongBetweenBase"/>
+			<param type="floating" value="building_column_width" name="NIL"/>
+		</split>
+	</rule>
+	
+	<rule name="BetweenBase">
+		<extrude height="building_height"/>
+	</rule>
+	<rule name="LongBetweenBase">
+		<extrude height="building_height"/>
+	</rule>
+	<rule name="ColumnBase">
+		<extrude height="building_height"/>
+	</rule>
+	<rule name="LongColumnBase">
+		<extrude height="building_height"/>
+	</rule>
+	<rule name="CornerBase">
+		<extrude height="building_height"/>
+	</rule>
+</rules>

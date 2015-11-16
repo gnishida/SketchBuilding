@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<extrude height="6"/>
+		<copy name="House"/>
+	</rule>
+	<rule name="House">
+		<comp>
+			<param name="front" value="FrontFacade"/>
+			<param name="side" value="SideFacade"/>
+			<param name="top" value="Roof"/>
+			<param name="bottom" value="Base."/>
+		</comp>
+	</rule>
+	<rule name="Roof">
+		<roofHip angle="30"/>
+	</rule>
+	<rule name="FrontFacade">
+		<split splitAxis="y">
+			<param type="relative" value="0.5" name="Entrance."/>
+			<param type="relative" value="0.5" name="Floor"/>
+		</split>
+	</rule>
+	<rule name="SideFacade">
+		<split splitAxis="y">
+			<param type="relative" value="0.5" name="Floor"/>
+			<param type="relative" value="0.5" name="Floor"/>
+		</split>
+	</rule>
+	<rule name="Floor">
+		<split splitAxis="x">
+			<param type="absolute" value="1.0" name="Wall."/>
+			<param type="floating" value="3.0" name="Tile" repeat="true"/>
+			<param type="absolute" value="1.0" name="Wall."/>
+		</split>
+	</rule>
+	<rule name="Tile">
+		<split splitAxis="x">
+			<param type="floating" value="1.0" name="Wall."/>
+			<param type="absolute" value="2.0" name="WallWindowWall"/>
+			<param type="floating" value="1.0" name="Wall."/>
+		</split>
+	</rule>
+	<rule name="WallWindowWall">
+		<split splitAxis="y">
+			<param type="absolute" value="1.0" name="Wall."/>
+			<param type="absolute" value="1.5" name="Window"/>
+			<param type="floating" value="1.0" name="Wall."/>
+		</split>
+	</rule>
+	<rule name="Window">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.05"/>
+		</translate>
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="scope.sx"/>
+			<param name="texHeight" type="absolute" value="scope.sy"/>
+		</setupProjection>
+		<texture texturePath="../assets/textures/window.1.tif"/>
+	</rule>
+</rules>

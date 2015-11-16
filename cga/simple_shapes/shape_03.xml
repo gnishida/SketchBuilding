@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="height" value="5" range="4,10"/>
+	<attr name="u_width_ratio" value="0.3" range="0.2,0.4"/>
+	<attr name="u_depth_ratio" value="0.4" range="0.3,0.7"/>
+	
+	<rule name="Start">
+		<split splitAxis="y">
+			<param type="relative" value="1-u_depth_ratio" name="Base1"/>
+			<param type="relative" value="u_depth_ratio" name="Base2"/>
+		</split>
+	</rule>
+	<rule name="Base1">
+		<split splitAxis="x">
+			<param type="relative" value="u_width_ratio" name="Base3"/>
+			<param type="relative" value="1-u_width_ratio*2" name="NIL"/>
+			<param type="relative" value="u_width_ratio" name="Base3"/>
+		</split>
+	</rule>
+	<rule name="Base2">
+		<extrude height="height"/>
+	</rule>
+	<rule name="Base3">
+		<extrude height="height"/>
+	</rule>
+</rules>

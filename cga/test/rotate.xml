@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<rotate>
+			<param name="xAngle" value="0"/>
+			<param name="yAngle" value="-90"/>
+			<param name="zAngle" value="0"/>
+		</rotate>
+	</rule>
+</rules>

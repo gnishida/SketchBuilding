@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<roofGable angle="30"/>
+		<comp>
+			<param name="vertical" value="Facade."/>
+			<param name="top" value="Roof."/>
+		</comp>
+	</rule>
+</rules>

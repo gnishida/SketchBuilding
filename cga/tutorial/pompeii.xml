@@ -1,0 +1,351 @@
+<?xml version="1.0"?>
+<rules version="2014.0" author="Esri R+D Center Zurich">
+	<!-- Control Attributes -->
+	<attr name="EaveHeight" value="6.7"/>
+	<attr name="DoorHeight" value="3.0"/>
+	<attr name="DoorWidth" value="1.4"/>
+	<attr name="ShopHeight" value="3.7"/>
+	<attr name="ShopWidth" value="3.5"/>
+	
+	<!-- Attributes -->
+	<attr name="HeightOffset" value="0.3"/>
+	<attr name="groundfloorHeight" value="4.2"/>
+	<attr name="doorDepth" value="0.1"/>
+	<attr name="marginWidth" value="0.45"/>
+	<attr name="doorFrameWidth" value="0.18"/>
+	<attr name="doorFrameHeight" value="0.18"/>
+	<attr name="doorstoneHeight" value="0.8"/>
+	<attr name="doorBeamTexScale" value="1"/>
+	<attr name="canopyBeamWidth" value="0.1"/>
+	<attr name="riserHeight" value="0.15"/>
+	<attr name="treadDepth" value="0.2"/>
+	<attr name="winLargeWidth" value="1.25"/>
+	<attr name="winLargeHeight" value="1.0"/>
+	<attr name="winSmallWidth" value="0.65"/>
+	<attr name="winSmallHeight" value="0.85"/>
+	<attr name="winSmallTileWidth" value="1.75"/>
+	<attr name="winVerticalPosition" value="0.6"/>
+	<attr name="winFrameWidth" value="0.8"/>
+	<attr name="winGrillDistance" value="0.175"/>
+	<attr name="wallDepth" value="0.45"/>
+	<attr name="wallpaintHeight" value="1.5"/>
+	<attr name="wallDepth" value="0.45"/>
+	<attr name="greyWallColor" value="#F5F5F5"/>
+	<attr name="shopCounterWidth" value="1.0"/>
+	<attr name="shopCounterHeight" value="1.3"/>
+	<attr name="gazeboProtrusion" value="0.65"/>
+	<attr name="gazeboBeamWidth" value="0.1"/>
+	<attr name="gazeboTriangleWidth" value="0.1"/>
+	<attr name="gazeboTriangleSpace" value="0.5"/>
+	<attr name="gallerySpacing" value="1.2"/>
+	<attr name="galleryBanisterHeight" value="0.85"/>
+	<attr name="galleryDepth" value="1.35"/>
+	<attr name="atriumOffset" value="2.75"/>
+	<attr name="gardenwayWidth" value="2"/>
+	
+	<!-- Assets -->
+	<attr name="wallTex" value="../assets/textures/wall.c.03.jpg"/>
+	<attr name="wallTexWidth" value="4"/>
+	<attr name="wallTexHeight" value="2"/>
+	<attr name="getSingleDoorObj" value="../assets/primitives/???.obj"/>
+	<attr name="getSingleDoorTex" value="../assets/textures/???.jpg"/>
+	<attr name="window_tex" value="../assets/textures/window.1b.tif"/>
+	<attr name="doorBeamTex" value="../assets/textures/DoorBeam.1.jpg"/>
+	<attr name="stoneBlockTex" value="../assets/textures/StoneBlock.1.c.jpg"/>
+	<attr name="cornerStoneTex" value="../assets/textures/cornerStone_1.jpg"/>
+	<attr name="winCornerStoneTex" value="../assets/textures//stone.c.03.jpg"/>
+	<attr name="doorStoneTex" value="../assets/textures/DoorStone.1.c.jpg"/>
+	<attr name="winStoneTex" value="../assets/textures/StoneBlock.1.c.jpg"/>
+	
+	<attr name="simpleledgeObj" value="../assets/primitives/ledge.01.simple.notex.obj"/>
+	<attr name="cylinderVerticalObj" value="../assets/primitives/cylinder.vert.8.notop.tex.obj"/>
+	<attr name="cylinderHorizontalObj" value="../assets/primitives/cylinder.hor.8.notop.tex.obj"/>
+
+	<attr name="groundTex" value="../assets/textures/trottoir.02.color.jpg"/>
+	
+	<!-- RULES -->
+	<rule name="Start">
+		<copy name="Ground2"/>
+		<translate mode="rel" coordSystem="world">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="HeightOffset"/>
+		</translate>
+		<split splitAxis="y">
+			<param type="absolute" value="0.3" name="NIL"/>
+			<param type="floating" value="1" name="Parcel"/>
+		</split>
+	</rule>
+	<rule name="Parcel">
+		<copy name="Footprint"/>
+	</rule>
+	<rule name="Footprint">
+		<extrude height="EaveHeight"/>
+		<comp>
+			<param name="front" value="Facade"/>
+			<param name="back" value="Facade"/>
+			<param name="side" value="Facade"/>
+			<param name="top" value="Roof"/>
+		</comp>
+	</rule>
+	<rule name="Facade">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="scope.sx"/>
+			<param name="texHeight" type="absolute" value="scope.sy"/>
+		</setupProjection>
+		<texture texturePath="wallTex"/>
+		<copy name="FacadeFloors"/>
+	</rule>
+	<rule name="FacadeFloors">
+		<split splitAxis="y">
+			<param type="absolute" value="groundfloorHeight" name="FacadeFloorsSub"/>
+			<param type="floating" value="2.5" name="UpperFloor" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="FacadeFloorsSub">
+		<copy name="GroundFloor"/>
+		<copy name="Cornerstones"/>
+		<copy name="GroundfloorLedge"/>
+	</rule>
+	
+	<!-- roof -->
+	<rule name="Ledge">
+		<size>
+			<param name="xSize" type="relative" value="1.008"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.1"/>
+		</size>
+		<center axesSelector="x"/>
+		<insert geometryPath="simpleledgeObj"/>
+	</rule>
+	<rule name="GroundfloorLedge">
+		<split splitAxis="y">
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="0.1" name="Ledge"/>
+		</split>
+	</rule>
+
+	<!-- upper floor -->
+	<rule name="UpperFloor">
+		<split splitAxis="x">
+			<param type="floating" value="1" name="Tile"/>
+			<param type="floating" value="1" name="Tile"/>
+			<param type="floating" value="1" name="PaintedWall"/>
+		</split>
+	</rule>
+
+	<!-- ground floor -->
+	<rule name="GroundFloor">
+		<split splitAxis="x">
+			<param type="floating" value="0.5" name="PaintedWall"/>
+			<param type="absolute" value="ShopWidth+marginWidth" name="Tile"/>
+			<param type="floating" value="0.5" name="Tile"/>
+		</split>
+	</rule>
+
+	<!-- Tile -->
+	<rule name="Tile">
+		<split splitAxis="x">
+			<param type="floating" value="1" name="PaintedWall"/>
+			<param type="absolute" value="winSmallWidth" name="TileSub"/>
+			<param type="floating" value="1" name="PaintedWall"/>
+		</split>
+	</rule>
+	<rule name="TileSub">
+		<split splitAxis="y">
+			<param type="absolute" value="winVerticalPosition*(scope.sy-winSmallHeight)" name="PaintedWall"/>
+			<param type="absolute" value="winSmallHeight" name="Subtile"/>
+			<param type="absolute" value="winFrameWidth" name="WinTop"/>
+		</split>
+	</rule>
+	<rule name="Subtile">
+		<split splitAxis="y">
+			<param type="absolute" value="winFrameWidth" name="WinSill"/>
+			<param type="floating" value="1" name="SubtileSub"/>
+			<param type="absolute" value="winFrameWidth" name="WinTop"/>
+		</split>
+	</rule>
+	<rule name="SubtileSub">
+		<split splitAxis="x">
+			<param type="absolute" value="winFrameWidth" name="WinFrame"/>
+			<param type="floating" value="1" name="Win"/>
+			<param type="absolute" value="winFrameWidth" name="WinFrame"/>
+		</split>
+	</rule>
+	
+	<!-- Tile -->
+	<rule name="PaintedWall">
+		<split splitAxis="y">
+			<param type="absolute" value="wallpaintHeight" name="RedWall"/>
+			<param type="floating" value="1" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="Wall">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-1"/>
+		</translate>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+	</rule>
+	<rule name="RedWall">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-1"/>
+		</translate>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+		<texture texturePath="wallTex"/>
+	</rule>
+	
+	<!-- Door -->
+	<rule name="DoorFrame">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth+0.05"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-wallDepth"/>
+		</translate>
+		<split splitAxis="y">
+			<param type="relative" value="0.2" name="DoorFrameSub" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="DoorFrameSub">
+		<insert geometryPath="../assets/primitives/stone-vertical.01.obj"/>
+	</rule>
+	
+	<!-- Tile -->
+	<rule name="WinSill">
+		<size>
+			<param name="xSize" type="absolute" value="scope.sx+0.06"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth+0.06"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-wallDepth"/>
+		</translate>
+		<center axesSelector="x"/>
+		<texture texturePath="winStoneTex"/>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+	</rule>
+	<rule name="WinFrame">
+		<size>
+			<param name="xSize" type="absolute" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth+0.03"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-wallDepth"/>
+		</translate>
+		<texture texturePath="stoneBlockTex"/>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+	</rule>
+	<rule name="WinTop">
+		<size>
+			<param name="xSize" type="relative" value="doorBeamTexScale"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="wallDepth+0.1"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-wallDepth"/>
+		</translate>
+		<center axesSelector="x"/>
+		<texture texturePath="doorBeamTex"/>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+	</rule>
+	<rule name="Win">
+		<copy name="Grill"/>
+	</rule>
+	<rule name="Grill">
+		<texture texturePath="../assets/textures/grillTexture_1.jpg"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-wallDepth*0.2"/>
+		</translate>
+		<split splitAxis="x">
+			<param type="floating" value="winGrillDistance" name="GrillSub" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="GrillSub">
+		<size>
+			<param name="xSize" type="absolute" value="0.05"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.05"/>
+		</size>
+		<center axesSelector="xz"/>
+		<insert geometryPath="cylinderVerticalObj"/>
+	</rule>
+	
+	<!-- Corner Stones -->
+	<rule name="Cornerstones">
+		<split splitAxis="y">
+			<param type="absolute" value="0.75" name="Cornerstones2"/>
+			<param type="floating" value="1" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="Cornerstones2">
+		<split splitAxis="x">
+			<param type="absolute" value="1" name="Cornerstones3"/>
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="1" name="Cornerstones3"/>
+		</split>
+	</rule>
+	<rule name="Cornerstones3">
+		<split splitAxis="y">
+			<param type="absolute" value="0.1" name="Cornerstone"/>
+			<param type="absolute" value="0.1" name="Cornerstone"/>
+			<param type="absolute" value="0.1" name="Cornerstone"/>
+			<param type="absolute" value="0.1" name="Cornerstone"/>
+			<param type="floating" value="1" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="Cornerstone">
+		<size>
+			<param name="xSize" type="absolute" value="0.25"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.2"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="-0.035"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="0.025-scope.sz"/>
+		</translate>
+		<insert geometryPath="cylinderVerticalObj"/>
+		<texture texturePath="cornerStoneTex"/>
+	</rule>
+
+	<!-- Ground-->
+	<rule name="Ground2">
+		<translate mode="rel" coordSystem="world">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="HeightOffset"/>
+			<param name="z" type="absolute" value="0"/>
+		</translate>
+		<setupProjection axesSelector="world.xz">
+			<param name="texWidth" type="absolute" value="12"/>
+			<param name="texHeight" type="absolute" value="12"/>
+		</setupProjection>
+		<texture texturePath="groundTex"/>
+	</rule>
+</rules>

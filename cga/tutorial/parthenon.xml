@@ -1,0 +1,656 @@
+<?xml version="1.0"?>
+<rules version="2011.1" author="Pascal Mueller">
+	<!-- model parameters -->
+	<attr name="Temple_Color" value="#EDE6CD"/>
+	
+	<!-- column parameters -->
+	<attr name="Diameter" value="1.92"/>
+	<attr name="Column_Height" value="10.43"/>
+	<attr name="Spacing" value="4.29"/>
+	<attr name="capitalHeight" value="0.864864"/>
+	<attr name="capitalWidth" value="2.112"/>
+	<attr name="echinusPartsHeight" value="1"/>
+	<attr name="abacusPartsHeight" value="1.15"/>
+	<attr name="Column_Color" value="#F4F1D4"/>
+	<attr name="peristyliumHeight" value="13.73"/>
+
+	<!-- entablature parameters -->
+	<attr name="Entablature_Height" value="3.3"/>
+	<attr name="Frieze_Height" value="1.3"/>
+	<attr name="architraveHeight" value="1.386"/>
+	<attr name="architraveD" value="1.632"/>
+	<attr name="corniceHeight" value="0.614"/>
+	<attr name="geisonProjection" value="0.96"/>
+	<attr name="triglyphWidth" value="0.8448"/>
+	<attr name="triglyphD" value="0.0938666"/>
+	<attr name="taeniaH" value="0.1386"/>
+	<attr name="taeniaD" value="0.064"/>
+	<attr name="architraveC" value="#EDE6CD"/>
+	<attr name="corniceC" value="#EDE6CD"/>
+	<attr name="Metopes_Color" value="#DB8C6C"/>
+	<attr name="Triglyph_Color" value="#576484"/>
+	
+	<!-- cella parameters -->
+	<attr name="Cella_Setback" value="4.97"/>
+	<attr name="Type" value="Prostyle"/>
+	<attr name="Portico_Length" value="5.5"/>
+	<attr name="Posticum_Length" value="5.4"/>
+	<attr name="wallThickness" value="1.4688"/>
+	<attr name="Posticum_Door" value="true"/>
+	<attr name="Door_Height" value="7.2"/>
+	<attr name="Door_Width" value="3.5"/>
+	<attr name="doorD" value="0.4"/>
+	<attr name="doorWindowH" value="1.08"/>
+	<attr name="doorFrameW" value="0.4"/>
+	<attr name="doorFrameH" value="0.6"/>
+	<attr name="entranceFrameW" value="0.5"/>
+	<attr name="entranceH" value="9.09"/>
+	<attr name="entranceW" value="5.3"/>
+	<attr name="corniceProjection" value="0.192"/>
+	<attr name="prostyleLength" value="1.152"/>
+
+	<!-- podium parameters -->
+	<attr name="No_of_Steps" value="3"/>
+	<attr name="podiumTreadDepth" value="0.72"/>
+	<attr name="podiumRiserHeight" value="0.41"/>
+	<attr name="Podium_Color" value="#CDC6AD"/>
+	<attr name="podiumH" value="1.23"/>
+
+	<!-- roof parameters -->
+	<attr name="Roof_Type" value="Gable"/>
+	<attr name="Angle" value="15"/>
+	<attr name="roofBrickW" value="1.0725"/>
+	<attr name="roofBrickH" value="1.5015"/>
+	<attr name="pedimentWidth" value="1.92"/>
+	<attr name="simaLength" value="2.112"/>
+	<attr name="simaHeight" value="0.5184"/>
+	<attr name="simaWidth" value="2.145"/>
+	<attr name="Roof_Color" value="#886644"/>
+
+	<!-- assets -->
+	<attr name="doorAsset" value="../assets/primitives/door_parthenon.obj"/>
+	<attr name="doorCorniceAsset" value="../assets/primitives/door-cornice_parthenon.obj"/>
+	<attr name="topdoorAsset" value="../assets/primitives/topdoor-element_parthenon.obj"/>
+	<attr name="shaftAsset" value="../assets/primitives/shaft_parthenon.obj"/>
+	<attr name="echinusAsset" value="../assets/primitives/echinus_parthenon.obj"/>
+	<attr name="abacusAsset" value="../assets/primitives/abacus_parthenon.obj"/>
+	<attr name="architraveAsset" value="../assets/primitives/architrave_parthenon.obj"/>
+	<attr name="friezeAsset" value="../assets/primitives/frieze_parthenon.obj"/>
+	<attr name="geisonAsset" value="../assets/primitives/geison_parthenon.obj"/>
+	<attr name="triglyphAsset" value="../assets/primitives/triglyph_parthenon.obj"/>
+	<attr name="guttaeAsset" value="../assets/primitives/guttae_parthenon.obj"/>
+	<attr name="mutuleAsset" value="../assets/primitives/mutule.obj"/>
+	<attr name="antefixAsset" value="../assets/primitives/antefix.obj"/>
+	<attr name="roofBrickBottomAsset" value="../assets/primitives/roofbrick_bottom.obj"/>
+	<attr name="roofBrickRound" value="../assets/primitives/roofbrick_round.obj"/>
+	<attr name="simaAsset" value="../assets/primitives/roof_sima.obj"/>
+
+	<!-- START -->
+	<rule name="Start">
+		<copy name="Podium"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="podiumH"/>
+		</translate>
+		<color s="Temple_Color"/>
+		<copy name="TempleOuter"/>
+		<copy name="TempleInner"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="peristyliumHeight"/>
+		</translate>
+		<offset offsetDistance="-Diameter/2+geisonProjection+architraveD/2" offsetSelector="inside"/>
+		<copy name="Roof"/>
+	</rule>
+	<rule name="TempleOuter">
+		<offset offsetDistance="-Diameter/2" offsetSelector="inside"/>
+		<extrude height="peristyliumHeight"/>
+		<copy name="Peristylium"/>
+	</rule>
+	<rule name="TempleInner">
+		<offset offsetDistance="-Cella_Setback" offsetSelector="inside"/>
+		<copy name="Cella"/>
+	</rule>
+	
+	<!-- PODIUM -->
+	<rule name="Podium">
+		<color s="Podium_Color"/>
+		<copy name="Steps2"/>
+	</rule>
+	<rule name="Steps2">
+		<copy name="Steps1"/>
+		<offset offsetDistance="2*podiumTreadDepth" offsetSelector="inside"/>
+		<extrude height="podiumRiserHeight"/>
+	</rule>
+	<rule name="Steps1">
+		<copy name="Steps0"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="podiumRiserHeight"/>
+		</translate>
+		<offset offsetDistance="podiumTreadDepth" offsetSelector="inside"/>
+		<extrude height="podiumRiserHeight"/>
+	</rule>
+	<rule name="Steps0">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="podiumRiserHeight*2"/>
+		</translate>
+		<extrude height="podiumRiserHeight"/>
+	</rule>
+	
+	<!-- CELLA -->
+	<rule name="Cella">
+		<copy name="InnerPeristylium"/>
+		<extrude height="Column_Height"/>
+		<split splitAxis="y">
+			<param type="absolute" value="Portico_Length" name="PorchWalls"/>
+			<param type="floating" value="1" name="Sanctuary"/>
+			<param type="absolute" value="Posticum_Length" name="PorchWalls"/>
+		</split>
+	</rule>
+	<rule name="InnerPeristylium">
+		<offset offsetDistance="-wallThickness*0.5" offsetSelector="inside"/>
+		<extrude height="peristyliumHeight"/>
+		<split splitAxis="z">
+			<param type="absolute" value="Column_Height" name="InnerPeristyliumSub1"/>
+			<param type="absolute" value="architraveHeight + Frieze_Height" name="InnerPeristyliumSub2"/>
+		</split>
+	</rule>
+	<rule name="InnerPeristyliumSub1">
+		<split splitAxis="y">
+			<param type="absolute" value="Portico_Length-Spacing-wallThickness*0.5" name="PorchColonnades"/>
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="Posticum_Length-Spacing-wallThickness*0.5" name="PorchColonnades"/>
+		</split>
+	</rule>
+	<rule name="InnerPeristyliumSub2">
+		<comp>
+			<param name="side" value="Entablature"/>
+		</comp>
+	</rule>
+	<rule name="PorchWalls">
+		<split splitAxis="y">
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="prostyleLength" name="PorchWallsSub"/>
+		</split>
+	</rule>
+	<rule name="PorchWallsSub">
+		<comp>
+			<param name="left" value="Wall"/>
+			<param name="right" value="Wall"/>
+		</comp>
+	</rule>
+	<rule name="Sanctuary">
+		<comp>
+			<param name="front" value="EntranceWall"/>
+			<param name="back" value="EntranceWall"/>
+			<param name="side" value="SanctuarySub"/>
+		</comp>
+	</rule>
+	<rule name="SanctuarySub">
+		<size>
+			<param name="xSize" type="relative" value="1.1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<center axesSelector="x"/>
+		<copy name="Wall"/>
+	</rule>
+	<rule name="EntranceWall">
+		<size>
+			<param name="xSize" type="relative" value="1.1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<center axesSelector="x"/>
+		<split splitAxis="x">
+			<param type="floating" value="1" name="Wall"/>
+			<param type="absolute" value="entranceW" name="EntranceWallSub"/>
+			<param type="floating" value="1" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="EntranceWallSub">
+		<split splitAxis="y">
+			<param type="absolute" value="entranceH" name="Entrance"/>
+			<param type="floating" value="1" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="Entrance">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-podiumTreadDepth *0.2"/>
+		</translate>
+		<split splitAxis="y">
+			<param type="absolute" value="podiumRiserHeight *0.5" name="EntranceSub1"/>
+			<param type="floating" value="1" name="EntranceSub2"/>
+			<param type="absolute" value="entranceFrameW" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="EntranceSub1">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="podiumTreadDepth*0.5"/>
+		</translate>
+		<copy name="Wall"/>
+	</rule>
+	<rule name="EntranceSub2">
+		<split splitAxis="x">
+			<param type="absolute" value="entranceFrameW" name="Wall"/>
+			<param type="floating" value="1" name="DoorMain"/>
+			<param type="absolute" value="entranceFrameW" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="DoorMain">
+		<color s="#664422"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-wallThickness*0.15"/>
+		</translate>
+		<split splitAxis="y">
+			<param type="floating" value="1" name="DoorMainSub"/>
+			<param type="absolute" value="doorFrameH" name="Wall"/>
+			<param type="absolute" value="doorWindowH" name="DoorWindows"/>
+		</split>
+	</rule>
+	<rule name="DoorMainSub">
+		<split splitAxis="x">
+			<param type="absolute" value="doorFrameW" name="Wall"/>
+			<param type="floating" value="1" name="Door"/>
+			<param type="absolute" value="doorFrameW" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="Door">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="doorD"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-1"/>
+		</translate>
+		<insert geometryPath="doorAsset"/>
+	</rule>
+	<rule name="DoorWindows">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="doorD*0.3"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-1"/>
+		</translate>
+		<split splitAxis="x">
+			<param type="floating" value="scope.sy" name="DoorWindow" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="DoorWindow">
+		<insert geometryPath="topdoorAsset"/>
+	</rule>
+	<rule name="Wall">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.2"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-1"/>
+		</translate>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+	</rule>
+	<rule name="PorchColonnades">
+		<comp>
+			<param name="right" value="Colonnade2"/>
+			<param name="left" value="Colonnade2"/>
+		</comp>
+	</rule>
+	
+	<!-- Peristylium -->
+	<rule name="Peristylium">
+		<comp>
+			<param name="front" value="PeristyliumSub"/>
+			<param name="side" value="PeristyliumSub"/>
+		</comp>
+	</rule>
+	<rule name="PeristyliumSub">
+		<split splitAxis="y">
+			<param type="absolute" value="Column_Height" name="Colonnade"/>
+			<param type="floating" value="1" name="Entablature"/>
+		</split>
+	</rule>
+	
+	<!-- Columns -->
+	<rule name="Colonnade">
+		<split splitAxis="x">
+			<param type="floating" value="Spacing + triglyphWidth *0.5-architraveD*0.5" name="ColumnTile"/>
+			<param type="floating" value="Spacing" name="ColumnTile" repeat="true"/>
+			<param type="floating" value="Spacing + triglyphWidth *0.5-architraveD*0.5" name="ColumnTile"/>
+			<param type="absolute" value="0.001" name="ColumnTile"/>
+		</split>
+	</rule>
+	<rule name="Colonnade2">
+		<split splitAxis="x">
+			<param type="floating" value="Spacing" name="ColumnTile" repeat="true"/>
+			<param type="absolute" value="0.001" name="ColumnTile"/>
+		</split>
+	</rule>
+	<rule name="ColumnTile">
+		<size>
+			<param name="xSize" type="absolute" value="Diameter"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<extrude height="Diameter"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="relative" value="-0.5"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="relative" value="-0.5"/>
+		</translate>
+		<color s="Column_Color"/>
+		<copy name="Column"/>
+	</rule>
+	<rule name="Column">
+		<split splitAxis="y">
+			<param type="floating" value="1" name="Shaft"/>
+			<param type="absolute" value="capitalHeight" name="Capital"/>
+		</split>
+	</rule>
+	<rule name="Shaft">
+		<insert geometryPath="shaftAsset"/>
+	</rule>
+	<rule name="Capital">
+		<size>
+			<param name="xSize" type="absolute" value="capitalWidth"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="capitalWidth"/>
+		</size>
+		<center axesSelector="xz"/>
+		<split splitAxis="y">
+			<param type="floating" value="echinusPartsHeight" name="Echinus"/>
+			<param type="floating" value="abacusPartsHeight" name="Abacus"/>
+		</split>
+	</rule>
+	<rule name="Echinus">
+		<insert geometryPath="echinusAsset"/>
+	</rule>
+	<rule name="Abacus">
+		<insert geometryPath="abacusAsset"/>
+	</rule>
+	
+	<!-- Entablature -->
+	<rule name="Entablature">
+		<split splitAxis="y">
+			<param type="absolute" value="architraveHeight" name="Architraves"/>
+			<param type="absolute" value="Frieze_Height" name="Frieze"/>
+			<param type="floating" value="1" name="Cornice"/>
+		</split>
+	</rule>
+	<rule name="Architraves">
+		<color s="architraveC"/>
+		<split splitAxis="x">
+			<param type="floating" value="Spacing + triglyphWidth *0.5-architraveD*0.5" name="ArchitravesSub1"/>
+			<param type="floating" value="Spacing" name="Architrave" repeat="true"/>
+			<param type="floating" value="Spacing + triglyphWidth *0.5-architraveD*0.5" name="ArchitravesSub2"/>
+		</split>
+	</rule>
+	<rule name="ArchitravesSub1">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="relative" value="-0.2"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="0"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="1.2"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<copy name="Architrave"/>
+	</rule>
+	<rule name="ArchitravesSub2">
+		<size>
+			<param name="xSize" type="relative" value="1.2"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<copy name="Architrave"/>
+	</rule>
+	<rule name="Architrave">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-architraveD*0.5"/>
+		</translate>
+		<split splitAxis="y">
+			<param type="floating" value="1" name="ArchitraveSub"/>
+			<param type="floating" value="taeniaH" name="Taenia"/>
+		</split>
+	</rule>
+	<rule name="ArchitraveSub">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="architraveD"/>
+		</size>
+		<insert geometryPath="architraveAsset"/>
+	</rule>
+	<rule name="Taenia">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="architraveD+taeniaD*1.5"/>
+		</size>
+		<insert geometryPath="architraveAsset"/>
+	</rule>
+	<rule name="Frieze">
+		<size>
+			<param name="xSize" type="absolute" value="scope.sx+architraveD"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<center axesSelector="x"/>
+		<copy name="Metopes"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="architraveD/2"/>
+		</translate>
+		<copy name="Triglyphs"/>
+	</rule>
+	<rule name="Metopes">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="architraveD+ triglyphWidth /15"/>
+		</size>
+		<center axesSelector="z"/>
+		<insert geometryPath="friezeAsset"/>
+		<color s="Metopes_Color"/>
+	</rule>
+	<rule name="Triglyphs">
+		<color s="Triglyph_Color"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.007"/>
+		</translate>
+		<split splitAxis="x">
+			<param type="absolute" value="triglyphWidth" name="TriglyphWithGuttae"/>
+			<param type="floating" value="Spacing" name="TriglyphsSub" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="TriglyphsSub">
+		<split splitAxis="x">
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="triglyphWidth" name="TriglyphsSubSub"/>
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="triglyphWidth" name="TriglyphsSubSub"/>
+		</split>
+	</rule>
+	<rule name="TriglyphsSubSub">
+		<extrude height="triglyphD"/>
+		<!--
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="triglyphD"/>
+		</size>
+		<insert geometryPath="../assets/primitives/cube.obj"/>
+		-->
+		<copy name="TriglyphWithGuttae"/>
+	</rule>
+	<rule name="TriglyphWithGuttae">
+		<copy name="Triglyph"/>
+		<copy name="Guttae"/>
+	</rule>
+	<rule name="Triglyph">
+		<insert geometryPath="triglyphAsset"/>
+	</rule>
+	<rule name="Guttae">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="-2*taeniaH"/>
+			<param name="z" type="absolute" value="-0.007"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="absolute" value="taeniaH"/>
+			<param name="zSize" type="absolute" value="taeniaD"/>
+		</size>
+		<insert geometryPath="guttaeAsset"/>
+	</rule>
+	<rule name="Cornice">
+		<color s="corniceC"/>
+		<size>
+			<param name="xSize" type="absolute" value="scope.sx+architraveD+ Spacing *0.25- triglyphWidth"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<center axesSelector="x"/>
+		<copy name="Geisons"/>
+	</rule>
+	<rule name="Geisons">
+		<split splitAxis="x">
+			<param type="floating" value="Spacing /4" name="GeisonsSub1"/>
+			<param type="floating" value="Spacing" name="GeisonsSub2"/>
+			<param type="floating" value="Spacing" name="GeisonsSub3"/>
+		</split>
+	</rule>
+	<!--
+	<rule name="GeisonsSub1">
+		<copy name="Mutule"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="relative" value="-4"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="0"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="5"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<copy name="Geison"/>
+	</rule>
+	<rule name="GeisonsSub2">
+		<split splitAxis="x">
+			<param type="relative" value="0.25" name="MutuleAndGeison" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="GeisonsSub3">
+		<split splitAxis="x">
+			<param type="relative" value="0.25" name="MutuleAndGeison" repeat="true"/>
+			<param type="relative" value="0.25" name="MutuleAndGeison2"/>
+		</split>
+	</rule>
+	<rule name="MutuleAndGeison">
+		<copy name="Mutule"/>
+		<copy name="Geison"/>
+	</rule>
+	<rule name="MutuleAndGeison2">
+		<copy name="Mutule"/>
+		<size>
+			<param name="xSize" type="relative" value="5"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<copy name="Geison"/>
+	</rule>
+	<rule name="Geison">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="geisonProjection+architraveD/2- Diameter"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="Diameter"/>
+		</size>
+		<insert geometryPath="geisonAsset"/>
+	</rule>
+	<rule name="Mutule">
+		<color s="Triglyph_Color"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="relative" value="0"/>
+			<param name="y" type="relative" value="0.05"/>
+			<param name="z" type="absolute" value="architraveD/2+geisonProjection*0.2"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="triglyphWidth/Spacing*4"/>
+			<param name="ySize" type="absolute" value="geisonProjection*0.25"/>
+			<param name="zSize" type="absolute" value="geisonProjection*0.65"/>
+		</size>
+		<center axesSelector="x"/>
+		<insert geometryPath="mutuleAsset"/>
+	</rule>
+	-->
+	
+	<!-- Roof -->
+	<rule name="Roof">
+		<roofGable angle="Angle"/>
+		<comp>
+			<param name="vertical" value="Pediment"/>
+			<param name="top" value="RoofPlane"/>
+		</comp>
+	</rule>
+	<rule name="RoofPlane">
+		<copy name="RoofBricks"/>
+	</rule>
+	<rule name="RoofBricks">
+		<color s="Roof_Color"/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0.15"/>
+			<param name="z" type="absolute" value="-0.05"/>
+		</translate>
+	</rule>
+	
+	<!-- pediment with simas -->
+	<rule name="Pediment">
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-pedimentWidth"/>
+		</translate>
+		<size>
+			<param name="xSize" type="relative" value="0.995"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<center axesSelector="x"/>
+		<extrude height="pedimentWidth-geisonProjection"/>
+	</rule>
+</rules>
+

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="window_sill_height" value="0.1"/>
+	<attr name="window_sill_depth" value="0.15"/>
+	<attr name="window_cornice_height" value="0.004"/>
+	<attr name="window_cornice_depth" value="0.05"/>
+	
+	<attr name="window_margin" value="0.05"/>
+	<attr name="window_single_width" value="0.3" range="0.3,0.4"/>
+	<attr name="window_single_height" value="0.3"/>
+	<attr name="window_border" value="0.004"/>
+	<attr name="window_depth" value="0.08"/>
+	<attr name="window_circle_radius" value="0.3" range="0.25,0.4"/>
+	
+	<rule name="Start">
+		<split splitAxis="y">
+			<param type="absolute" value="window_sill_height" name="NIL"/>
+			<param type="floating" value="1" name="WindowMain"/>
+			<param type="absolute" value="window_circle_radius" name="WindowUpper"/>
+		</split>
+	</rule>
+	
+	<rule name="WindowSill">
+		<extrude height="window_sill_depth"/>
+	</rule>
+	
+	<rule name="WindowMain">
+		<split splitAxis="x">
+			<param type="absolute" value="window_margin" name="NIL"/>
+			<param type="floating" value="window_single_width" name="WindowSingleColumn" repeat="true"/>
+			<param type="absolute" value="window_margin" name="NIL"/>
+		</split>
+	</rule>
+
+	<rule name="WindowSingleColumn">
+		<split splitAxis="y">
+			<param type="floating" value="window_single_height" name="WindowSingle" repeat="true"/>
+		</split>
+	</rule>
+	
+	<rule name="WindowSingle">
+		<split splitAxis="x">
+			<param type="absolute" value="window_border" name="WindowBorder"/>
+			<param type="floating" value="1" name="WindowSingleMainColumn"/>
+			<param type="absolute" value="window_border" name="WindowBorder"/>
+		</split>
+	</rule>
+	
+	<rule name="WindowSingleMainColumn">
+		<split splitAxis="y">
+			<param type="absolute" value="window_border" name="WindowBorder"/>
+			<param type="floating" value="1" name="WindowSingleMain"/>
+			<param type="absolute" value="window_border" name="WindowBorder"/>
+		</split>
+	</rule>
+	
+	<rule name="WindowSingleMain">
+		<extrude height="-window_depth"/>
+	</rule>
+	
+	<rule name="WindowUpper">
+		<innerSemiCircle />
+		<offset offsetDistance="-window_cornice_height"/>
+		<comp>
+			<param name="inside" value="WindowUpperInside"/>
+			<param name="border" value="WindoeUpperBorder"/>
+		</comp>
+	</rule>
+	
+	<rule name="WindoeUpperBorder">
+		<extrude height="window_cornice_depth"/>
+	</rule>
+</rules>

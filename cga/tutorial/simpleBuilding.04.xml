@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<rules version="2010.3" author="andi">
+	<!-- Attributes -->
+	<attr name="groundfloor_height" value="4"/>
+	<attr name="floor_height" value="3.5"/>
+	<attr name="tile_width" value="3"/>
+	<attr name="bldg_height" value="11"/>
+	<attr name="wallColor" value="#ffffff"/>
+	<attr name="LOD" value="0"/>
+	
+	<!-- Assets -->
+	<attr name="window_asset" value="../assets/primitives/window.obj"/>
+	<attr name="cube_notex" value="../assets/primitives/cube_notex.obj"/>
+	<attr name="frontdoor_tex" value="../assets/textures/shopdoor.tif"/>
+	<attr name="wall_tex" value="../assets/textures/brickwall.jpg"/>
+	<attr name="roof_tex" value="../assets/textures/roof.tif"/>
+	<attr name="window_tex" value="../assets/textures/window.1b.tif"/>
+	
+	<!-- Initial Shape starting rule -->
+	<rule name="Start">
+		<extrude height="bldg_height"/>
+		<copy name="Building"/>
+	</rule>
+	
+	<!-- split the building geometry into its facade components -->
+	<rule name="Building">
+		<comp>
+			<param name="front" value="FrontFacade"/>
+			<param name="side" value="SideFacade"/>
+			<param name="top" value="Roof"/>
+		</comp>
+	</rule>
+	
+	<!-- the front facade is subdivided into one front groundfloor and upper floors -->
+	<rule name="FrontFacade">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="1.5"/>
+			<param name="texHeight" type="absolute" value="1"/>
+		</setupProjection>
+		<texture texturePath="wall_tex"/>
+		<split splitAxis="y">
+			<param type="absolute" value="groundfloor_height" name="Groundfloor"/>
+			<param type="floating" value="floor_height" name="Floor" repeat="true"/>
+		</split>
+	</rule>
+	
+	<!-- a side facade is subdivided into one bottom floor and upper floors. -->
+	<rule name="SideFacade">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="1.5"/>
+			<param name="texHeight" type="absolute" value="1"/>
+		</setupProjection>
+		<texture texturePath="wall_tex"/>
+		<split splitAxis="y">
+			<param type="absolute" value="groundfloor_height" name="Floor"/>
+			<param type="floating" value="floor_height" name="Floor" repeat="true"/>
+		</split>
+	</rule>
+	
+	<!-- a roof texture is applied to the roof face -->
+	<rule name="Roof">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="scope.sx"/>
+			<param name="texHeight" type="absolute" value="scope.sy"/>
+		</setupProjection>
+		<texture texturePath="roof_tex"/>
+	</rule>
+	
+	<!-- each floor is horizontally split into two narrow corner areas on 
+		each side of the floor, and into a set of window tiles in between -->
+	<rule name="Floor">
+		<split splitAxis="x">
+			<param type="absolute" value="1.0" name="Wall"/>
+			<param type="floating" value="tile_width" name="Tile" repeat="true"/>
+			<param type="absolute" value="1.0" name="Wall"/>
+		</split>
+	</rule>
+	
+	<!-- similarily, the front groundfloor is horizontally split into 
+		two narrow corner areas on each side of the floor, 
+		a special entrance tile on the right 
+		and into a set of window tiles in between -->
+	<rule name="Groundfloor">
+		<split splitAxis="x">
+			<param type="absolute" value="1.0" name="Wall"/>
+			<param type="floating" value="tile_width" name="Tile" repeat="true"/>
+			<param type="floating" value="tile_width" name="EntranceTile"/>
+			<param type="absolute" value="1.0" name="Wall"/>
+		</split>
+	</rule>
+
+	<!-- a tile consists of a centered window element and 
+		wall elements above, below, left and right -->
+	<rule name="Tile">
+		<split splitAxis="x">
+			<param type="floating" value="1.0" name="Wall"/>
+			<param type="absolute" value="2.0" name="WallWindowWall"/>
+			<param type="floating" value="1.0" name="Wall"/>
+		</split>
+	</rule>
+	
+	<rule name="WallWindowWall">
+		<split splitAxis="y">
+			<param type="absolute" value="1.0" name="Wall"/>
+			<param type="absolute" value="1.5" name="Window"/>
+			<param type="floating" value="1.0" name="Wall"/>
+		</split>
+	</rule>
+	
+	<!-- similarily, the EntranceTile contains a centered Door element,
+		but with no wall on spacing below -->
+	<rule name="EntranceTile">
+		<split splitAxis="x">
+			<param type="floating" value="1.0" name="SolidWall"/>
+			<param type="absolute" value="2" name="DoorAndSolidWall"/>
+			<param type="floating" value="1.0" name="SolidWall"/>
+		</split>
+	</rule>
+	
+	<rule name="DoorAndSolidWall">
+		<split splitAxis="y">
+			<param type="absolute" value="2.5" name="Door"/>
+			<param type="floating" value="2.0" name="SolidWall"/>
+		</split>
+	</rule>
+	
+	<!-- firstly, the depth and the depth position of the future window is set
+		secondly, one of nine window textures is randomly selected
+		finally, the window geometry asset is inserted -->
+	<rule name="Window">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.4"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.25"/>
+		</translate>
+		<texture texturePath="window_tex"/>
+		<insert geometryPath="window_asset"/>
+	</rule>
+	
+	<!-- same for the door asset. Scaling, positioning, texture selection
+		and geometry insert
+		TODO: fix door uv bug (problem with uv handling on split?) -->
+	<rule name="Door">
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.1"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.4"/>
+		</translate>
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="scope.sx"/>
+			<param name="texHeight" type="absolute" value="scope.sy"/>
+		</setupProjection>
+		<texture texturePath="frontdoor_tex"/>
+	</rule>
+	
+	<!-- for the wall asset, setting the texture scale params u and v 
+		guarantees a texture mapping that nicely fits over the whole facade -->
+	<rule name="Wall">
+		<color s="wallColor"/>
+	</rule>
+	
+	<rule name="SolidWall">
+		<color s="wallColor"/>
+		<size>
+			<param name="xSize" type="relative" value="1"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="absolute" value="0.4"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.4"/>
+		</translate>
+		<insert geometryPath="cube_notex"/>
+	</rule>
+</rules>

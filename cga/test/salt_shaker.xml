@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<taper height="3" top_ratio="0.7"/>
+		<comp>
+			<param name="front" value="Side."/>
+			<param name="side" value="Side."/>
+			<param name="top" value="Top"/>
+			<param name="bottom" value="Bottom."/>
+		</comp>
+	</rule>
+	<rule name="Top">
+		<offset offsetDistance="-0.5"/>
+		<comp>
+			<param name="inside" value="X"/>
+			<param name="border" value="Y."/>
+		</comp>
+	</rule>
+	<rule name="X">
+		<extrude height="2"/>
+	</rule>
+</rules>

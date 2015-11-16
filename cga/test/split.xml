@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<translate mode="rel" coordSystem="world">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="0.3"/>
+		</translate>
+		<!--
+		<split splitAxis="z">
+			<param type="absolute" value="10" name="Parcel."/>
+			<param type="floating" value="1" name="Parcel."/>
+			<param type="absolute" value="10" name="Parcel."/>
+		</operator>
+		-->
+		<split splitAxis="y">
+			<param type="absolute" value="2.0" name="Wall"/>
+			<param type="floating" value="2.5" name="Tile" repeat="true"/>
+			<param type="floating" value="2.5" name="EntranceTile" />
+			<param type="absolute" value="2.0" name="Wall" />
+		</split>
+	</rule>
+</rules>

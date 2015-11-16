@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<extrude height="5"/>
+		<size>
+			<param name="xSize" type="absolute" value="3"/>
+			<param name="ySize" type="relative" value="1.2"/>
+			<param name="zSize" type="absolute" value="3"/>
+		</size>
+	</rule>
+</rules>

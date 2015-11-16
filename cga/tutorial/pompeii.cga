@@ -1,0 +1,1148 @@
+/**
+ * File:    pompeii.cga
+ * Created: 3 Nov 2008
+ * Updated: 6 June 2014
+ * Author:  Esri R+D Center Zurich
+ */
+
+
+
+version "2014.0"
+
+
+
+import Roof: "pompeiiRoofs.cga" (LevelOfDetail = LevelOfDetail)
+import Plant : "/ESRI.lib/rules/Plants/Plant_Loader.cga"
+
+
+####################################################
+# Control Attributes
+#
+
+@Order(1) @Range("High","Low")
+attr LevelOfDetail 	= "Low"
+
+@Group("Building",2) 
+@Order(1) @Range("Atrium","Large House","Medium House","Small House")
+attr Type	= getRandomBuilingType
+@Order(2) @Range(3,11)
+attr EaveHeight = getRandomEaveHeight
+
+@Group("Facade",3)
+@Order(1) @Range("Wooden frame","Beam with frame","Beam with stones","Stone cornice","Stone roof")
+attr WindowType 	= 50%: "Beam with frame" 15%: "Wooden frame" 15%: "Beam with stones" 10%: "Stone cornice" else: "Stone roof"
+@Order(2) @Range("Grill","Vertical bars","Horizontal bars","No bars")
+attr WindowOpening	= 25%: "Vertical bars" 15%: "Grill" 2%: "Horizontal bars" else: "No bars"
+@Order(3) @Range(2.5,4.0)
+attr DoorHeight 	= case smallHouse: rand(2.5,3.5) else: rand(3.0, 4.0)
+@Order(4) @Range(1.1,1.7)
+attr DoorWidth		= case smallHouse: rand(1.1,1.4) else: rand(1.4, 1.7)
+@Order(5) 
+attr DoorStones 	= 80% : true else : false
+@Order(6) @Range(2.8,4.2)
+attr ShopHeight 	= case smallHouse: rand(2.8,3.7) else: rand(3.7,4.2)
+@Order(7) @Range(2.8,4)
+attr ShopWidth 		= rand(2.8, 4.0)
+
+
+
+####################################################
+# Building Construction Constants
+#
+
+const HeightOffset 			= 0.3	# should be same as SidewalkHeight
+
+# Floor
+const groundfloorHeight 	= ShopHeight+rand(0.4,0.6)
+const floorType 			= case atrium: 10 else: 16%: 1 16%: 2 29%: 3 16%: 8 else: 9
+const groundfloorLedge 		= 25%: EaveHeight > groundfloorHeight+0.4 else: false
+
+# Door
+const doorDepth 			= 0.1
+const marginWidth 			= wallDepth
+const doorFrameWidth		= rand(0.15,0.22)
+const doorFrameHeight		= doorFrameWidth
+const doorstoneHeight 		= rand(0.6,1)
+const doorBeamTexScale 		= 20%: 1 else: rand(1.1,1.3)
+const canopyBeamWidth 		= 0.1
+
+# Steps
+const riserHeight 			= rand(0.1,0.2) 
+const treadDepth 			= 0.2 
+
+# Window
+const winLargeWidth 	   	= rand(1.0, 1.5)
+const winLargeHeight 		= rand(0.8,1.1) 
+const winSmallWidth 	   	= rand(0.4,0.85)
+const winSmallHeight 	   	= rand(0.7,1)
+const winSmallTileWidth 	= winSmallWidth+2*marginWidth	# minimal width of window tile type 1 (small)
+const winVerticalPosition 	= rand(0.45,0.7)				# ratio of wall-height below window to height above window
+const winFrameWidth			= 0.08
+const winGrillDistance		= rand(0.1,0.25)
+
+# Wall
+const wallDepth 			= rand(0.35, 0.55)
+const wallpainted 			= 90% : true else : false
+const wallpaintHeight 		= rand(1.2,1.8)
+const greyWallColor			= 20% : "#EEEEEE" 20% : "#F5F5F5" 20% : "#FFFFFF" 20% : "#FFFFFF" else : "#FFFFFF"
+
+# Shop
+const shopType				= 50% : 0 else : 1
+const shopCounterWidth		= rand(0.8,1.2)
+const shopCounterHeight 	= 1.3
+
+# Gazebo
+const gazeboProtrusion 		= rand(0.5,0.8)
+const gazeboBeamWidth 		= 0.1
+const gazeboTriangleWidth 	= 0.1			
+const gazeboTriangleSpace 	= 0.5
+
+# Gallery
+const gallerySpacing 		= rand(1.0,1.4)
+const galleryBanisterHeight = rand(0.7,1.0)
+const galleryDepth 			= rand(1.2,1.5)
+
+# Atrium
+const atriumOffset 			= rand(2.5,3)
+const gardenwayWidth 		= rand(1,3)
+
+# Meadow
+const nMeadowLayers 		= floor(rand(1,4.5))
+
+
+
+
+####################################################
+# Asset Management
+#
+
+# Walls
+const wallTex 					= fileRandom("assets/facades/walls/wall.c.*.jpg")
+const wallTexWidth 				= 4	# all textures are approx the same size
+const wallTexHeight 			= 2	# dito
+const dirtmap 					= fileRandom("assets/general/dirtmaps/dirtmap.*.jpg")
+
+# Doors & Windows
+const singleDoorFolder 			= 40% : "single-door_noble_1/" else: "single-door_normal_1/"
+const getSingleDoorObj 			= fileRandom("assets/facades/doors/"+singleDoorFolder+"*.obj")
+const getSingleDoorTex 			= fileRandom("assets/facades/doors/"+singleDoorFolder+"*.c.jpg")
+const doubleDoorFolder 			= 50% : "double-door_noble_1/" else: "double-door_noble_2/"
+const getDoubleDoorObj 			= fileRandom("assets/facades/doors/"+doubleDoorFolder+"*.obj")
+const getDoubleDoorTex 			= fileRandom("assets/facades/doors/"+doubleDoorFolder+"*.c.jpg")
+const doorBeamTex 				= fileRandom("assets/general/woodwork/DoorBeam.*.jpg")
+const stoneBlockTex 			= fileRandom("assets/general/stonework/StoneBlock.*.c.jpg")
+const cornerStoneTex 			= fileRandom("assets/general/stonework/cornerStone*.jpg")
+const winCornerStoneTex 		= fileRandom("assets/general/stonework/stone.c.03.jpg")
+const doorStoneTex 				= fileRandom("assets/general/stonework/DoorStone.*.c.jpg")
+const winStoneTex 				= fileRandom("assets/general/stonework/StoneBlock.*.c.jpg")
+
+# Misc OBJs
+const simpleledgeObj			= "assets/facades/ledges/ledge.01.simple.notex.obj" 
+const doorcorniceObj			= "assets/facades/doors/door-cornice.01.simple.obj" 
+const doorcornicetriangleObj	= "assets/facades/doors/door-cornice.02.triangle.obj" 
+const shaftObj 					= "assets/facades/columns/pillar.01.simple.obj"
+const atticbaseObj				= "assets/facades/columns/base.01.attic.obj"
+const neckObj					= "assets/facades/columns/neck.01.obj"
+const canopy_clothObj			= "assets/specific/pompeii/canopy/canopy_cloth.hd.obj" 
+const canopyTex 				= "assets/specific/pompeii/canopy/redwhite.png"
+const canopyClothSupportObj		= "assets/specific/pompeii/canopy/canopy_cloth_support.hd.obj" 
+const gazeboSupportTriangleObj	= "assets/specific/pompeii/gazebo/gazebo_support_triangle.hd.obj" 
+const counterObj 				= "assets/interior/counter.obj"
+const cylinderVerticalObj		= "assets/general/primitives/cylinder.vert.8.notop.tex.obj"
+const cylinderHorizontalObj		= "assets/general/primitives/cylinder.hor.8.notop.tex.obj"
+const woodcrossObj				= fileRandom("assets/general/woodwork/wood-cross.*.obj") 
+
+# Misc Textures
+const woodTex 					= fileRandom("assets/general/woodwork/wood.c.0*.v.jpg")
+const counterTex 				= "assets/facades/windows/special_window.c.jpg"
+const groundTex 				= "streets/trottoir.02.color.jpg"
+const groundTexBump 			= "streets/streets.bump.jpg"
+
+# Functions
+woodTex(inst,orient) 			= "assets/general/woodwork/wood.c.0"+inst+"."+orient+".jpg"
+noisecubeObj 					= case highLOD: fileRandom("assets/general/primitives/cube.noised*obj") else: "builtin:cube"	
+
+
+
+####################################################
+# Helpers
+#
+
+getRandomBuilingType =
+	case geometry.area > 250			: "Atrium"
+	case geometry.area > 200 && p(0.75)	: "Atrium"
+	case geometry.area > 150 && p(0.50)	: "Atrium"
+	case geometry.area > 50				: "Large House"
+	case geometry.area > 20				: "Medium House"
+	else								: "Small House"
+
+getRandomEaveHeight	=
+	case atrium 		: groundfloorHeight+rand(1.5)
+	case smallHouse		: 60%: groundfloorHeight else: groundfloorHeight+rand(1.5,2.5)
+	case mediumHouse	: 30%: groundfloorHeight 65% : groundfloorHeight+rand(2,3) 	else: groundfloorHeight+rand(4,5)
+	else            	: 10%: groundfloorHeight 80% : groundfloorHeight+rand(2.5,3) 	else: groundfloorHeight+rand(4,6) 
+
+heightAboveGround = 
+	convert(y, scope, object, pos, scope.tx, scope.ty, scope.tz)
+
+isOnGround =
+	heightAboveGround < 0.5
+
+roundSize(size, ref) =
+	ref/(rint(ref/size))
+	
+rand05 = rand(0.25,0.75)
+	
+isWinType(type) =	
+	case WindowType == "Wooden frame"		: 0 == type	
+	case WindowType == "Beam with frame"	: 1 == type	
+	case WindowType == "Beam with stones"	: 2 == type	
+	case WindowType == "Stone cornice"		: 3 == type	
+	case WindowType == "Stone roof"			: 4 == type	
+	else									: false
+	
+calcAtriumHeight(roofAngle) = EaveHeight + atriumOffset*sin(roofAngle)
+calcAtriumShedIndex(nVerticesOriginal) = case nVerticesOriginal*3 == geometry.nVertices: 2 else: 0
+
+@Hidden
+attr pillarBaseWidth 		= 0
+getPillarBaseWidth(height)	= height/8*1.34
+
+const highLOD 			= LevelOfDetail == "High"	
+const atrium 			= Type == "Atrium"
+const largeHouse		= Type == "Large House"
+const mediumHouse		= Type == "Medium House"
+const smallHouse		= Type == "Small House"
+	
+	
+
+	
+	
+###################################################
+###################################################
+##
+##  RULES
+##
+##
+
+@StartRule
+Lot -->
+	case scope.sx >= 2.5 && scope.sz >= 2.5 && geometry.area >= 4:
+		Ground2
+		translate(rel,world,0,HeightOffset,0) 
+		split(z){ ~1: Parcel | (rand(0.1,1)): NIL }				# parcels are randomly setbacked
+	else:
+		Ground2
+		
+LotInner -->
+	Ground2 
+	translate(rel,world,0,HeightOffset,0) 
+	Parcel
+
+Parcel -->
+	case geometry.area > 80:
+		20% : GardenParcel
+		else: Footprint
+	case geometry.area > 30:
+		40% : GardenParcel
+		else: Footprint
+	else:
+		20% : GardenParcel
+		else: Footprint		
+		
+Footprint -->
+	case !atrium :
+		extrude(EaveHeight) 
+		comp(f){front: Facade | back: Facade | side: Facade | top: Roof.Generate}
+	else : 
+		Atrium(geometry.nVertices)
+			
+Facade -->	
+	setupProjection(0,scope.xy,~wallTexWidth,~wallTexHeight,1)
+	setupProjection(2,scope.xy,'1,'1,1)
+	texture(wallTex) set(material.dirtmap, dirtmap)
+	FacadeFloors
+
+FacadeFloors -->	
+	case !atrium : 
+		split(y){groundfloorHeight: GroundFloor(floorType) Cornerstones GroundfloorLedge
+				| { ~2.5 		  : UpperFloor(floorType) }* }
+	else : 
+		PaintedWall
+
+
+
+# -----------------------------------------------------------------
+# roof
+# -----------------------------------------------------------------
+
+Ledge --> 
+	case highLOD:
+		s('1.1,'1,0.1) center(x) i(simpleledgeObj)
+		color(greyWallColor) texture(wallTex) set(material.dirtmap, dirtmap)
+		projectUV(0) projectUV(2) scaleUV(0,0.5,0.5) scaleUV(2,0.5,0.5)
+	else:
+		NIL
+	
+GroundfloorLedge -->
+	case groundfloorLedge: split(y){ ~1: NIL | 0.1: Ledge }	
+	else: NIL
+	
+	
+	
+# -----------------------------------------------------------------
+# upper floor
+# -----------------------------------------------------------------
+
+UpperFloor(type) --> 
+	case type == 1:
+		case scope.sx > 3 * winLargeWidth:
+   			split(x) { ~2 : Tile("smallwindow") | ~3 : Tile("largewindow") | ~2 : Tile("smallwindow") } 
+		else: 
+			UpperFloor(9) #typ1 1 fallback
+	case type == 2 :
+		40%  :	split(x){~1 : Tile("smallwindow") | ~1 : Tile("smallwindow") | ~1 : PaintedWall } 
+		30%  :	split(x){~1 : PaintedWall | ~1 : Tile("smallwindow") | ~1 : Tile("smallwindow") } 
+		else :	split(x){~1 :  PaintedWall | ~2 : split(x){ ~(winSmallTileWidth+1) : Tile("smallwindow") }* } 
+	case type == 3 && scope.sx > (2*winLargeWidth+0.5) && scope.sy > 2.2:
+		case comp.sel == "front" || comp.sel == "back":
+			30% : split(x){ ~(rand(0.7,1)) : Tile("largewindow") | ~1 : Tile("gazebo") | (rand(0.1,0.5)): PaintedWall } 
+			30% : split(x){ (rand(0.1,0.5)): PaintedWall | ~1 : Tile("gazebo") | (rand(0.1,0.5)): PaintedWall } 
+			else : split(x){ (rand(0.1,0.5)): PaintedWall | ~1 : Tile("gazebo") | ~(rand(0.7,1)) : Tile("largewindow")} 
+		else:
+			Tile("largewindow")
+	case type == 8 && scope.sx > (3 * winSmallWidth + 6*marginWidth) :   # floordesign 8 (alignment with lower part!)
+		split(x){ ~rand(1,2)		  : PaintedWall 
+				| { ~winSmallTileWidth : Tile("smallwindow") }* 
+				| ~rand(1,2) 		  : PaintedWall }
+	case type == 9 && scope.sx > gallerySpacing+4*wallDepth && scope.sy > galleryBanisterHeight + 1 : 	# floordesign 9 gallery
+		case comp.sel == "front" || comp.sel == "back":
+			50% : split(x){2*wallDepth : PaintedWall | ~1 : Tile("gallery") | 2*wallDepth : PaintedWall }
+			else: split(x){wallDepth : PaintedWall | ~1 : Tile("gallery") | wallDepth : PaintedWall }
+		else:
+			Tile("smallwindow")
+	case type == 10 : # floordesign 10 atrium / only wall
+		Tile("wall") 
+	else : 
+		UpperFloor(2)		
+	
+
+
+# -----------------------------------------------------------------
+# ground floor 
+# -----------------------------------------------------------------
+
+GroundFloor(type) -->
+	case (!atrium && comp.sel == "back" && p(0.2)) 
+			|| (!atrium && comp.sel == "side" && p(0.8)) 
+			|| (atrium && p(0.4)):  # no doors in these cases
+		30% : UpperFloor(1)
+		30% : UpperFloor(2)
+		else: UpperFloor(8)
+	case type == 1 :
+		case scope.sx > (ShopWidth + 2*DoorWidth) :
+			split(x){~2 : Tile("wallPainted") | ~3 : Tile("shop") | ~2 : Tile("door1") }
+		else : 
+			GroundFloor(2)
+	case type == 2 :  # shop
+		case scope.sx > (ShopWidth+2*marginWidth+winSmallTileWidth) :
+			50%  : split(x){~rand05 : PaintedWall | ShopWidth+marginWidth : Tile("shop") | ~(1-rand05) : Tile("smallwindow") }
+			else : split(x){~rand05 : Tile("smallwindow") | ShopWidth+marginWidth : Tile("shop") |~(1-rand05) : PaintedWall } 
+		case scope.sx > (ShopWidth+2*marginWidth) :
+			Tile("shop") 
+		else : 
+			Tile("door1")
+	case type == 3 : # shop
+		case scope.sx > (ShopWidth + DoorWidth + 2*marginWidth) :
+			25% : split(x){~rand05 : Tile("door1") | ShopWidth+2*marginWidth : Tile("shop") | ~(1-rand05) : PaintedWall } 
+			25% : split(x){~rand05 : Tile("door1") | ShopWidth+2*marginWidth : Tile("shop") | ~(1-rand05) : PaintedWall } 
+			25% : split(x){~rand05 : PaintedWall | ShopWidth+2*marginWidth : Tile("shop") | ~(1-rand05) : Tile("door1") } 
+			else : split(x){ ~rand05 : PaintedWall | ShopWidth+2*marginWidth : Tile("shop") | ~(1-rand05) : PaintedWall }
+		case scope.sx > ShopWidth + 0.5 :
+			Tile("shop")
+		else : 
+			GroundFloor(7)
+	case type == 4:		# #TODO: floordesign 4 (very similar to design 2, todo: extrude doortop)
+		GroundFloor(2)
+	case type == 5 && scope.sx > (winSmallWidth + marginWidth) :
+		split(x){ ~3 : Tile("smallwindow") }* 
+	case type == 7 && scope.sx > (ShopWidth + 2*winSmallWidth + marginWidth) :
+		split(x){winSmallTileWidth : Tile("smallwindow") | DoorWidth+2*marginWidth : Tile("door1") | { ~winSmallTileWidth : Tile("smallwindow") }* } 
+	case type == 9 && scope.sx > (DoorWidth + winSmallWidth + marginWidth) :
+		50% :	split(x){~1 : Tile("door1") | ~1 : Tile("smallwindow") } 
+		else :	split(x){~1 : Tile("smallwindow") | ~1 : Tile("door1") }
+	case type == 10 :	# atrium
+		Tile("shop") 
+	else : 
+		60% : Tile("door1")
+		else : PaintedWall  
+
+
+
+# -----------------------------------------------------------------
+# Tile
+# -----------------------------------------------------------------
+
+# types : door1, shop, smallwindow, largewindow, gazebo, gallery, balcony
+Tile(tiletype) -->
+	case inside(inter) 										: NIL 
+	case tiletype == "wall"  								: Wall
+	case tiletype == "wallPainted" 							: PaintedWall
+	case tiletype == "door1":
+		case scope.sx > DoorWidth + 2*marginWidth:
+			split(x){ ~rand05: PaintedWall 
+					| DoorWidth : split(y){DoorHeight : Subtile(tiletype) | ~(1-rand05): PaintedWall } 
+					| ~1 	 : PaintedWall }
+		else: 
+			Tile("smallwindow") # too narrow for door, try window
+	case tiletype == "shop" ://&& scope.sx > ShopWidth && scope.sy > (ShopWidth+0.3) :
+		split(x){ ~1 	: PaintedWall 
+				| ShopWidth: split(y){ShopHeight : Subtile("shop") | ~1 : Wall } 
+				| ~1 	: PaintedWall }
+	case tiletype == "largewindow"  && scope.sx > winLargeHeight+0.6 :
+		split(x){ ~1 		  :  PaintedWall 
+				| winLargeWidth : split(y){ ~2: PaintedWall | winLargeHeight: Subtile(tiletype)  | ~1: Wall } 
+				| ~1 		  : PaintedWall }*
+	case tiletype == "smallwindow" && scope.sy > winSmallHeight+0.6: 
+		50%:
+		split(x){ ~1 		  : PaintedWall 
+				| winSmallWidth : split(y){	winVerticalPosition*(scope.sy-winSmallHeight) : /*TODO Function("closedwall")*/ PaintedWall 
+   	 								  | winSmallHeight : Subtile(tiletype) 
+   	 								  | ~1 : Wall } 
+   	 			| ~1 : PaintedWall }
+		else:
+		split(x){ ~rand(0.5,1.5) 		  : PaintedWall 
+				| winSmallWidth : split(y){	winVerticalPosition*(scope.sy-winSmallHeight) : /*TODO Function("closedwall")*/ PaintedWall 
+   	 								  | winSmallHeight : Subtile(tiletype) 
+   	 								  | ~1 : Wall } 
+   	 			| ~rand(0.5,1.5) : PaintedWall }*
+	case tiletype == "gazebo" :
+		case overlaps(inter) : report("Occluded.Gazebo",1) PaintedWall
+		case scope.sy < 2.8: split(y){ 0.2: Wall | ~1: Gazebo | Roof.Overhang: Wall }
+		else : split(y){ 0.2: Wall | ~1: Gazebo | 0.3+Roof.Overhang/2: Wall }
+	case tiletype == "gallery" :
+		case overlaps(inter) : report("Occluded.Gallery",1) PaintedWall
+		else : split(y){ ~1: Gallery | (rand(0.3,0.5)): Wall }
+	else : PaintedWall
+
+Subtile(tiletype) -->
+	# do frame
+	case inside(inter) : 
+		NIL
+	case overlaps(inter) : 
+		PaintedWall report("Overlapping.Subtile",1)	
+	case  !geometry.isRectangular(3):
+		PaintedWall
+	case tiletype == "door1" || tiletype == "shop" :
+		split(y){ ~1: split(x){ doorFrameWidth: DoorFrame DoorStone 
+							  | ~1 		   	  : SubtileFramed(tiletype) 
+							  | doorFrameWidth: DoorFrame DoorStone } 
+				| doorFrameHeight: DoorTop(tiletype) }
+   	case tiletype == "smallwindow" || tiletype == "largewindow" || tiletype == "gazebowindow":
+		split(y){winFrameWidth : WinSill 
+				| ~1 : split(x){winFrameWidth : WinFrame("l") | ~1 : SubtileFramed(tiletype) | winFrameWidth : WinFrame("r") } 
+				| winFrameWidth : WinTop  }
+   	else : NIL
+
+SubtileFramed(tiletype) -->
+	case tiletype =="door1" : Door
+	case tiletype =="shop" : Shopentrance
+	case tiletype =="smallwindow" : Win
+	case tiletype =="largewindow" : Win
+	else : Wall
+	
+	
+	
+# -----------------------------------------------------------------
+# Wall
+# -----------------------------------------------------------------
+
+PaintedWall -->	
+	case wallpainted && isOnGround: 
+		split(y){ wallpaintHeight : Wall("red") | ~1 : Wall }
+	else : 
+		Wall
+
+Wall -->
+	Wall("grey")
+
+WallSolid -->
+	WallSolid("grey")
+
+Wall(col) -->
+	case highLOD && geometry.isRectangular(3):
+		s('1,'1,wallDepth) t(0,0,'-1) 
+		i("general/primitives/cube.onlyfrontback.obj")
+		projectUV(0) projectUV(2)
+		WallMaterial(col)	
+	else:
+		WallMaterial(col)
+		
+WallSolid(col) -->
+	case highLOD && geometry.isRectangular(3):
+		s('1,'1,wallDepth) t(0,0,'-1) 
+		i("builtin:cube")
+		projectUV(0) projectUV(2)
+		WallMaterial(col)	
+	else:
+		WallMaterial(col)		
+		
+WallMaterial(col) -->
+	case col == "red" :
+		# use red texture
+		texture(fileDirectory(wallTex) + "red" + fileBasename(wallTex) + "." + fileExtension(wallTex))
+		set(material.dirtmap, dirtmap)
+		set(material.bumpmap, material.colormap) set(material.bumpValue, 0.8)
+		projectUV(0) projectUV(2)
+	case col == "grey":
+		WallMaterial(greyWallColor)
+	else:
+		# use multiplied grey value
+		color(col)
+		texture(wallTex)
+		set(material.dirtmap, dirtmap)
+		set(material.bumpmap, material.colormap) set(material.bumpValue, 0.8)
+		projectUV(0) projectUV(2)	
+
+
+
+# -----------------------------------------------------------------
+# Door
+# -----------------------------------------------------------------
+
+DoorFrame --> 
+	case highLOD:
+		s('1,'1,wallDepth+0.05) t(0,0,-wallDepth) i("builtin:cube") 
+		split(y){ '0.2: i("general/stonework/stone-vertical.01.obj") 
+						 texture(stoneBlockTex) scaleUV(0,0.5,3) translateUV(0,0,rand(1)) 
+						 t(rand(-0.01,0.01),0,rand(-0.01,0.01)) D. }*
+	else:
+		s('1,'1,wallDepth+0.05) t(0,0,-wallDepth)  
+		i("builtin:cube") texture(stoneBlockTex) scaleUV(0,1,5)
+
+DoorStone --> 
+	case DoorStones:
+		s(doorFrameWidth+0.08,doorstoneHeight,wallDepth+0.15) center(x) t(0,0,-wallDepth-0.025) 
+		i(noisecubeObj) texture(doorStoneTex) 
+	else:
+		NIL
+
+DoorTop(tiletype) -->
+	60% : DoorBeam Canopy(tiletype,"beam")
+	10% : DoorCornice Canopy(tiletype,"cornice")
+	else: DoorCornice
+
+DoorBeam -->
+	s('doorBeamTexScale,'1,wallDepth+0.1) t(0,0,-wallDepth) center(x) 
+	i("builtin:cube") texture(doorBeamTex)
+		
+DoorCornice --> 
+	50%:
+		[ s('1,'1,wallDepth) t(0,0,'-1) i("builtin:cube") texture(stoneBlockTex) DoorFrame. ]
+		s('1.22,'2,0.2) center(x) i(doorcorniceObj) 
+		texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) DoorCornice.
+	else:
+		[ s('1,'1,wallDepth) t(0,0,'-1) i("builtin:cube") texture(stoneBlockTex) DoorFrame. ]
+		s('1.1,'2,0.15) center(x) i(doorcornicetriangleObj) 
+		texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) DoorCornice.
+
+Door -->
+	case overlaps(inter): 
+		report("Occluded.Doorway",1) Wall
+	case !isOnGround:
+		t(0,0,-wallDepth*rand(0.2,1)) Doorelement
+	else : 
+		30%:
+			t(0,0,-wallDepth*rand(0.2,1))
+			split(y){ (rand(0.5)): Stairs | ~1: Doorelement | ~0.2: Doortop }
+		else:
+			t(0,0,-wallDepth*rand(0.2,1))
+			split(y){ (rand(0.7)): Stairs | ~1: Doorelement }
+
+Doorelement -->
+	case !highLOD:
+		t(0,0,doorDepth)
+		setupProjection(0,scope.xy,'1,'1) projectUV(0) texture(getSingleDoorTex)
+	case scope.sx > 1.2:  
+		s('1,'1,doorDepth) texture(getDoubleDoorTex) i(getDoubleDoorObj) 
+	else:
+		s('1,'1,doorDepth) texture(getSingleDoorTex) i(getSingleDoorObj) 
+
+Doortop -->  
+   	split(y){ '0.2: s('1,'1,doorDepth*1.5) i("builtin:cube") texture(getSingleDoorTex) DoorBeam.
+   			| ~1  : split(x){~(scope.sy*0.8) : WoodcrossAsset(getSingleDoorTex) }* }
+
+WoodcrossAsset(tex) -->
+	case highLOD:
+		s('1,'1,doorDepth/2) t(0,0,'0.5) texture(tex) i(woodcrossObj)
+	else:
+		NIL
+
+Stairs -->
+	s('1,'1,ceil(scope.sy/riserHeight)*treadDepth+0.2) t(0,0,-0.2) i("builtin:cube")
+	split(y){~riserHeight : split(z){ ~1: Step | split.index*treadDepth : NIL } }*
+	
+Step --> 
+	i("builtin:cube")
+	texture(stoneBlockTex)
+
+DoorStep -->
+	setupProjection(0,scope.zx,scope.sz,scope.sx,0.5) projectUV(0) texture(stoneBlockTex)
+
+DoorstepSide -->
+	setupProjection(0,scope.yx,scope.sy,scope.sx) projectUV(0) texture(stoneBlockTex)
+
+
+
+# -----------------------------------------------------------------
+# Windows
+# -----------------------------------------------------------------
+
+WinSill -->
+	case isWinType(0):
+		Wood("h")
+	case isWinType(1) || isWinType(2) || isWinType(3) || isWinType(4):
+		case highLOD:
+			s(scope.sx+rand(0.04,0.08),'1,wallDepth+rand(0.04,0.08)) t(0,0,-wallDepth) center(x) 
+			texture(winStoneTex) i((50%: noisecubeObj else: "builtin:cube"))
+			setupProjection(0, scope.yx,'10,'1,scope.sx/scope.sz) projectUV(0)
+			translateUV(0,rand(1),0)
+		else:
+			i("general/primitives/quadXY.obj") scaleUV(0,1,0.1) texture(winStoneTex)
+	else:
+		NIL
+
+WinFrame(side) -->
+	case isWinType(0):
+		Wood("v")
+	case isWinType(1) || isWinType(3) || isWinType(4):
+		case highLOD:
+			s('1,'1,wallDepth+0.03) t(0,0,-wallDepth)  
+			i("builtin:cube") texture(stoneBlockTex)	
+		else:
+			i("general/primitives/quadXY.obj") texture(stoneBlockTex)
+	case isWinType(2):
+		WallSolid Cornerstones(side,0.3,winCornerStoneTex)
+	else:
+		NIL
+
+WinTop -->
+	case isWinType(0):
+		Wood("h")
+	case isWinType(1) || isWinType(2):
+		case highLOD:
+			s('doorBeamTexScale,'1,wallDepth+0.1) t(0,0,-wallDepth) center(x) 
+			i("builtin:cube") texture(doorBeamTex)
+		else:
+			i("general/primitives/quadXY.obj") texture(doorBeamTex)
+	case isWinType(3):
+		case highLOD:
+			[ s('1,'1,wallDepth) t(0,0,'-1) i("builtin:cube") texture(stoneBlockTex) WinFrame. ]
+			s('1.22,'2,0.1) center(x) i(doorcorniceObj) 
+			texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) WinCornice.
+		else:
+			s('1.22,'2,0.1) center(x) i(doorcorniceObj) 
+			texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) WinCornice.
+	case isWinType(4):
+		case highLOD:
+			[ s('1,'1,wallDepth) t(0,0,'-1) i("builtin:cube") texture(stoneBlockTex) WinFrame. ]
+			s('1.1,scope.sx/5,0.1) center(x) i(doorcornicetriangleObj) 
+			texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) WinCornice.
+		else:
+			s('1.1,scope.sx/5,0.1) center(x) i(doorcornicetriangleObj) 
+			texture(stoneBlockTex) setupProjection(0,scope.xy,'1,'1) projectUV(0) WinCornice.			
+	else:
+		NIL
+		
+Wood(orient) -->
+	case !highLOD:
+		i("general/primitives/quadXY.obj") texture(woodTex)
+	case orient == "v":
+		s('1,'1,wallDepth+rand(0.03)) t(0,0,-wallDepth) 
+		i("builtin:cube") texture(woodTex)
+		setupProjection(0, scope.xy,1,1,0.5) projectUV(0) translateUV(0,rand(),0)
+	else :
+		s('1,'1,wallDepth+rand(0.03)) t(0,0,-wallDepth) 
+		i("builtin:cube") texture(woodTex)
+		setupProjection(0, scope.yx,1,1,0.5) projectUV(0) translateUV(0,rand(),0)
+
+Win --> 
+	Grill
+
+Grill -->
+	case !highLOD:
+		NIL
+	case WindowOpening == "Grill" :
+		texture("assets/general/grill/grillTexture_1.jpg")
+		t(0,0,-wallDepth*0.2)
+		split(x){ ~winGrillDistance : s(0.05,'1,0.05) center(xz) i(cylinderVerticalObj) Grill.}*
+		split(y){ ~winGrillDistance : s('1,0.05,0.05) center(yz) i(cylinderHorizontalObj) Grill.}*
+	case WindowOpening == "Vertical bars" :
+		texture("assets/general/grill/grillTexture_1.jpg")
+		t(0,0,-wallDepth*0.2)
+		split(x){ ~winGrillDistance : s(0.05,'1,0.05) center(xz) i(cylinderVerticalObj) Grill.}*
+	case WindowOpening == "Horizontal bars" :
+   		texture("assets/general/grill/grillTexture_1.jpg")
+		t(0,0,-wallDepth*0.2)
+		split(y){ ~winGrillDistance : s('1,0.05,0.05) center(yz) i(cylinderHorizontalObj) Grill.}*
+	else : NIL
+
+
+# -----------------------------------------------------------------
+# Shop Entrance 
+# -----------------------------------------------------------------
+
+Shopentrance -->
+	case inside : report("Occluded.Shopentrance", 1) NIL
+	case shopType == 0 : s('1,'1,doorDepth) Shopopening 
+	else 	: s('1,'1,doorDepth) ShopCounters
+
+Shopopening -->
+	case inside : 
+		report("Occluded.Shopopening",1) Wall
+	else : 
+		50% : t(0,0,-wallDepth*rand(0.2,1)) split(y){ (rand(0.2)): Stairs | ~1: Shopdoorswithtop }
+		else: t(0,0,-wallDepth*rand(0.2,1)) Shopdoorswithtop
+
+Shopdoorswithtop -->
+	case scope.sy > 3 :
+		50%  : split(y){~1 : Shopdoors | ~0.2 : Doortop }
+		else : Shopdoors
+	else : Shopdoors
+
+Shopdoors -->
+	33% : split(x){ ~1 : r(0,rand(-15,-45),0) Doorelement | ~1 : Doorelement | ~1 : Doorelement | ~1 : setPivot(xyz,5) r(0,rand(-15,-45),0) setPivot(xyz,5) Doorelement }
+	33%  : split(x){~1 : Doorelement | ~1 : r(0,rand(-15,-45),0) Doorelement | ~1 : setPivot(xyz,5) r(0,rand(-15,-45),0) setPivot(xyz,5) Doorelement | ~1 : Doorelement}
+	else : split(x){~DoorWidth : Doorelement}*
+	
+ShopCounters --> 
+	set(trim.vertical, false)
+	s('1,'1,1)
+	t(0,0,'-1)
+	split(y){shopCounterHeight : Counters}
+
+Counters -->
+	50%  : split(x){~shopCounterWidth : NIL | {~shopCounterWidth : CounterAsset}* }
+	else : split(x){{~shopCounterWidth : CounterAsset}* | ~shopCounterWidth : NIL }
+	
+CounterAsset -->
+	texture(counterTex)  i(counterObj)
+	
+
+
+# -----------------------------------------------------------------
+# Corner Stones
+# -----------------------------------------------------------------
+
+Cornerstones -->
+	case highLOD && comp.sel =="front":
+		set(trim.vertical, false) set(trim.horizontal, false)
+		split(y){ (rand(0.3,1.2)) : split(x){1 : Cornerstones("r",0.08) | ~1 : NIL | 1 : Cornerstones("l",0.08)} 
+				| ~1 : NIL}
+	else : NIL
+
+Cornerstones(side,prob) -->
+	Cornerstones(side,prob,"")
+
+Cornerstones(side,prob,tex) -->
+	case highLOD && scope.sy > 0.1:
+		split(y){ (rand(0.07,0.2)): Cornerstone(side,prob,tex) | ~1: Cornerstones(side,prob,tex) }		# recursive in case a higher LOD (looks a little bit nicer)
+	else:
+		NIL
+
+Cornerstone(side,prob,tex) --> 
+	case p(prob):
+		NIL
+	case side =="r" :
+		s(rand(0.15,0.35),'1,rand(0.1,0.3))
+		t(-rand(0.02,0.05),0,rand(0.01,0.04)-scope.sz) 
+		i(noisecubeObj) Stone("h",tex)
+	else :
+		t(scope.sx,0,0) 
+		s(rand(0.15,0.35),'1,rand(0.1,0.3))
+		t(rand(0.02,0.05)-scope.sx,0,rand(0.01,0.04)-scope.sz)  
+		i(noisecubeObj) Stone("h",tex)
+
+Stone(orient,tex) -->
+	case orient == "v":
+		setupProjection(0, scope.xy, 5,2.5,scope.sx/scope.sz)
+		texture(case tex=="": cornerStoneTex else: tex)
+		projectUV(0)
+	else : 
+		setupProjection(0, scope.xy, 5,2.5,scope.sx/scope.sz)
+		texture(case tex=="": cornerStoneTex else: tex)
+		projectUV(0)
+		translateUV(0, rand(1), rand(1))
+
+
+	
+# -----------------------------------------------------------------
+# Gazebo
+# -----------------------------------------------------------------
+	
+Gazebo -->
+	s('1,'1,gazeboProtrusion+wallDepth) i("builtin:cube") t(0,0,-wallDepth)  
+	split(y){ gazeboBeamWidth : GazeboShelves 
+			| ~1 : comp(f){ back: NIL | side = GazeboWalls }
+			| gazeboBeamWidth : GazeboShelves }
+	s('1,gazeboProtrusion*0.7,gazeboProtrusion) t(0,'-1,wallDepth) GazeboSupport
+	
+GazeboWalls -->	
+	comp(f){ front : GazeboFrontWall | side : WallSolid }
+	
+GazeboFrontWall -->
+	case scope.sy>1.6:
+		70% : split(x){ wallDepth*0.7: Wall | ~1: Gallery | wallDepth*0.7: Wall }
+		20% : Tile("largewindow")
+		else: Tile("smallwindow")
+	else:
+		50% : Tile("largewindow")
+		else: Tile("smallwindow")		
+	
+GazeboSupport -->
+	case highLOD:
+		split(x){~gazeboTriangleSpace : NIL 
+				| gazeboTriangleWidth : GazeboAsset 
+				| ~gazeboTriangleSpace: NIL }*
+	else:
+		NIL
+
+GazeboAsset -->
+	case overlaps(intra): NIL
+	else:
+		i(gazeboSupportTriangleObj) texture(woodTex) projectUV(0)
+	
+GazeboShelves -->
+	texture(woodTex) s(scope.sx+rand(0.1),'1,scope.sz+rand(0.05)) center(x)
+	setupProjection(0, scope.zx,0.3,'0.5,0.5) projectUV(0) 
+	translateUV(0,-0.06,0)
+	
+	
+	
+# -----------------------------------------------------------------
+# Gallery
+# -----------------------------------------------------------------
+
+Gallery -->
+	GalleryFront 
+	t(0,0,-galleryDepth) set(trim.vertical,false) 
+	GalleryBack
+	
+GalleryFront -->
+	set(pillarBaseWidth,getPillarBaseWidth(scope.sy-gazeboBeamWidth*2))
+	split(y){ gazeboBeamWidth : s('1,'1,galleryDepth) i("builtin:cube") t(0,0,'-1) WallMaterial(greyWallColor) 
+			| ~1 : s('1,'1,pillarBaseWidth*1.2) i("builtin:cube") t(0,0,'-1) GalleryOpening 			   
+			| gazeboBeamWidth : s('1,'1,pillarBaseWidth*1.2) i("builtin:cube") t(0,0,'-1) GalleryShelves }
+
+GalleryBack -->
+	case highLOD:
+		GroundFloor(9)
+	else:
+		Wall
+			
+GalleryOpening -->
+	split(x){ pillarBaseWidth/2  : FrontWall t('0.5,0,0) GalleryPillar
+			| ~gallerySpacing    	: GalleryOpeningSection 
+			| { pillarBaseWidth/2: GalleryPillar | ~gallerySpacing : GalleryOpeningSection }*
+			| pillarBaseWidth/2  : FrontWall t('-0.5,0,0) GalleryPillar }
+
+GalleryOpeningSection -->
+	case scope.sy > galleryBanisterHeight*2:
+		s('1,'1,0.05) center(z) 	
+		split(y){ galleryBanisterHeight: Banister 
+				| 0.05 :  s('1,'1,0.07) center(z) GalleryShelves
+				| ~1 : NIL }
+	else:
+		s('1,'1,0.05) center(z) 	
+		split(y){ ~0.9 : Banister 
+				| 0.05 :  s('1,'1,0.07) center(z) GalleryShelves
+				| ~1 : NIL }
+
+Banister -->
+	case highLOD:
+		split(y){ ~galleryBanisterHeight*0.5:
+	 				split(x){ ~scope.sy:  BanisterElement }* }*
+	else:
+		BanisterElement
+
+BanisterElement -->
+	texture(woodTex) i(woodcrossObj)
+
+GalleryShelves -->
+	case highLOD:
+		texture(woodTex) s('1,'1,scope.sz+rand(0.03)) 
+		setupProjection(0, scope.zx,0.3,~3,0.5) projectUV(0) 
+		translateUV(0,-0.06,0)
+	else:
+		comp(f){ front:
+			texture(woodTex) s('1,'1,scope.sz+rand(0.03)) 
+			setupProjection(0, scope.zx,0.3,~3,0.5) projectUV(0) 
+			translateUV(0,-0.06,0) GalleryShelve. }		
+
+FrontWall -->
+	comp(f){ front: Wall }
+	
+GalleryPillar -->
+	color(greyWallColor) Pillar
+
+		
+	
+# -----------------------------------------------------------------
+# Canopy
+# -----------------------------------------------------------------
+
+Canopy(tiletype,toptype) -->
+	case (tiletype == "shop" && p(0.7)) || (tiletype == "door1" && p(0.3)):
+		case toptype == "beam":
+			s(scope.sx*doorBeamTexScale+rand(3,4)*canopyBeamWidth,rand(0.9,1),rand(0.8,1)) center(x) 
+			t(0,'-rand(0.2,0.5),0) i("builtin:cube") CanopySub("cloth")
+		else:
+			s(scope.sx*1.2+rand(3,4)*canopyBeamWidth,rand(0.9,1),rand(0.8,1)) center(x) 
+			t(0,'-rand(0.1,0.4),0) i("builtin:cube") CanopySub("cloth")
+	else : NIL
+			
+CanopySub(type) -->
+	case overlaps(inter): report("Occluded.Canopy",1) 
+		NIL
+	else :    
+		split(x){ canopyBeamWidth : CanopyBeam 
+				| ~1 : CanopyType
+				| canopyBeamWidth : CanopyBeam }
+	
+CanopyType -->
+	20% : 
+		t(0,'-0.7,0) s('1,'1,'0.9)
+		comp(f){top : 
+			roofShed(rand(20,40),0) 
+			set(trim.vertical,false)
+			comp(f){ bottom: NIL | vertical : NIL | all: Roof.RoofCovering s('1,0.1,'1) Roof.Batten }  }
+	else : 
+		setupProjection(0, scope.xz, roundSize(0.5,scope.sx), 1)
+		setupProjection(2, scope.xy, scope.sx, scope.sz,1)
+		texture(canopyTex) 
+		set(material.dirtmap, dirtmap) 
+		i(canopy_clothObj)
+		projectUV(0)
+		projectUV(2)
+	
+CanopyBeam -->
+	case highLOD:
+		setupProjection(0, scope.zy, 1, 1, 1)
+		texture(woodTex(1,"h")) 
+		i(canopyClothSupportObj)
+		projectUV(0)
+	else:
+		NIL
+
+
+
+# -----------------------------------------------------------------
+# Atrium
+# -----------------------------------------------------------------
+
+Atrium(nVerticesOriginal) -->
+	offset(-atriumOffset)
+	comp(f){ border = AtriumFootprint(calcAtriumShedIndex(nVerticesOriginal))  
+		   | inside : Garden }
+	
+AtriumFootprint(shedIndex) --> 
+	Ground
+	extrude(EaveHeight)
+	comp(f){ side: AtriumSides
+		   | top: Roof.AtriumRoof(shedIndex) }	
+	
+AtriumSides -->
+	case comp.index%2 == 0 	: AtriumFacade(Roof.RoofAngle)
+	else 					: ColumnFacade
+
+AtriumFacade(roofAngle) -->
+	setupProjection(0,scope.xy,~wallTexWidth,~wallTexHeight,1)
+	setupProjection(2,scope.xy,'1,calcAtriumHeight(roofAngle),1)
+	texture(wallTex) set(material.dirtmap, dirtmap)
+	GroundFloor(floorType) Cornerstones
+	
+ColumnFacade -->
+	set(pillarBaseWidth,getPillarBaseWidth(scope.sy-gazeboBeamWidth*2-0.4))
+	split(y){ ~1: s(scope.sx+pillarBaseWidth,'1,pillarBaseWidth) Columns
+			| gazeboBeamWidth*2: s('1.1,'1,pillarBaseWidth) center(x) t(0,0,'-1) i("builtin:cube") GalleryShelves
+			| 0.4 : setupProjection(0,scope.xy,~wallTexWidth,wallTexHeight,1)
+					setupProjection(2,scope.xy,'1,'1,1) Wall }
+	
+Columns -->	
+	case scope.sx > pillarBaseWidth*2:
+		set(trim.vertical, false)
+		t(-pillarBaseWidth,0,'-1) i("builtin:cube") 
+		split(x){ pillarBaseWidth : s('0.8,'0.8,'0.8) center(xyz) Pillar | ~pillarBaseWidth*3 : NIL }*
+	else:
+		NIL
+
+Roof.AtriumPediment(roofAngle) -->
+	setupProjection(0,scope.xy,~wallTexWidth,wallTexHeight,1)
+	setupProjection(2,scope.xy,'1,calcAtriumHeight(roofAngle),0,-EaveHeight,1)
+	s('1,(case Roof.GenerateBricks: scope.sy-0.03 else: scope.sy),'1) WallMaterial(greyWallColor)
+
+
+
+# -----------------------------------------------------------------
+# Pillar
+# -----------------------------------------------------------------		
+	
+Pillar --> 
+	case atrium && overlaps(all): NIL
+	case atrium: s('1.25,'1.25,'1.25) center(xyz) Pillar(scope.sy/8)
+	else: Pillar(scope.sy/8)
+
+Pillar(d) -->
+	case highLOD:
+		split(y){d*0.5 : PillarBase(d*1.34) | ~1 : Shaft(d) | d*0.6 : Capital(d*1.3) }
+	else : 	
+		split(y){d*0.5/4 : PillarBase(d*1.34) | ~1 : Shaft(d) | d*0.3 : Capital(d*1.3) }
+
+Shaft(d) -->
+	s(d,'1,d) center(xz) i(shaftObj) PillarMaterial
+
+PillarBase(d) -->	
+	case highLOD: s(d,'1,d) center(xyz) i(atticbaseObj) PillarMaterial
+	else : s(d,'1,d) center(xyz) i("builtin:cube") PillarMaterial
+
+Capital(d) -->	
+	case highLOD: s(d,'1,d) center(xyz) split(y){ ~2 : i(neckObj) PillarMaterial  | ~1 :i("builtin:cube") PillarMaterial }
+	else :  s(d,'1,d) center(xyz) i("builtin:cube") PillarMaterial
+	
+PillarMaterial -->
+	case !atrium:
+		projectUV(0) projectUV(2)
+	else:
+		texture(dirtmap)
+		color(greyWallColor)
+
+
+
+# -----------------------------------------------------------------
+# Garden
+# -----------------------------------------------------------------
+
+Red --> color(1,0,0)
+
+GardenParcel -->
+	alignScopeToGeometry(zUp,0,0) Garden
+			
+Garden --> 
+	25% : split(x){~1 : GardenSub | gardenwayWidth : GardenWay | ~1 : GardenSub }
+	25% : split(x){~(rand(2,5)*gardenwayWidth) : GardenSub | gardenwayWidth : Ground | ~(rand(2,5)*gardenwayWidth) : GardenSub }*
+	else : GardenSub
+	
+GardenSub -->
+	33% : split(y){~1 : GardenGreen | gardenwayWidth : GardenWay | ~1 : GardenGreen }
+	33% : split(y){~(rand(1,4)) : GardenGreen | gardenwayWidth : Ground | ~(rand(1,4)) : GardenGreen }
+	else : GardenGreen
+
+GardenWay --> 
+	75% : Ground
+	else : GardenGreen
+	
+GardenGreen -->	
+	Meadow
+	offset(-1,inside) Trees
+	
+Trees -->
+	35% : alignScopeToAxes(y) split(x){~5 : split(z){~5 : Tree }* }*
+	else: alignScopeToAxes(y) split(x){~1 : split(z){~1 : Tree(0.07) }* }*
+
+Tree(prob) -->
+	case  p(prob): Tree
+	else : NIL
+
+
+pompeiiVegetation =
+	6%: "Desert Willow"
+	11%: "Hedgehog Agave"
+	8%: "Leyland Cypress"
+	7%: "Palo Verde"
+	6%: "Prickly Pear Cactus"
+	3%: "Parlour Palm"
+	3%: "Ruffle Palm"
+	6%: "Mexican Palmetto"
+	7%: "Orange Tree"
+	6%: "Ficus"
+	11%: "Shadbush"
+	7%: "Flannelbush"
+	4%: "Lacy Tree Philodendron"
+	3%: "Rose"
+	3%: "Orchid"
+	7%: "Rhododendron Azaleas"
+	else: "Oval-leaved Privet"
+	
+
+
+Tree -->
+	GetTree(pompeiiVegetation)
+
+GetTree(chosenTree) -->
+	case highLOD:
+		set(Plant.Representation, "Model")
+		Plant.Generate(chosenTree)
+	else:
+		set(Plant.Representation, "Fan")
+		Plant.Generate(chosenTree)
+
+# -----------------------------------------------------------------
+# Meadow
+# -----------------------------------------------------------------
+
+Meadow -->
+	setupProjection(0,scope.xy,15,15) projectUV(0)					# lawn textures are aprox 15x15m
+	setupProjection(2,scope.xy,'1,'1) projectUV(2)					# and for a dirtmap we setup another texture coordinate set
+	translate(rel,world,0,0.05,0)
+	MeadowLayer("garden/lawn.jpg")  								# invoke the ground layer
+	MeadowTopLayers(nMeadowLayers)									# and some layers on top of it (with an alpha texture)
+	
+MeadowLayer(tex) -->
+	translateUV(0,rand,rand)										# we randomly offset the texture coordinates (the textures are tileable)									
+	texture(tex)													# assign the corresponding texture
+	set(material.dirtmap,"garden/dirtmap.jpg")						# and a dirtmap
+		
+MeadowTopLayers(n) -->
+	case n > 0:
+		translate(rel,world,0,0.05,0)
+		MeadowLayer("garden/meadow_with_alpha.png")					# move upwards and invoke layer
+		MeadowTopLayers(n-1)										# invoke another layer above
+	else:
+		NIL															# end the recursion
+
+
+
+# -----------------------------------------------------------------
+# Roof Callbacks
+# -----------------------------------------------------------------		
+
+Roof.Wall --> WallMaterial(greyWallColor)
+
+Roof.Ledge --> Ledge
+
+Roof.Pediment(type) -->
+	setupProjection(0,scope.xy,~wallTexWidth,wallTexHeight,1)
+	setupProjection(2,scope.xy,'1,-EaveHeight,1)
+	RoofWall(type)
+						
+RoofWall(type) -->
+	case type =="shed"	  : WallMaterial(greyWallColor)
+	case p(0.7)           : Tile("smallwindow")
+	else                  : Wall						
+
+
+
+# -----------------------------------------------------------------
+# Ground
+# -----------------------------------------------------------------		
+
+Ground2  -->
+	translate(rel,world,0,HeightOffset,0)
+	Ground
+	
+Ground  -->
+	setupProjection(0,world.xz,12,12) projectUV(0) 
+	texture(groundTex)
+	set(material.bumpmap, groundTexBump) 
+	set(material.bumpValue,-0.5)
+		

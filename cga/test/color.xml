@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<extrude height="5"/>
+		<split splitAxis="z">
+			<param type="floating" value="1.5" name="X" repeat="true"/>
+		</split>
+	</rule>
+	<!--
+	<rule name="X">
+		<color r="1" g="0" b="0"/>
+	</rule>
+	-->
+	<rule name="X">
+		<color s="#ff0000"/>
+	</rule>
+
+</rules>

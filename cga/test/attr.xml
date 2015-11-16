@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="buildingheight" value="5"/>
+	<rule name="Start">
+		<extrude height="buildingheight"/>
+	</rule>
+</rules>

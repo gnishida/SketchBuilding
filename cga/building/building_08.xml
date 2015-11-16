@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="building_height" value="8" range="6,12"/>
+	<attr name="ground_floor_height" value="3" range="2.5,3.5"/>
+	<attr name="building_cut_length" value="3.5" range="3,3.7"/>
+	<attr name="column_width" value="0.8" range="0.5,1"/>
+	
+	<rule name="Start">
+		<copy name="Start2"/>
+		<copy name="Start3"/>
+		<copy name="Start4"/>
+		<cornerCut type="straight" length="building_cut_length*2"/>
+		<extrude height="ground_floor_height"/>
+	</rule>
+	<rule name="Start2">
+		<translate mode="rel" coordSystem="world">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="ground_floor_height"/>
+		</translate>
+		<cornerCut type="negative_curve" length="building_cut_length"/>
+		<extrude height="building_height-ground_floor_height"/>
+	</rule>
+	<rule name="Start3">
+		<split splitAxis="x">
+			<param type="float" value="1" name="NIL"/>
+			<param type="absolute" value="column_width" name="ColumnEdge"/>
+			<param type="absolute" value="building_cut_length" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="ColumnEdge">
+		<split splitAxis="y">
+			<param type="absolute" value="column_width" name="Column"/>
+			<param type="float" value="1" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="Start4">
+		<split splitAxis="y">
+			<param type="absolute" value="building_cut_length" name="NIL"/>
+			<param type="absolute" value="column_width" name="RowEdge"/>
+			<param type="float" value="1" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="RowEdge">
+		<split splitAxis="x">
+			<param type="float" value="1" name="NIL"/>
+			<param type="absolute" value="column_width" name="Column"/>
+		</split>
+	</rule>
+	<rule name="Column">
+		<extrude height="ground_floor_height"/>
+	</rule>
+</rules>

@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="building_height" value="5" range="4,6"/>
+	<attr name="ground_floor_height" value="2.5" range="2,3"/>
+	<attr name="building_corner_length" value="2.5" range="2,3"/>
+	<attr name="building_column_length" value="1.5" range="1.5,2.5"/>
+	<attr name="building_between_column_length" value="4" range="3,4"/>
+	<attr name="building_offset" value="-0.5"/>
+	<attr name="building_entrance_left_margin" value="0.5" range="0.3,0.8"/>
+	<attr name="building_entrance_width" value="1.5" range="1.0,2.0"/>
+	
+	<rule name="Start">
+		<copy name="Start2"/>
+		<offset offsetDistance="building_offset" offsetSelector="inside"/>
+		<extrude height="building_height"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="Roof"/>
+			<param name="bottom" value="Base"/>
+		</comp>
+	</rule>
+	<rule name="Start2">
+		<split splitAxis="x">
+			<param type="absolute" value="building_column_length" name="Start3"/>
+			<param type="floating" value="building_column_length+building_between_column_length" name="Start4" repeat="true"/>
+			<param type="absolute" value="building_between_column_length" name="Start5"/>
+			<param type="absolute" value="building_column_length" name="Start3"/>
+		</split>
+	</rule>
+	<rule name="Start3">
+		<split splitAxis="y">
+			<param type="absolute" value="building_column_length" name="CornerBase"/>
+			<param type="floating" value="1" name="NIL"/>
+			<param type="absolute" value="building_column_length" name="CornerBase"/>
+		</split>
+	</rule>
+	<rule name="Start4">
+		<split splitAxis="x">
+			<param type="floating" value="building_between_column_length" name="Start5"/>
+			<param type="absolute" value="building_column_length" name="ColumnBase"/>
+		</split>
+	</rule>
+	<rule name="Start5">
+		<split splitAxis="x">
+			<param type="absolute" value="building_entrance_left_margin" name="NIL"/>
+			<param type="absolute" value="building_entrance_width" name="EntranceBase"/>
+			<param type="floating" value="1" name="NIL"/>
+		</split>
+	</rule>
+	<rule name="ColumnBase">
+		<extrude height="building_height*1.01"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="GableRoof"/>
+			<param name="bottom" value="Base"/>
+		</comp>
+	</rule>
+	<rule name="CornerBase">
+		<extrude height="building_height*1.01"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="CornerRoof"/>
+			<param name="bottom" value="Base"/>
+		</comp>
+	</rule>
+	<rule name="EntranceBase">
+		<extrude height="ground_floor_height"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="GableRoof"/>
+			<param name="bottom" value="Base"/>
+		</comp>
+	</rule>
+	<rule name="Roof">
+		<offset offsetDistance="0.3" offsetSelector="inside"/>
+		<roofGable angle="18"/>
+	</rule>
+	<rule name="CornerRoof">
+		<offset offsetDistance="0.3" offsetSelector="inside"/>
+		<roofHip angle="40"/>
+	</rule>
+	<rule name="GableRoof">
+		<roofGable angle="40"/>
+	</rule>
+</rules>

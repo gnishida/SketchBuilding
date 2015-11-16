@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<extrude height="5"/>
+		<comp>
+			<param name="front" value="Facade"/>
+			<param name="side" value="Facade"/>
+			<param name="top" value="Roof."/>
+			<param name="bottom" value="Base."/>
+		</comp>
+	</rule>
+	<rule name="Facade">
+		<split splitAxis="y">
+			<param type="absolute" value="2.0" name="Floor."/>
+			<param type="floating" value="1.5" name="Floor." repeat="true"/>
+		</split>
+	</rule>
+</rules>

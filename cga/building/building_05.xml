@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<rules>
+	<attr name="building_height" value="6" range="6,12"/>
+	<attr name="ground_floor_height" value="3" range="2.8,3.5"/>
+	<attr name="ground_floor_ledge_height" value="0.8" range="0.5,1"/>
+	<attr name="building_offset" value="-3" range="-2,-4"/>
+	<attr name="column_width" value="0.8" range="0.5,1.0"/>
+	<attr name="between_column_length" value="4" range="3,5"/>
+	
+	<rule name="Start">
+		<copy name="Start2"/>
+		<copy name="Start3"/>
+		<translate mode="rel" coordSystem="world">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="ground_floor_height-ground_floor_ledge_height"/>
+		</translate>
+		<extrude height="ground_floor_ledge_height"/>
+		<comp>
+			<param name="side" value="Facade."/>
+			<param name="top" value="SecondFloorBase"/>
+		</comp>
+	</rule>
+	<rule name="Start2">
+		<offset offsetDistance="building_offset" offsetSelector="inside"/>
+		<extrude height="ground_floor_height"/>
+	</rule>
+	<rule name="Start3">
+		<split splitAxis="x">
+			<param type="absolute" value="column_width" name="Start5"/>
+			<param type="float" value="column_width+between_column_length" name="Start4" repeat="true"/>
+			<param type="absolute" value="between_column_length" name="NIL"/>
+			<param type="absolute" value="column_width" name="Start4"/>
+		</split>
+	</rule>
+	<rule name="Start4">
+		<split splitAxis="x">
+			<param type="float" value="between_column_length" name="NIL"/>
+			<param type="absolute" value="column_width" name="Start5"/>
+		</split>
+	</rule>
+	<rule name="Start5">
+		<split splitAxis="y">
+			<param type="absolute" value="column_width" name="ColumnBase"/>
+			<param type="float" value="column_width+between_column_length" name="Start6" repeat="true"/>
+			<param type="absolute" value="between_column_length" name="NIL"/>
+			<param type="absolute" value="column_width" name="ColumnBase"/>
+		</split>
+	</rule>
+	<rule name="Start6">
+		<split splitAxis="y">
+			<param type="float" value="between_column_length" name="NIL"/>
+			<param type="absolute" value="column_width" name="ColumnBase"/>
+		</split>
+	</rule>
+	<rule name="ColumnBase">
+		<extrude height="ground_floor_height-ground_floor_ledge_height"/>
+	</rule>
+	<rule name="SecondFloorBase">
+		<extrude height="building_height-ground_floor_height"/>
+	</rule>
+</rules>

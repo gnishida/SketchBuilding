@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<rules>
+	<rule name="Start">
+		<extrude height="1"/>
+		<copy name="B."/>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="3"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="0"/>
+		</translate>
+		<copy name="C"/>
+	</rule>
+	<rule name="C">
+		<copy name="D."/>
+		<size>
+			<param name="xSize" type="absolute" value="2"/>
+			<param name="ySize" type="absolute" value="1.75"/>
+			<param name="zSize" type="absolute" value="0.5"/>
+		</size>
+		<copy name="E."/>
+	</rule>
+</rules>
