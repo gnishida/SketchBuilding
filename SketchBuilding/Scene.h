@@ -17,7 +17,6 @@ public:
 	float object_depth;
 	float height;
 	cga::Grammar grammar;
-	//std::vector<cga::Grammar> grammars;
 	std::vector<glutils::Face> faces;
 
 public:

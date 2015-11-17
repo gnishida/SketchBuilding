@@ -334,12 +334,18 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 		if (stage == STAGE_BUILDING) {
 			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
 				// shift the camera such that the selected face becomes a ground plane.
-				camera.pos.y = selectedFace->vertices[0].position.y;
+				camera.pos = glm::vec3(0, selectedFace->vertices[0].position.y, 40);
+				camera.xrot = 30.0f;
+				camera.yrot = -45.0f;
+				camera.zrot = 0.0f;
 				current_z = selectedFace->vertices[0].position.y;
 			}
 			else {
 				// shift the camera such that the ground plane becomes really a ground plane.
-				camera.pos.y = 0;
+				camera.pos = glm::vec3(0, 0, 40);
+				camera.xrot = 30.0f;
+				camera.yrot = -45.0f;
+				camera.zrot = 0.0f;
 				current_z = 0;
 			}
 			camera.updateMVPMatrix();

@@ -119,7 +119,14 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, glutils::F
 		_selectedFace->select();
 		return true;
 	}
-	else return false;
+	else {
+		if (_selectedFace != NULL) {
+			_selectedFace->unselect();
+			_selectedFace = NULL;
+		}
+		*selectedFace = NULL;
+		return false;
+	}
 }
 
 /**
@@ -168,7 +175,14 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils
 
 		return true;
 	}
-	else return false;
+	else {
+		if (_selectedFace != NULL) {
+			_selectedFace->unselect();
+			_selectedFace = NULL;
+		}
+		*selectedFace = NULL;
+		return false;
+	}
 }
 
 /**
@@ -217,7 +231,14 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v, glutil
 
 		return true;
 	}
-	else return false;
+	else {
+		if (_selectedFace != NULL) {
+			_selectedFace->unselect();
+			_selectedFace = NULL;
+		}
+		*selectedFace = NULL;
+		return false;
+	}
 }
 
 void BuildingMass::generateGeometry(cga::CGA* system, RenderManager* renderManager) {
