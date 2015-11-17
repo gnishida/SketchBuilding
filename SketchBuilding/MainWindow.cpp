@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
-	connect(ui.actionPredict, SIGNAL(triggered()), this, SLOT(onPredict()));
 	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
 	connect(ui.actionCuboid, SIGNAL(triggered()), this, SLOT(onSelectShape()));
 	connect(ui.actionLShape, SIGNAL(triggered()), this, SLOT(onSelectShape()));
@@ -58,13 +57,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 void MainWindow::onNew() {
 	glWidget->clearSketch();
 	glWidget->clearGeometry();
-}
-
-/**
-* This is called when the user clickes [Tool] -> [Predict]
-*/
-void MainWindow::onPredict() {
-	glWidget->predict();
 }
 
 void MainWindow::onFixGeometry() {

@@ -51,6 +51,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions[0] = new Regression("../models/cuboid_43/deploy.prototxt", "../models/cuboid_43/train_iter_64000.caffemodel");
 	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
 
+	selectedFace = NULL;
 	changeStage(STAGE_BUILDING);
 	shapeType = 0;
 }
@@ -65,6 +66,8 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 
 	painter.drawLine(pt1, pt2);
 
+	strokes.back().push_back(glm::vec2(endPoint.x(), endPoint.y()));
+
 	lastPos = endPoint;
 }
 
@@ -73,6 +76,7 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
  */
 void GLWidget3D::clearSketch() {
 	sketch.fill(qRgba(255, 255, 255, 255));
+	strokes.clear();
 
 	update();
 }
@@ -192,6 +196,52 @@ void GLWidget3D::predictBuilding() {
 }
 
 void GLWidget3D::predictFacade() {
+	if (selectedFace == NULL) return;
+
+	// list up y coordinates
+	std::vector<float> ys;
+	for (int i = 0; i < strokes.size(); ++i) {
+		if (strokes[i].size() <= 1) continue;
+
+		float y = height() - (strokes[i][0].y + strokes[i].back().y) * 0.5f;
+
+		// check if there is any y that is close to this y
+		bool tooClose = false;
+		for (int j = 0; j < ys.size(); ++j) {
+			if (fabs(ys[i] - y) < 1) {
+				tooClose = true;
+				break;
+			}
+		}
+
+		if (tooClose) continue;
+
+		ys.push_back(y);
+	}
+
+	// order the lines by Y
+	std::sort(ys.begin(), ys.end());
+
+	// project the face to the image plane, and find the y coordinates of the bottom and top lines
+	float bottom_y = height();
+	float top_y = 0.0f;
+	for (int i = 0; i < selectedFace->vertices.size(); ++i) {
+		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(selectedFace->vertices[i].position, 1);
+		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height();
+		if (y < bottom_y) {
+			bottom_y = y;
+		}
+		if (y > top_y) {
+			top_y = y;
+		}
+	}
+
+	std::cout << bottom_y << std::endl;
+	for (int i = 0; i < ys.size(); ++i) {
+		std::cout << ys[i] << std::endl;
+	}
+	std::cout << top_y << std::endl;
+
 
 }
 
@@ -224,6 +274,10 @@ glm::vec3 GLWidget3D::viewVector(const glm::vec2& point, const glm::mat4& mvMatr
 void GLWidget3D::changeStage(int stage) {
 	this->stage = stage;
 	clearSketch();
+	if (selectedFace != NULL) {
+		selectedFace->unselect();
+		selectedFace = NULL;
+	}
 
 	switch (stage) {
 	case STAGE_BUILDING:
@@ -278,7 +332,6 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 		glm::vec3 view_v1 = viewVector(glm::vec2(e->x(), e->y()), camera.mvMatrix, camera.f(), camera.aspect());
 
 		if (stage == STAGE_BUILDING) {
-			glutils::Face* selectedFace;
 			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
 				// shift the camera such that the selected face becomes a ground plane.
 				camera.pos.y = selectedFace->vertices[0].position.y;
@@ -292,7 +345,6 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			camera.updateMVPMatrix();
 		}
 		else if (stage == STAGE_FACADE) {
-			glutils::Face* selectedFace;
 			if (scene.building.selectSideFace(cameraPos, view_v1, &selectedFace)) {
 				// shift the camera such that the selected face becomes parallel to the image plane.
 				camera.pos.y = selectedFace->bbox.center().y;
@@ -311,6 +363,7 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 	else { // start drawing a stroke
 		lastPos = e->pos();
 		dragging = true;
+		strokes.resize(strokes.size() + 1);
 	}
 }
 

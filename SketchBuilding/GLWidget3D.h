@@ -28,23 +28,24 @@ public:
 
 	MainWindow* mainWin;
 	QImage sketch;
+	std::vector<std::vector<glm::vec2> > strokes;
 	QPoint lastPos;
 	bool dragging;
 	bool ctrlPressed;
 	bool shiftPressed;
-	
+		
 	int stage;
 	std::vector<Regression*> regressions;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	int shapeType;
 	sc::Scene scene;
 	float current_z;
+	glutils::Face* selectedFace;
 
 	Camera camera;
 	glm::vec3 light_dir;
 	glm::mat4 light_mvpMatrix;
 	RenderManager renderManager;
-	//cga::CGA system;
 
 public:
 	GLWidget3D(QWidget *parent);

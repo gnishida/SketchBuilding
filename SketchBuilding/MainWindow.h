@@ -22,7 +22,6 @@ public:
 
 public slots:
 	void onNew();
-	void onPredict();
 	void onFixGeometry();
 	void onSelectShape();
 	void onNewLayer();
