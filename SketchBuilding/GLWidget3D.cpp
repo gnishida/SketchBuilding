@@ -182,15 +182,15 @@ void GLWidget3D::predictBuilding() {
 	offset_y -= object_depth * 0.5f;
 
 	scene.building.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
-
+	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
-
+	
 	// set parameter values
 	scene.building.currentLayer().setGrammar(grammars["building"][shapeType], params);
-
+	
 	// set height
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][shapeType]);
 	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);

@@ -57,8 +57,11 @@ void CGA::setParamValues(Grammar& grammar, const std::vector<float>& params) {
 	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it, ++count) {
 		if (it->second.hasRange) {
 			float param = std::min(1.0f, std::max(0.0f, params[count]));
-			grammar.attrs[it->first].value = std::to_string((it->second.range_end - it->second.range_start) * param + it->second.range_start);
-			//grammar.attrs[it->first].value = std::to_string(params[count]);
+
+			grammar.attrs[it->first].value = boost::lexical_cast<std::string>((it->second.range_end - it->second.range_start) * param + it->second.range_start);
+
+			// the code below should work, but it breaks heap memory for some reasons and gives a memory access error when the application is closed.
+			//grammar.attrs[it->first].value = std::to_string((it->second.range_end - it->second.range_start) * param + it->second.range_start);
 		}
 	}
 }
