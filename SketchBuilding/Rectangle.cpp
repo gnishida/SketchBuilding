@@ -1,6 +1,7 @@
 ﻿#include "Rectangle.h"
 #include "GLUtils.h"
 #include "Circle.h"
+#include "LShape.h"
 #include "Pyramid.h"
 #include "HipRoof.h"
 #include "GableRoof.h"
@@ -9,6 +10,7 @@
 #include "Cuboid.h"
 #include "SemiCircle.h"
 #include "OffsetRectangle.h"
+#include "UShape.h"
 #include "CGA.h"
 
 namespace cga {
@@ -142,15 +144,11 @@ void Rectangle::setupProjection(int axesSelector, float texWidth, float texHeigh
 }
 
 boost::shared_ptr<Shape> Rectangle::shapeL(const std::string& name, float frontWidth, float leftWidth) {
-	std::vector<glm::vec2> points(6);
-	points[0] = glm::vec2(0, 0);
-	points[1] = glm::vec2(_scope.x, 0);
-	points[2] = glm::vec2(_scope.x, frontWidth);
-	points[3] = glm::vec2(leftWidth, frontWidth);
-	points[4] = glm::vec2(leftWidth, _scope.y);
-	points[5] = glm::vec2(0, _scope.y);
+	return boost::shared_ptr<Shape>(new LShape(name, _pivot, _modelMat, _scope.x, _scope.y, frontWidth, leftWidth, _color));
+}
 
-	return boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, points, _color, _texture));
+boost::shared_ptr<Shape> Rectangle::shapeU(const std::string& name, float frontWidth, float backDepth) {
+	return boost::shared_ptr<Shape>(new UShape(name, _pivot, _modelMat, _scope.x, _scope.y, frontWidth, backDepth, _color));
 }
 
 void Rectangle::size(float xSize, float ySize, float zSize, bool centered) {

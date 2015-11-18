@@ -1,13 +1,7 @@
 #include "UShapePrism.h"
 #include "GLUtils.h"
 #include "Circle.h"
-#include "Pyramid.h"
-#include "HipRoof.h"
-#include "GableRoof.h"
-#include "Polygon.h"
 #include "Cuboid.h"
-#include "SemiCircle.h"
-#include "OffsetRectangle.h"
 #include "UShape.h"
 #include "Rectangle.h"
 #include "CGA.h"
@@ -171,6 +165,13 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 	// top
 	{
 		std::vector<Vertex> vertices;
+		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_depth) * 0.5, _scope.z)), vertices);
+		glutils::drawQuad(_scope.x, _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_depth * 0.5, _scope.z)), vertices);
+		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_depth) * 0.5, _scope.z)), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
+
+		/*
+		std::vector<Vertex> vertices;
 		glm::mat4 mat = glm::translate(_pivot * _modelMat, glm::vec3(0, 0, _scope.z));
 		std::vector<glm::vec2> pts(8);
 		pts[0] = glm::vec2(0, 0);
@@ -184,10 +185,18 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 
 		glutils::drawConcavePolygon(pts, glm::vec4(_color, opacity), mat, vertices);
 		faces.push_back(glutils::Face(_name, vertices));
+		*/
 	}
 
 	// base
 	if (_scope.z >= 0) {
+		std::vector<Vertex> vertices;
+		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_depth) * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
+		glutils::drawQuad(_scope.x, _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_depth * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
+		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_depth) * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
+		faces.push_back(glutils::Face(_name, vertices));
+
+		/*
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = glm::translate(glm::rotate(_pivot * _modelMat, M_PI, glm::vec3(1, 0, 0)), glm::vec3(0, -_scope.y, 0));
 
@@ -203,6 +212,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 
 		glutils::drawConcavePolygon(pts, glm::vec4(_color, opacity), mat, vertices);
 		faces.push_back(glutils::Face(_name, vertices));
+		*/
 	}
 
 	// front

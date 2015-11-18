@@ -14,6 +14,7 @@
 #include "RotateOperator.h"
 #include "SetupProjectionOperator.h"
 #include "ShapeLOperator.h"
+#include "ShapeUOperator.h"
 #include "SizeOperator.h"
 #include "SplitOperator.h"
 #include "TaperOperator.h"
@@ -99,6 +100,8 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 					grammar.addOperator(name, parseSetupProjectionOperator(operator_node));
 				} else if (operator_name == "shapeL") {
 					grammar.addOperator(name, parseShapeLOperator(operator_node));
+				} else if (operator_name == "shapeU") {
+					grammar.addOperator(name, parseShapeUOperator(operator_node));
 				} else if (operator_name == "size") {
 					grammar.addOperator(name, parseSizeOperator(operator_node));
 				} else if (operator_name == "split") {
@@ -388,18 +391,43 @@ boost::shared_ptr<Operator> parseSetupProjectionOperator(const QDomNode& node) {
 }
 
 boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node) {
-	float frontWidth;
-	float leftWidth;
+	Value frontWidth;
+	Value leftWidth;
 
 	QDomNode child = node.firstChild();
 	while (!child.isNull()) {
 		if (child.toElement().tagName() == "param") {
 			QString name = child.toElement().attribute("name");
+			QString type;
+
+			if (!child.toElement().hasAttribute("type")) {
+				throw "param node under size node has to have type attribute.";
+			}
+
+			type = child.toElement().attribute("type");
+			std::string value = child.toElement().attribute("value").toUtf8().constData();
 
 			if (name == "frontWidth") {
-				frontWidth = child.toElement().attribute("value").toFloat();
-			} else if (name == "leftWidth") {
-				leftWidth = child.toElement().attribute("value").toFloat();
+				if (type == "relative") {
+					frontWidth = Value(Value::TYPE_RELATIVE, value);
+				}
+				else if (type == "absolute") {
+					frontWidth = Value(Value::TYPE_ABSOLUTE, value);
+				}
+				else {
+					throw "type attribute under shapeL node has to be either relative or absolute.";
+				}
+			}
+			else if (name == "leftWidth") {
+				if (type == "relative") {
+					leftWidth = Value(Value::TYPE_RELATIVE, value);
+				}
+				else if (type == "absolute") {
+					leftWidth = Value(Value::TYPE_ABSOLUTE, value);
+				}
+				else {
+					throw "type attribute under shapeL node has to be either relative or absolute.";
+				}
 			}
 		}
 
@@ -407,6 +435,53 @@ boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node) {
 	}
 
 	return boost::shared_ptr<Operator>(new ShapeLOperator(frontWidth, leftWidth));
+}
+
+boost::shared_ptr<Operator> parseShapeUOperator(const QDomNode& node) {
+	Value frontWidth;
+	Value backDepth;
+
+	QDomNode child = node.firstChild();
+	while (!child.isNull()) {
+		if (child.toElement().tagName() == "param") {
+			QString name = child.toElement().attribute("name");
+			QString type;
+
+			if (!child.toElement().hasAttribute("type")) {
+				throw "param node under size node has to have type attribute.";
+			}
+
+			type = child.toElement().attribute("type");
+			std::string value = child.toElement().attribute("value").toUtf8().constData();
+
+			if (name == "frontWidth") {
+				if (type == "relative") {
+					frontWidth = Value(Value::TYPE_RELATIVE, value);
+				}
+				else if (type == "absolute") {
+					frontWidth = Value(Value::TYPE_ABSOLUTE, value);
+				}
+				else {
+					throw "type attribute under shapeL node has to be either relative or absolute.";
+				}
+			}
+			else if (name == "backDepth") {
+				if (type == "relative") {
+					backDepth = Value(Value::TYPE_RELATIVE, value);
+				}
+				else if (type == "absolute") {
+					backDepth = Value(Value::TYPE_ABSOLUTE, value);
+				}
+				else {
+					throw "type attribute under shapeL node has to be either relative or absolute.";
+				}
+			}
+		}
+
+		child = child.nextSibling();
+	}
+
+	return boost::shared_ptr<Operator>(new ShapeUOperator(frontWidth, backDepth));
 }
 
 boost::shared_ptr<Operator> parseSizeOperator(const QDomNode& node) {

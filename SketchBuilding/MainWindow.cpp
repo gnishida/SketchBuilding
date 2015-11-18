@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	// add menu handlers
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
+	connect(ui.actionOpenCGA, SIGNAL(triggered()), this, SLOT(onOpenCGA()));
 	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
 
 	// create tool bar
@@ -65,6 +66,13 @@ void MainWindow::keyReleaseEvent(QKeyEvent* e) {
 void MainWindow::onNew() {
 	glWidget->clearSketch();
 	glWidget->clearGeometry();
+}
+
+void MainWindow::onOpenCGA() {
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open CGA file..."), "", tr("CGA Files (*.xml)"));
+	if (filename.isEmpty()) return;
+
+	glWidget->loadCGA(filename.toUtf8().data());
 }
 
 void MainWindow::onFixGeometry() {

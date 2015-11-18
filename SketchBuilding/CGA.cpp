@@ -18,8 +18,6 @@ CGA::CGA() {
  */
 std::vector<float> CGA::randomParamValues(Grammar& grammar) {
 	std::vector<float> param_values;
-	/*std::default_random_engine generator;
-	std::uniform_real_distribution<float> distribution(0.0, 1.0);*/
 
 	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it) {
 		if (it->second.hasRange) {

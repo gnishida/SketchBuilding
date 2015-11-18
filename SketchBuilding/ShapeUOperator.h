@@ -4,13 +4,13 @@
 
 namespace cga {
 
-class ShapeLOperator : public Operator {
+class ShapeUOperator : public Operator {
 private:
 	Value frontWidth;
-	Value leftWidth;
+	Value backDepth;
 
 public:
-	ShapeLOperator(const Value& frontWidth, const Value& leftWidth);
+	ShapeUOperator(const Value& frontWidth, const Value& backDepth);
 
 	boost::shared_ptr<Shape> apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack);
 };

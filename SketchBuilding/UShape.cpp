@@ -1,13 +1,10 @@
 #include "UShape.h"
 #include "GLUtils.h"
-#include "Circle.h"
 #include "Pyramid.h"
 #include "HipRoof.h"
 #include "GableRoof.h"
 #include "UShapePrism.h"
-#include "Polygon.h"
 #include "Cuboid.h"
-#include "SemiCircle.h"
 #include "Rectangle.h"
 #include "CGA.h"
 
@@ -110,22 +107,14 @@ void UShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 	if (_textureEnabled) {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[7]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
-		vertices.clear();
 		glutils::drawQuad(_scope.x, _back_height, (_texCoords[0] + _texCoords[7]) * 0.5f, (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[6], _texCoords[7], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
-		vertices.clear();
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[4], _texCoords[5], (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[3], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
 		faces.push_back(glutils::Face(_name, vertices, _texture));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-		vertices.clear();
 		glutils::drawQuad(_scope.x, _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-		vertices.clear();
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
 		faces.push_back(glutils::Face(_name, vertices));
 	}

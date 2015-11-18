@@ -24,6 +24,7 @@ boost::shared_ptr<Operator> parseRoofHipOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseRotateOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseSetupProjectionOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node);
+boost::shared_ptr<Operator> parseShapeUOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseSizeOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseSplitOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseTaperOperator(const QDomNode& node);

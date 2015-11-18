@@ -53,7 +53,7 @@ public:
 	void clearSketch();
 	void clearGeometry();
 	void drawScene(int drawMode);
-	//void loadCGA(char* filename);
+	void loadCGA(char* filename);
 	void selectOption(int option_index);
 
 	void updateBuildingOptions();

@@ -25,6 +25,7 @@ public:
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void setupProjection(int axesSelector, float texWidth, float texHeight);
 	boost::shared_ptr<Shape> shapeL(const std::string& name, float frontWidth, float leftWidth);
+	boost::shared_ptr<Shape> shapeU(const std::string& name, float frontWidth, float backDepth);
 	void size(float xSize, float ySize, float zSize, bool centered);
 	void split(int splitAxis, const std::vector<float>& ratios, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
 	boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);

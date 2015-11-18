@@ -159,6 +159,10 @@ boost::shared_ptr<Shape> Shape::shapeL(const std::string& name, float frontWidth
 	throw "shapeL() is not supported.";
 }
 
+boost::shared_ptr<Shape> Shape::shapeU(const std::string& name, float frontWidth, float backDepth) {
+	throw "shapeU() is not supported.";
+}
+
 void Shape::size(float xSize, float ySize, float zSize, bool centered) {
 	throw "size() is not supported.";
 }

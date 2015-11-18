@@ -44,6 +44,7 @@ public:
 	void rotate(const std::string& name, float xAngle, float yAngle, float zAngle);
 	virtual void setupProjection(int axesSelector, float texWidth, float texHeight);
 	virtual boost::shared_ptr<Shape> shapeL(const std::string& name, float frontWidth, float leftWidth);
+	virtual boost::shared_ptr<Shape> shapeU(const std::string& name, float frontWidth, float backDepth);
 	virtual void size(float xSize, float ySize, float zSize, bool centered);
 	virtual void split(int splitAxis, const std::vector<float>& sizes, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
 	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);

@@ -128,24 +128,24 @@ void GLWidget3D::drawScene(int drawMode) {
  * Load a grammar from a file and generate a 3d geometry.
  * This is only for test usage.
  */
-/*
 void GLWidget3D::loadCGA(char* filename) {
 	renderManager.removeObjects();
 
-	float object_width = 8.0f;
-	float object_height = 8.0f;
-
-	{ // for parthenon
-		cga::Rectangle* start = new cga::Rectangle("Start", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(-object_width*0.5f, -object_height*0.5f, 0)), glm::mat4(), object_width, object_height, glm::vec3(1, 1, 1));
-		system.stack.push_back(boost::shared_ptr<cga::Shape>(start));
-	}
 
 	try {
 		cga::Grammar grammar;
 		cga::parseGrammar(filename, grammar);
-		system.randomParamValues(grammar);
-		system.derive(grammar);
-		system.generateGeometry(&renderManager);
+		cga::CGA::randomParamValues(grammar);
+
+		sc::ShapeLayer sl;
+		sl.setFootprint(0, 0, 0, 16, 12);
+
+		std::vector<float> params(10);
+		for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
+		sl.setGrammar(grammar, params);
+
+		cga::CGA system;
+		sl.generateGeometry(&system, &renderManager);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -154,11 +154,8 @@ void GLWidget3D::loadCGA(char* filename) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
 	}
 
-	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
-
-	updateGL();
+	update();
 }
-*/
 
 void GLWidget3D::selectOption(int option_index) {
 	switch (stage) {

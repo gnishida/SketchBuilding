@@ -26,6 +26,7 @@ protected:
 
 public slots:
 	void onNew();
+	void onOpenCGA();
 	void onFixGeometry();
 	void onStageChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);
