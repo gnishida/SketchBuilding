@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include "LeftWindowItemWidget.h"
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	ui.setupUi(this);
@@ -11,27 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	shapeGroup->addAction(ui.actionLShape);
 	ui.actionCuboid->setChecked(true);
 
-	QActionGroup* stageGroup = new QActionGroup(this);
-	actionStages["building"] = ui.mainToolBar->addAction("Building");
-	actionStages["building"]->setCheckable(true);
-	actionStages["building"]->setChecked(true);
-	stageGroup->addAction(actionStages["building"]);
-	actionStages["roof"] = ui.mainToolBar->addAction("Roof");
-	actionStages["roof"]->setCheckable(true);
-	stageGroup->addAction(actionStages["roof"]);
-	actionStages["facade"] = ui.mainToolBar->addAction("Facade");
-	actionStages["facade"]->setCheckable(true);
-	stageGroup->addAction(actionStages["facade"]);
-	actionStages["floor"] = ui.mainToolBar->addAction("Floor");
-	actionStages["floor"]->setCheckable(true);
-	stageGroup->addAction(actionStages["floor"]);
-	actionStages["window"] = ui.mainToolBar->addAction("Window");
-	actionStages["window"]->setCheckable(true);
-	stageGroup->addAction(actionStages["window"]);
-	actionStages["ledge"] = ui.mainToolBar->addAction("Ledge");
-	actionStages["ledge"]->setCheckable(true);
-	stageGroup->addAction(actionStages["ledge"]);
-
+	// add menu handlers
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
@@ -39,14 +20,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionLShape, SIGNAL(triggered()), this, SLOT(onSelectShape()));
 	connect(ui.actionNewLayer, SIGNAL(triggered()), this, SLOT(onNewLayer()));
 
-	connect(actionStages["building"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
-	connect(actionStages["roof"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
-	connect(actionStages["facade"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
-	connect(actionStages["floor"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
-	connect(actionStages["window"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
-	connect(actionStages["ledge"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+	// create tool bar
+	QActionGroup* stageGroup = new QActionGroup(this);
+	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
+	for (int i = 0; i < 6; ++i) {
+		QIcon ic("resources/building.png");
 
+		actionStages[stage_names[i]] = new QAction(QIcon(std::string("resources/" + stage_names[i] + ".png").c_str()), std::string("&" + stage_names[i]).c_str(), this);
+		actionStages[stage_names[i]]->setCheckable(true);
+		stageGroup->addAction(actionStages[stage_names[i]]);
+		ui.mainToolBar->addAction(actionStages[stage_names[i]]);
 
+		connect(actionStages[stage_names[i]], SIGNAL(triggered()), this, SLOT(onStageChanged()));
+
+		if (i == 0) {
+			actionStages[stage_names[i]]->setChecked(true);
+		}
+	}
+	
+	// setup layouts
 	glWidget = new GLWidget3D(this);
 
 	thumbsList = new QListWidget(this);
