@@ -16,9 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
-	connect(ui.actionCuboid, SIGNAL(triggered()), this, SLOT(onSelectShape()));
-	connect(ui.actionLShape, SIGNAL(triggered()), this, SLOT(onSelectShape()));
-	connect(ui.actionNewLayer, SIGNAL(triggered()), this, SLOT(onNewLayer()));
 
 	// create tool bar
 	QActionGroup* stageGroup = new QActionGroup(this);
@@ -54,6 +51,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	centralWidget()->setLayout(layout);
 }
 
+void MainWindow::keyPressEvent(QKeyEvent* e) {
+	glWidget->keyPressEvent(e);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent* e) {
+	glWidget->keyReleaseEvent(e);
+}
+
 /**
  * This is called when the user clicks [File] -> [New].
  */
@@ -64,19 +69,6 @@ void MainWindow::onNew() {
 
 void MainWindow::onFixGeometry() {
 	glWidget->fixGeometry();
-}
-
-void MainWindow::onSelectShape() {
-	if (ui.actionCuboid->isChecked()) {
-		glWidget->shapeType = 0;
-	}
-	else if (ui.actionLShape->isChecked()) {
-		glWidget->shapeType = 1;
-	}
-}
-
-void MainWindow::onNewLayer() {
-	glWidget->newLayer();
 }
 
 void MainWindow::onStageChanged() {

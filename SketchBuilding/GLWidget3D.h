@@ -38,7 +38,6 @@ public:
 	//std::vector<Regression*> regressions;
 	std::map<std::string, std::vector<QImage> > grammarImages;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
-	int shapeType;
 	sc::Scene scene;
 	float current_z;
 	glutils::Face* selectedFace;
@@ -60,11 +59,10 @@ public:
 	void updateBuildingOptions();
 	void updateRoofOptions();
 
-	void predictBuilding();
+	void predictBuilding(int grammar_id);
 	void predictFacade();
 
 	void fixGeometry();
-	void newLayer();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(int stage);
 	void keyPressEvent(QKeyEvent* e);

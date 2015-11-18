@@ -35,26 +35,36 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
 
 	// load grammar
-	grammars["building"].resize(2);
-	grammars["facade"].resize(1);
-	try {
-		cga::parseGrammar("cga/building/building_01.xml", grammars["building"][0]);
-		cga::parseGrammar("cga/building/building.xml", grammars["building"][1]);
-		cga::parseGrammar("cga/facade/facade_01.xml", grammars["facade"][0]);
-	}
-	catch (const std::string& ex) {
-		std::cout << "ERROR:" << std::endl << ex << std::endl;
-	}
-	catch (const char* ex) {
-		std::cout << "ERROR:" << std::endl << ex << std::endl;
-	}
-
 	for (int i = 0; i < 6; ++i) {
-		QStringList filters;
-		filters << "*.png" << "*.jpg" << "*.bmp";
-		QFileInfoList fileInfoList = QDir(std::string("cga/" + stage_names[i] + "/").c_str()).entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
-		for (auto fileInfo : fileInfoList) {
-			grammarImages[stage_names[i]].push_back(QImage(fileInfo.absoluteFilePath()).scaled(LeftWindowItemWidget::IMAGE_WIDTH, LeftWindowItemWidget::IMAGE_HEIGHT));
+		// load grammar
+		{
+			QStringList filters;
+			filters << "*.xml";
+			QFileInfoList fileInfoList = QDir(std::string("cga/" + stage_names[i] + "/").c_str()).entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
+			for (auto fileInfo : fileInfoList) {
+				cga::Grammar grammar;
+				try {
+					std::cout << "Load gramar: " << fileInfo.absoluteFilePath().toUtf8().constData() << std::endl;
+					cga::parseGrammar(fileInfo.absoluteFilePath().toUtf8().constData(), grammar);
+					grammars[stage_names[i]].push_back(grammar);
+				}
+				catch (const std::string& ex) {
+					std::cout << "ERROR:" << std::endl << ex << std::endl;
+				}
+				catch (const char* ex) {
+					std::cout << "ERROR:" << std::endl << ex << std::endl;
+				}
+			}
+		}
+
+		// load thumbnail for each grammar
+		{
+			QStringList filters;
+			filters << "*.png" << "*.jpg" << "*.bmp";
+			QFileInfoList fileInfoList = QDir(std::string("cga/" + stage_names[i] + "/").c_str()).entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
+			for (auto fileInfo : fileInfoList) {
+				grammarImages[stage_names[i]].push_back(QImage(fileInfo.absoluteFilePath()).scaled(LeftWindowItemWidget::IMAGE_WIDTH, LeftWindowItemWidget::IMAGE_HEIGHT));
+			}
 		}
 	}
 
@@ -67,7 +77,6 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 	selectedFace = NULL;
 	changeStage(STAGE_BUILDING);
-	shapeType = 0;
 }
 
 void GLWidget3D::drawLineTo(const QPoint &endPoint) {
@@ -152,7 +161,23 @@ void GLWidget3D::loadCGA(char* filename) {
 */
 
 void GLWidget3D::selectOption(int option_index) {
+	switch (stage) {
+	case STAGE_BUILDING:
+		predictBuilding(option_index);
+		break;
+	case STAGE_ROOF:
+		break;
+	case STAGE_FACADE:
+		break;
+	case STAGE_FLOOR:
+		break;
+	case STAGE_WINDOW:
+		break;
+	case STAGE_LEDGE:
+		break;
+	}
 
+	update();
 }
 
 void GLWidget3D::updateBuildingOptions() {
@@ -162,6 +187,8 @@ void GLWidget3D::updateBuildingOptions() {
 	for (size_t i = 0; i < grammarImages["building"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["building"][i], i);
 	}
+
+	predictBuilding(0);
 
 	update();
 }
@@ -174,7 +201,7 @@ void GLWidget3D::updateRoofOptions() {
  * Use the sketch as an input to the pretrained network, and obtain the probabilities as output.
  * Then, display the options ordered by the probabilities.
  */
-void GLWidget3D::predictBuilding() {
+void GLWidget3D::predictBuilding(int grammar_id) {
 	time_t start = clock();
 
 	renderManager.removeObjects();
@@ -191,15 +218,11 @@ void GLWidget3D::predictBuilding() {
 	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
 
 	// predict parameter values by deep learning
-	//std::vector<float> params = regressions[shapeType]->Predict(grayMat);
+	//std::vector<float> params = regressions[grammar_id]->Predict(grayMat);
 	
-	// DEBUG用に、Deeplearningを使わない
-	std::vector<float> params(5);
-	params[0] = 0.5f;
-	params[1] = 0.5f;
-	params[2] = 0.5f;
-	params[3] = 0.5f;
-	params[4] = 0.5f;
+	// DEBUG用に、Deeplearningを使わないで、固定のパラメータ値を使用する
+	std::vector<float> params(7);
+	for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
 
 	float offset_x = params[0] * 12 - 6;
 	float offset_y = params[1] * 12 - 6;
@@ -216,10 +239,10 @@ void GLWidget3D::predictBuilding() {
 	params.erase(params.begin(), params.begin() + 4);
 	
 	// set parameter values
-	scene.building.currentLayer().setGrammar(grammars["building"][shapeType], params);
+	scene.building.currentLayer().setGrammar(grammars["building"][grammar_id], params);
 	
 	// set height
-	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][shapeType]);
+	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
 	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
 	scene.generateGeometry(&renderManager);
@@ -292,13 +315,6 @@ void GLWidget3D::fixGeometry() {
 	else {
 
 	}
-}
-
-void GLWidget3D::newLayer() {
-	clearSketch();
-	scene.building.newLayer();
-	scene.generateGeometry(&renderManager);
-	update();
 }
 
 glm::vec3 GLWidget3D::viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect) {
@@ -433,7 +449,6 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		dragging = false;
 
 		if (stage == STAGE_BUILDING) {
-			//predictBuilding();
 			updateBuildingOptions();
 		}
 		else if (stage == STAGE_ROOF) {

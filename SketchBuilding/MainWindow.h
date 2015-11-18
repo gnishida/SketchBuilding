@@ -20,11 +20,13 @@ public:
 public:
 	MainWindow(QWidget *parent = 0);
 
+protected:
+	void keyPressEvent(QKeyEvent* e);
+	void keyReleaseEvent(QKeyEvent* e);
+
 public slots:
 	void onNew();
 	void onFixGeometry();
-	void onSelectShape();
-	void onNewLayer();
 	void onStageChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);
 };
