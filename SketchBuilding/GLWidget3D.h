@@ -36,6 +36,7 @@ public:
 		
 	int stage;
 	//std::vector<Regression*> regressions;
+	std::map<std::string, std::vector<QImage> > grammarImages;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	int shapeType;
 	sc::Scene scene;
@@ -55,8 +56,13 @@ public:
 	void drawScene(int drawMode);
 	//void loadCGA(char* filename);
 	void selectOption(int option_index);
+
+	void updateBuildingOptions();
+	void updateRoofOptions();
+
 	void predictBuilding();
 	void predictFacade();
+
 	void fixGeometry();
 	void newLayer();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);

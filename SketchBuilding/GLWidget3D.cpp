@@ -12,6 +12,7 @@
 #include "GLUtils.h"
 //#include "Regression.h"
 #include <time.h>
+#include "LeftWindowItemWidget.h"
 
 GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	mainWin = (MainWindow*)parent;
@@ -31,19 +32,30 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	glm::mat4 light_mvMatrix = glm::lookAt(-light_dir * 50.0f, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	light_mvpMatrix = light_pMatrix * light_mvMatrix;
 
+	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
+
 	// load grammar
 	grammars["building"].resize(2);
 	grammars["facade"].resize(1);
 	try {
-		cga::parseGrammar("../cga/simple_shapes/shape_01.xml", grammars["building"][0]);
-		cga::parseGrammar("../cga/simple_shapes/shape_02.xml", grammars["building"][1]);
-		cga::parseGrammar("../cga/facade/facade_01.xml", grammars["facade"][0]);
+		cga::parseGrammar("cga/building/building_01.xml", grammars["building"][0]);
+		cga::parseGrammar("cga/building/building.xml", grammars["building"][1]);
+		cga::parseGrammar("cga/facade/facade_01.xml", grammars["facade"][0]);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
 	}
 	catch (const char* ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
+	}
+
+	for (int i = 0; i < 6; ++i) {
+		QStringList filters;
+		filters << "*.png" << "*.jpg" << "*.bmp";
+		QFileInfoList fileInfoList = QDir(std::string("cga/" + stage_names[i] + "/").c_str()).entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
+		for (auto fileInfo : fileInfoList) {
+			grammarImages[stage_names[i]].push_back(QImage(fileInfo.absoluteFilePath()).scaled(LeftWindowItemWidget::IMAGE_WIDTH, LeftWindowItemWidget::IMAGE_HEIGHT));
+		}
 	}
 
 	// initialize deep learning network
@@ -141,6 +153,21 @@ void GLWidget3D::loadCGA(char* filename) {
 
 void GLWidget3D::selectOption(int option_index) {
 
+}
+
+void GLWidget3D::updateBuildingOptions() {
+	mainWin->thumbsList->clear();
+
+	QPainter painter(&sketch);
+	for (size_t i = 0; i < grammarImages["building"].size(); ++i) {
+		mainWin->addListItem("???", grammarImages["building"][i], i);
+	}
+
+	update();
+}
+
+void GLWidget3D::updateRoofOptions() {
+	mainWin->thumbsList->clear();
 }
 
 /**
@@ -358,6 +385,17 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			}
 			camera.updateMVPMatrix();
 		}
+		else if (stage == STAGE_ROOF) {
+			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
+				// shift the camera such that the selected face becomes a ground plane.
+				camera.pos = glm::vec3(0, selectedFace->vertices[0].position.y, 40);
+				camera.xrot = 30.0f;
+				camera.yrot = -45.0f;
+				camera.zrot = 0.0f;
+				current_z = selectedFace->vertices[0].position.y;
+			}
+			camera.updateMVPMatrix();
+		}
 		else if (stage == STAGE_FACADE) {
 			if (scene.building.selectSideFace(cameraPos, view_v1, &selectedFace)) {
 				// shift the camera such that the selected face becomes parallel to the image plane.
@@ -395,10 +433,11 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		dragging = false;
 
 		if (stage == STAGE_BUILDING) {
-			predictBuilding();
+			//predictBuilding();
+			updateBuildingOptions();
 		}
 		else if (stage == STAGE_ROOF) {
-			// To Do
+			updateRoofOptions();
 		}
 		else if (stage == STAGE_FACADE) {
 			predictFacade();

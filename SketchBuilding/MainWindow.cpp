@@ -99,3 +99,18 @@ void MainWindow::onStageChanged() {
 		glWidget->changeStage(GLWidget3D::STAGE_LEDGE);
 	}
 }
+
+/**
+* Add an option to the list widget.
+*
+* @param text			probability that is shown on this item widget
+* @param image			image that is shown on this item widget
+* @param option_index	the index of this option (This index is not the index of the ordered options, but the index of the options in the original order.)
+*/
+void MainWindow::addListItem(const QString& text, const QImage& image, int option_index) {
+	LeftWindowItemWidget* widget = new LeftWindowItemWidget(this, text, image, option_index);
+	QListWidgetItem *item = new QListWidgetItem();
+	item->setSizeHint(widget->size());
+	thumbsList->addItem(item);
+	thumbsList->setItemWidget(item, widget);
+}

@@ -26,6 +26,7 @@ public slots:
 	void onSelectShape();
 	void onNewLayer();
 	void onStageChanged();
+	void addListItem(const QString& text, const QImage& image, int option_index);
 };
 
 #endif // MAINWINDOW_H
