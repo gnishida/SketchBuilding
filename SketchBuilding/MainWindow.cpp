@@ -1,7 +1,7 @@
 #include "MainWindow.h"
-#include "Regression.h"
 #include <QFileDialog>
 #include <QHBoxLayout>
+#include "LeftWindowItemWidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	ui.setupUi(this);
@@ -46,9 +46,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(actionStages["window"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
 	connect(actionStages["ledge"], SIGNAL(triggered()), this, SLOT(onStageChanged()));
 
+
 	glWidget = new GLWidget3D(this);
 
-	this->setCentralWidget(glWidget);
+	thumbsList = new QListWidget(this);
+	thumbsList->setFlow(QListView::TopToBottom);
+	thumbsList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	thumbsList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	thumbsList->setFixedWidth(LeftWindowItemWidget::WIDGET_WIDTH + thumbsList->frameWidth() * 2 + 18);
+	
+	QHBoxLayout *layout = new QHBoxLayout;
+	layout->addWidget(thumbsList);
+	layout->addWidget(glWidget);
+
+	centralWidget()->setLayout(layout);
 }
 
 /**

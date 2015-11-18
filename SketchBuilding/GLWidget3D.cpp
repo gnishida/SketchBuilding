@@ -10,7 +10,7 @@
 #include "GrammarParser.h"
 #include "Rectangle.h"
 #include "GLUtils.h"
-#include "Regression.h"
+//#include "Regression.h"
 #include <time.h>
 
 GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
@@ -47,9 +47,11 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
+	/*
 	regressions.resize(2);
 	regressions[0] = new Regression("../models/cuboid_43/deploy.prototxt", "../models/cuboid_43/train_iter_64000.caffemodel");
 	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
+	*/
 
 	selectedFace = NULL;
 	changeStage(STAGE_BUILDING);
@@ -137,6 +139,10 @@ void GLWidget3D::loadCGA(char* filename) {
 }
 */
 
+void GLWidget3D::selectOption(int option_index) {
+
+}
+
 /**
  * Use the sketch as an input to the pretrained network, and obtain the probabilities as output.
  * Then, display the options ordered by the probabilities.
@@ -158,13 +164,15 @@ void GLWidget3D::predictBuilding() {
 	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
 
 	// predict parameter values by deep learning
-	std::vector<float> params = regressions[shapeType]->Predict(grayMat);
-	/*
-	for (int i = 0; i < params.size(); ++i) {
-		std::cout << params[i] << ",";
-	}
-	std::cout << std::endl;
-	*/
+	//std::vector<float> params = regressions[shapeType]->Predict(grayMat);
+	
+	// DEBUG用に、Deeplearningを使わない
+	std::vector<float> params(5);
+	params[0] = 0.5f;
+	params[1] = 0.5f;
+	params[2] = 0.5f;
+	params[3] = 0.5f;
+	params[4] = 0.5f;
 
 	float offset_x = params[0] * 12 - 6;
 	float offset_y = params[1] * 12 - 6;
@@ -175,7 +183,7 @@ void GLWidget3D::predictBuilding() {
 
 	scene.building.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 
-	std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
+	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
@@ -190,7 +198,7 @@ void GLWidget3D::predictBuilding() {
 	scene.generateGeometry(&renderManager);
 
 	time_t end = clock();
-	std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
+	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
 	update();
 }
@@ -242,7 +250,7 @@ void GLWidget3D::predictFacade() {
 	}
 	std::cout << top_y << std::endl;
 
-
+	//scene.building.currentLayer().setGrammar()
 }
 
 void GLWidget3D::fixGeometry() {

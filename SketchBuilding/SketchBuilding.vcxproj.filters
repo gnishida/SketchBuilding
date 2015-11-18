@@ -16,9 +16,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Regression.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CenterOperator.cpp">
       <Filter>Source Files\rule</Filter>
     </ClCompile>
@@ -175,6 +172,15 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LeftWindowItemWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LeftWindowItemWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftWindowItemWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -232,13 +238,13 @@
     <CustomBuild Include="MainWindow.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="LeftWindowItemWidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_MainWindow.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Regression.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CenterOperator.h">
       <Filter>Source Files\rule</Filter>
