@@ -243,9 +243,6 @@
     <ClCompile Include="NumberEval.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="OffsetOperator.cpp" />
-    <ClCompile Include="OffsetPolygon.cpp" />
-    <ClCompile Include="OffsetRectangle.cpp" />
-    <ClCompile Include="OffsetSemiCircle.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Prism.cpp" />
     <ClCompile Include="Pyramid.cpp" />
@@ -380,9 +377,6 @@
     <ClInclude Include="LShapePrism.h" />
     <ClInclude Include="NumberEval.h" />
     <ClInclude Include="OBJLoader.h" />
-    <ClInclude Include="OffsetPolygon.h" />
-    <ClInclude Include="OffsetRectangle.h" />
-    <ClInclude Include="OffsetSemiCircle.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="Prism.h" />
     <ClInclude Include="Pyramid.h" />

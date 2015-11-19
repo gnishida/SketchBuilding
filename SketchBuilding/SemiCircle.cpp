@@ -21,15 +21,17 @@ boost::shared_ptr<Shape> SemiCircle::clone(const std::string& name) const {
 	return copy;
 }
 
-boost::shared_ptr<Shape> SemiCircle::offset(const std::string& name, float offsetDistance, int offsetSelector) {
-	if (offsetSelector == SELECTOR_ALL) {
-		return boost::shared_ptr<Shape>(new OffsetSemiCircle(name, _pivot, _modelMat, _scope.x, _scope.y, offsetDistance, _color));
-	} else if (offsetSelector == SELECTOR_INSIDE) {
+void SemiCircle::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// inner shape
+	if (!inside.empty()) {
 		float offset_width = _scope.x + offsetDistance * 2.0f;
 		float offset_height = _scope.y + offsetDistance;
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(-offsetDistance, 0, 0));
-		return boost::shared_ptr<Shape>(new SemiCircle(name, _pivot, mat, offset_width, offset_height, _color));
-	} else {
+		shapes.push_back(boost::shared_ptr<Shape>(new SemiCircle(name, _pivot, mat, offset_width, offset_height, _color)));
+	}
+	
+	// border shape
+	if (!border.empty()) {
 		throw "border of offset is not supported by semicircle.";
 	}
 }

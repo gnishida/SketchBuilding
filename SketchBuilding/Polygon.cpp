@@ -44,14 +44,16 @@ boost::shared_ptr<Shape> Polygon::inscribeCircle(const std::string& name) {
 	return NULL;
 }
 
-boost::shared_ptr<Shape> Polygon::offset(const std::string& name, float offsetDistance, int offsetSelector) {
-	if (offsetSelector == SELECTOR_ALL) {
-		return boost::shared_ptr<Shape>(new OffsetPolygon(name, _pivot, _modelMat, _points, offsetDistance, _color, _texture));
-	} else if (offsetSelector == SELECTOR_INSIDE) {
+void Polygon::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// inner shape
+	if (!inside.empty()) {
 		std::vector<glm::vec2> offset_points;
 		glutils::offsetPolygon(_points, offsetDistance, offset_points);
-		return boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, offset_points, _color, _texture));
-	} else {
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, offset_points, _color, _texture)));
+	}
+
+	// border shape
+	if (!border.empty()) {
 		std::vector<glm::vec2> offset_points;
 		glutils::offsetPolygon(_points, offsetDistance, offset_points);
 
@@ -74,7 +76,7 @@ boost::shared_ptr<Shape> Polygon::offset(const std::string& name, float offsetDi
 			normals.push_back(glm::vec3(0, 0, 1));
 		}
 		
-		return boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, pts, normals, _color));
+		shapes.push_back(boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, pts, normals, _color)));
 	}
 }
 

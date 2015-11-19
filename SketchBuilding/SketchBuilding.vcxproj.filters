@@ -109,15 +109,6 @@
     <ClCompile Include="HipRoof.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
-    <ClCompile Include="OffsetPolygon.cpp">
-      <Filter>Source Files\shape</Filter>
-    </ClCompile>
-    <ClCompile Include="OffsetRectangle.cpp">
-      <Filter>Source Files\shape</Filter>
-    </ClCompile>
-    <ClCompile Include="OffsetSemiCircle.cpp">
-      <Filter>Source Files\shape</Filter>
-    </ClCompile>
     <ClCompile Include="Polygon.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
@@ -349,15 +340,6 @@
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="HipRoof.h">
-      <Filter>Source Files\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="OffsetPolygon.h">
-      <Filter>Source Files\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="OffsetRectangle.h">
-      <Filter>Source Files\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="OffsetSemiCircle.h">
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="Polygon.h">

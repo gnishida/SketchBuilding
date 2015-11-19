@@ -72,6 +72,39 @@ void LShape::offset(const std::string& name, float offsetDistance, const std::st
 	}
 }
 
+boost::shared_ptr<Shape> LShape::pyramid(const std::string& name, float height) {
+	std::vector<glm::vec2> points(4);
+	points[0] = glm::vec2(0, 0);
+	points[1] = glm::vec2(_scope.x, 0);
+	points[2] = glm::vec2(_scope.x, _scope.y);
+	points[3] = glm::vec2(0, _scope.y);
+	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+}
+
+boost::shared_ptr<Shape> LShape::roofGable(const std::string& name, float angle) {
+	std::vector<glm::vec2> points;
+	points.push_back(glm::vec2(0, _scope.y - _left_width));
+	points.push_back(glm::vec2(_scope.x - _front_width, _scope.y - _left_width));
+	points.push_back(glm::vec2(_scope.x - _front_width, 0));
+	points.push_back(glm::vec2(_scope.x, 0));
+	points.push_back(glm::vec2(_scope.x, _scope.y));
+	points.push_back(glm::vec2(0, _scope.y));
+
+	return boost::shared_ptr<Shape>(new GableRoof(name, _pivot, _modelMat, points, angle, _color));
+}
+
+boost::shared_ptr<Shape> LShape::roofHip(const std::string& name, float angle) {
+	std::vector<glm::vec2> points;
+	points.push_back(glm::vec2(0, _scope.y - _left_width));
+	points.push_back(glm::vec2(_scope.x - _front_width, _scope.y - _left_width));
+	points.push_back(glm::vec2(_scope.x - _front_width, 0));
+	points.push_back(glm::vec2(_scope.x, 0));
+	points.push_back(glm::vec2(_scope.x, _scope.y));
+	points.push_back(glm::vec2(0, _scope.y));
+
+	return boost::shared_ptr<Shape>(new HipRoof(name, _pivot, _modelMat, points, angle, _color));
+}
+
 void LShape::setupProjection(int axesSelector, float texWidth, float texHeight) {
 	_texCoords.resize(8);
 	_texCoords[0] = glm::vec2(0, (_scope.y - _left_width) / texHeight);

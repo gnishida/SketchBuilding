@@ -15,6 +15,7 @@
 		<pyramid height="3"/>
 		<comp>
 			<param name="side" value="RoofTop"/>
+			<param name="bottom" value="RoofLedge"/>
 		</comp>
 	</rule>
 </grammar>

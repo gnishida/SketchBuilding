@@ -163,6 +163,7 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils
 						min_dist = dist;
 						selected = true;
 						newSelectedFace = &_layers[i].faces[j];
+						_currentLayer = i;
 					}
 				}
 

@@ -21,7 +21,7 @@ public:
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
 	boost::shared_ptr<Shape> inscribeCircle(const std::string& name);
-	boost::shared_ptr<Shape> offset(const std::string& name, float offsetDistance, int offsetSelector);
+	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void setupProjection(float texWidth, float texHeight);

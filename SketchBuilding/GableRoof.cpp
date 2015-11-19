@@ -4,6 +4,7 @@
 #include <CGAL/create_straight_skeleton_2.h>
 #include "GLUtils.h"
 #include "Polygon.h"
+#include "Rectangle.h"
 #include "CGA.h"
 #include "GeneralObject.h"
 
@@ -31,7 +32,38 @@ boost::shared_ptr<Shape> GableRoof::clone(const std::string& name) const {
 	return copy;
 }
 
+// To be fixed!!!
 void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// hack for square
+	if (_points.size() == 4 && fabs(glm::length(_points[0] - _points[1]) - glm::length(_points[1] - _points[2])) < 0.01 && glm::dot(_points[2] - _points[1], _points[1] - _points[0]) < 0.01) {
+		float width = glm::length(_points[0] - _points[1]);
+		float depth = glm::length(_points[3] - _points[0]);
+		float height = tanf(_angle / 180.0f * M_PI) * depth * 0.5f;
+
+		float rot_x = atan2f(height, depth * 0.5f);
+		glm::mat4 mat = glm::rotate(_modelMat, rot_x, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
+
+		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(width, depth, 0)), M_PI, glm::vec3(0, 0, 1)), rot_x, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
+
+		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, depth, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
+		std::vector<glm::vec2> pts;
+		pts.push_back(glm::vec2(0, 0));
+		pts.push_back(glm::vec2(depth, 0));
+		pts.push_back(glm::vec2(depth * 0.5, height));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+
+		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(width, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
+		pts.clear();
+		pts.push_back(glm::vec2(0, 0));
+		pts.push_back(glm::vec2(depth, 0));
+		pts.push_back(glm::vec2(depth * 0.5, height));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+
+		return;
+	}
+
 	Polygon_2 poly;
 	for (int i = 0; i < _points.size(); ++i) {
 		poly.push_back(KPoint(_points[i].x, _points[i].y));

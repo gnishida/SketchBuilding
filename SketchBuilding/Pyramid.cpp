@@ -107,8 +107,8 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 		
 		// convert the coordinates
 		std::vector<glm::vec2> pts;
-		for (auto point : _points) {
-			pts.push_back(glm::vec2(invMat * glm::vec4(point, 0, 1)));
+		for (int i = _points.size() - 1; i >= 0; --i) {
+			pts.push_back(glm::vec2(invMat * glm::vec4(_points[i], 0, 1)));
 		}
 
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _pivot, mat, pts, _color, _texture)));
