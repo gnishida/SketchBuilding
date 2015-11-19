@@ -7,7 +7,7 @@
 	<rule name="Start">
 		<shapeL>
 			<param name="frontWidth" type="relative" value="l_width_ratio"/>
-			<param name="leftWidth" type="relative" value="l_depth_ratio"/>
+			<param name="rightWidth" type="relative" value="l_depth_ratio"/>
 		</shapeL>
 		<extrude height="height"/>
 		<comp>

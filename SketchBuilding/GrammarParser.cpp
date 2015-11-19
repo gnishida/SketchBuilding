@@ -402,7 +402,7 @@ boost::shared_ptr<Operator> parseSetupProjectionOperator(const QDomNode& node) {
 
 boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node) {
 	Value frontWidth;
-	Value leftWidth;
+	Value rightWidth;
 
 	QDomNode child = node.firstChild();
 	while (!child.isNull()) {
@@ -428,12 +428,12 @@ boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node) {
 					throw "type attribute under shapeL node has to be either relative or absolute.";
 				}
 			}
-			else if (name == "leftWidth") {
+			else if (name == "rightWidth") {
 				if (type == "relative") {
-					leftWidth = Value(Value::TYPE_RELATIVE, value);
+					rightWidth = Value(Value::TYPE_RELATIVE, value);
 				}
 				else if (type == "absolute") {
-					leftWidth = Value(Value::TYPE_ABSOLUTE, value);
+					rightWidth = Value(Value::TYPE_ABSOLUTE, value);
 				}
 				else {
 					throw "type attribute under shapeL node has to be either relative or absolute.";
@@ -444,7 +444,7 @@ boost::shared_ptr<Operator> parseShapeLOperator(const QDomNode& node) {
 		child = child.nextSibling();
 	}
 
-	return boost::shared_ptr<Operator>(new ShapeLOperator(frontWidth, leftWidth));
+	return boost::shared_ptr<Operator>(new ShapeLOperator(frontWidth, rightWidth));
 }
 
 boost::shared_ptr<Operator> parseShapeUOperator(const QDomNode& node) {
