@@ -17,9 +17,13 @@ void ShapeLayer::setHeight(float height) {
 	this->height = height;
 }
 
-void ShapeLayer::setGrammar(const cga::Grammar& grammar, const std::vector<float>& params) {
-	this->grammar = grammar;
-	cga::CGA::setParamValues(this->grammar, params);
+void ShapeLayer::setGrammar(const std::string& name, const cga::Grammar& grammar) {
+	grammars[name] = grammar;
+}
+
+void ShapeLayer::setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params) {
+	grammars[name] = grammar;
+	cga::CGA::setParamValues(grammars[name], params);
 }
 
 void ShapeLayer::generateGeometry(cga::CGA* system, RenderManager* renderManager) {
@@ -31,7 +35,8 @@ void ShapeLayer::generateGeometry(cga::CGA* system, RenderManager* renderManager
 	cga::Rectangle* footprint = new cga::Rectangle("Start", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
 	system->stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
 
-	system->derive(grammar, true);
+	//system->derive(grammar, true);
+	system->derive(grammars, true);
 	
 	system->generateGeometry(faces);
 

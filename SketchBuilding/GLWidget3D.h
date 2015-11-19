@@ -60,6 +60,7 @@ public:
 	void updateRoofOptions();
 
 	void predictBuilding(int grammar_id);
+	void predictRoof(int grammar_id);
 	void predictFacade();
 
 	void fixGeometry();

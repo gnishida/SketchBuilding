@@ -103,16 +103,12 @@ void LShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 	if (_textureEnabled) {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _left_width, _texCoords[2], _texCoords[3], (_texCoords[3] + _texCoords[4]) * 0.5f, _texCoords[1], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5f, (_scope.y - _left_width) * 0.5f, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
-		vertices.clear();
 		glutils::drawQuad(_scope.x, _left_width, _texCoords[0], (_texCoords[3] + _texCoords[4]) * 0.5f, _texCoords[4], _texCoords[5], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _left_width * 0.5, 0)), vertices);
 		faces.push_back(glutils::Face(_name, vertices, _texture));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _left_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5f, (_scope.y - _left_width) * 0.5f, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
-		vertices.clear();
 		glutils::drawQuad(_scope.x, _left_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _left_width * 0.5, 0)), vertices);
 		faces.push_back(glutils::Face(_name, vertices, _texture));
 	}

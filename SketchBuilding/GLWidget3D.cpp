@@ -142,7 +142,8 @@ void GLWidget3D::loadCGA(char* filename) {
 
 		std::vector<float> params(10);
 		for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
-		sl.setGrammar(grammar, params);
+		sl.setGrammar("Start", grammar, params);
+		//sl.setGrammar(grammar, params);
 
 		cga::CGA system;
 		sl.generateGeometry(&system, &renderManager);
@@ -163,6 +164,7 @@ void GLWidget3D::selectOption(int option_index) {
 		predictBuilding(option_index);
 		break;
 	case STAGE_ROOF:
+		predictRoof(option_index);
 		break;
 	case STAGE_FACADE:
 		break;
@@ -192,6 +194,15 @@ void GLWidget3D::updateBuildingOptions() {
 
 void GLWidget3D::updateRoofOptions() {
 	mainWin->thumbsList->clear();
+
+	QPainter painter(&sketch);
+	for (size_t i = 0; i < grammarImages["roof"].size(); ++i) {
+		mainWin->addListItem("???", grammarImages["roof"][i], i);
+	}
+
+	predictRoof(0);
+
+	update();
 }
 
 /**
@@ -236,12 +247,28 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	params.erase(params.begin(), params.begin() + 4);
 	
 	// set parameter values
-	scene.building.currentLayer().setGrammar(grammars["building"][grammar_id], params);
+	scene.building.currentLayer().setGrammar("Footprint", grammars["building"][grammar_id], params);
 	
 	// set height
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
 	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
+	scene.generateGeometry(&renderManager);
+
+	time_t end = clock();
+	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
+
+	update();
+}
+
+void GLWidget3D::predictRoof(int grammar_id) {
+	time_t start = clock();
+
+	renderManager.removeObjects();
+
+	// DEBUG用に、roof grammarを固定で選択
+	scene.building.currentLayer().setGrammar("TopFace", grammars["roof"][grammar_id]);
+
 	scene.generateGeometry(&renderManager);
 
 	time_t end = clock();

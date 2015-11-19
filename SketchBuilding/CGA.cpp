@@ -85,6 +85,34 @@ void CGA::derive(const Grammar& grammar, bool suppressWarning) {
 	}
 }
 
+void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWarning) {
+	shapes.clear();
+
+	while (!stack.empty()) {
+		boost::shared_ptr<Shape> shape = stack.front();
+		stack.pop_front();
+
+		bool found = false;
+		std::string name;
+		for (auto it = grammars.begin(); it != grammars.end(); ++it) {
+			if (it->second.contain(shape->_name)) {
+				found = true;
+				name = it->first;
+				break;
+			}
+		}
+
+		if (found) {
+			grammars.at(name).getRule(shape->_name).apply(shape, grammars.at(name), stack);
+		} else {
+			if (!suppressWarning && shape->_name.back() != '!' && shape->_name.back() != '.') {
+				std::cout << "Warning: " << "no rule is found for " << shape->_name << "." << std::endl;
+			}
+			shapes.push_back(shape);
+		}
+	}
+}
+
 /**
  * Generate a geometry and add it to the render manager.
  */

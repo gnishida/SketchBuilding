@@ -10,9 +10,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_MainWindow.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -188,6 +185,9 @@
       <Filter>Source Files\shape</Filter>
     </ClCompile>
     <ClCompile Include="ShapeUOperator.cpp">
+      <Filter>Source Files\rule</Filter>
+    </ClCompile>
+    <ClCompile Include="PyramidOperator.cpp">
       <Filter>Source Files\rule</Filter>
     </ClCompile>
   </ItemGroup>
@@ -421,6 +421,9 @@
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="ShapeUOperator.h">
+      <Filter>Source Files\rule</Filter>
+    </ClInclude>
+    <ClInclude Include="PyramidOperator.h">
       <Filter>Source Files\rule</Filter>
     </ClInclude>
   </ItemGroup>

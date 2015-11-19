@@ -16,7 +16,8 @@ public:
 	float object_width;
 	float object_depth;
 	float height;
-	cga::Grammar grammar;
+	//cga::Grammar grammar;
+	std::map<std::string, cga::Grammar> grammars;
 	std::vector<glutils::Face> faces;
 
 public:
@@ -24,7 +25,8 @@ public:
 	ShapeLayer(float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
 	void setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth);
 	void setHeight(float height);
-	void setGrammar(const cga::Grammar& grammar, const std::vector<float>& params);
+	void setGrammar(const std::string& name, const cga::Grammar& grammar);
+	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params);
 
 	void generateGeometry(cga::CGA* system, RenderManager* renderManager);
 	void updateGeometry(RenderManager* renderManager);

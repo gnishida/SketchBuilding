@@ -7,5 +7,10 @@
 	<rule name="Start">
 		<innerCircle/>
 		<extrude height="height"/>
+		<comp>
+			<param name="side" value="Facade"/>
+			<param name="top" value="TopFace"/>
+			<param name="bottom" value="Base."/>
+		</comp>
 	</rule>
 </rules>

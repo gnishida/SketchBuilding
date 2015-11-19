@@ -39,6 +39,7 @@ public:
 	boost::shared_ptr<Shape> insert(const std::string& name, const std::string& geometryPath);
 	void nil();
 	virtual void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
+	virtual boost::shared_ptr<Shape> pyramid(const std::string& name, float height);
 	virtual boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	virtual boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void rotate(const std::string& name, float xAngle, float yAngle, float zAngle);

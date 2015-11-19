@@ -54,8 +54,8 @@ void LShapePrism::comp(const std::map<std::string, std::string>& name_map, std::
 		if (_scope.z < 0) {
 			rot_angle = -rot_angle;
 		}
-		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("right"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _scope.y, fabs(_scope.z), _color)));
 	}
 
 	// left face
@@ -64,8 +64,8 @@ void LShapePrism::comp(const std::map<std::string, std::string>& name_map, std::
 		if (_scope.z < 0) {
 			rot_angle = -rot_angle;
 		}
-		glm::mat4 mat = glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("left"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _left_width, fabs(_scope.z), _color)));
 	}
 
 	// back face
@@ -74,8 +74,8 @@ void LShapePrism::comp(const std::map<std::string, std::string>& name_map, std::
 		if (_scope.z < 0) {
 			rot_angle = -rot_angle;
 		}
-		glm::mat4 mat = glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("back"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _scope.x, fabs(_scope.z), _color)));
 	}
 
 	// side faces
@@ -87,27 +87,27 @@ void LShapePrism::comp(const std::map<std::string, std::string>& name_map, std::
 
 		// front face
 		if (name_map.find("front") == name_map.end()) {
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.x - _left_width, 0)), rot_angle, glm::vec3(1, 0, 0)), _scope.x - _front_width, fabs(_scope.z), _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _pivot, glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width, _scope.y - _left_width, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0)), _scope.y - _left_width, fabs(_scope.z), _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width, 0, 0)), rot_angle, glm::vec3(1, 0, 0)), _front_width, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.x - _left_width, 0)), rot_angle, glm::vec3(1, 0, 0)), _scope.x - _front_width, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width, _scope.y - _left_width, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0)), _scope.y - _left_width, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width, 0, 0)), rot_angle, glm::vec3(1, 0, 0)), _front_width, fabs(_scope.z), _color)));
 		}
 
 		// right face
 		if (name_map.find("right") == name_map.end()) {
-			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+			glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _scope.y, fabs(_scope.z), _color)));
 		}
 
 		// left face
 		if (name_map.find("left") == name_map.end()) {
-			glm::mat4 mat = glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y, 0, 0));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+			glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _left_width, fabs(_scope.z), _color)));
 		}
 
 		// back face
 		if (name_map.find("back") == name_map.end()) {
-			glm::mat4 mat = glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+			glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, _scope.x, fabs(_scope.z), _color)));
 		}
 	}
 }

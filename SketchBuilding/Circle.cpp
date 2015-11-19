@@ -29,6 +29,10 @@ void Circle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 
 	std::vector<Vertex> vertices;
 
+	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
+	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+
+	/*
 	glm::vec3 p0 = glm::vec3(_pivot * _modelMat * glm::vec4(_scope.x * 0.5, 0, 0, 1));
 
 	glm::vec3 normal = glm::vec3(_pivot * _modelMat * glm::vec4(0, 0, 1, 0));
@@ -57,6 +61,7 @@ void Circle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity)));
 		}
 	}
+	*/
 
 	faces.push_back(glutils::Face(_name, vertices));
 }

@@ -137,6 +137,10 @@ void Shape::offset(const std::string& name, float offsetDistance, const std::str
 	throw "offset() is not supported.";
 }
 
+boost::shared_ptr<Shape> Shape::pyramid(const std::string& name, float height) {
+	throw "pyramid() is not supported.";
+}
+
 boost::shared_ptr<Shape> Shape::roofGable(const std::string& name, float angle) {
 	throw "roofGable() is not supported.";
 }
