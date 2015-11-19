@@ -20,10 +20,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar
 	QActionGroup* stageGroup = new QActionGroup(this);
-	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
-	for (int i = 0; i < 6; ++i) {
-		QIcon ic("resources/building.png");
-
+	std::string stage_names[5] = { "building", "roof", "facade", "window", "ledge" };
+	for (int i = 0; i < 5; ++i) {
 		actionStages[stage_names[i]] = new QAction(QIcon(std::string("resources/" + stage_names[i] + ".png").c_str()), std::string("&" + stage_names[i]).c_str(), this);
 		actionStages[stage_names[i]]->setCheckable(true);
 		stageGroup->addAction(actionStages[stage_names[i]]);
@@ -81,22 +79,19 @@ void MainWindow::onFixGeometry() {
 
 void MainWindow::onStageChanged() {
 	if (actionStages["building"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_BUILDING);
+		glWidget->changeStage("building");
 	}
 	else if (actionStages["roof"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_ROOF);
+		glWidget->changeStage("roof");
 	}
 	else if (actionStages["facade"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_FACADE);
-	}
-	else if (actionStages["floor"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_FLOOR);
+		glWidget->changeStage("facade");
 	}
 	else if (actionStages["window"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_WINDOW);
+		glWidget->changeStage("window");
 	}
 	else if (actionStages["ledge"]->isChecked()) {
-		glWidget->changeStage(GLWidget3D::STAGE_LEDGE);
+		glWidget->changeStage("ledge");
 	}
 }
 

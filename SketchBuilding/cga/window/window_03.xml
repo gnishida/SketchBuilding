@@ -1,71 +1,33 @@
 <?xml version="1.0"?>
-<rules>
-	<attr name="window_sill_height" value="0.1"/>
-	<attr name="window_sill_depth" value="0.15"/>
-	<attr name="window_cornice_height" value="0.1"/>
-	<attr name="window_cornice_depth" value="0.05"/>
-	
-	<attr name="window_margin" value="0.05"/>
-	<attr name="window_single_width" value="0.5" range="0.45,0.55"/>
-	<attr name="window_single_height" value="0.4"/>
-	<attr name="window_border" value="0.02"/>
-	<attr name="window_depth" value="0.08"/>
-	
-	<rule name="Start">
-		<split splitAxis="y">
-			<param type="absolute" value="window_sill_height" name="WindowSill"/>
-			<param type="floating" value="1" name="WindowMain"/>
-			<param type="absolute" value="window_cornice_height" name="WindowCornice"/>
-		</split>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="Window">
+		<extrude height="-0.5"/>
+		<comp>
+			<param name="side" value="WindowFrame"/>
+			<param name="top" value="WindowTile1Top"/>
+		</comp>
 	</rule>
-	
-	<rule name="WindowSill">
-		<extrude height="window_sill_depth"/>
-	</rule>
-	
-	<rule name="WindowCornice">
-		<extrude height="window_cornice_depth"/>
-	</rule>
-	
-	<rule name="WindowMain">
+	<rule name="WindowTile1Top">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
 		<split splitAxis="x">
-			<param type="absolute" value="window_margin" name="NIL"/>
-			<param type="floating" value="window_single_width * 2" name="WindowDoubleColumn" repeat="true"/>
-			<param type="absolute" value="window_margin" name="NIL"/>
+			<param type="floating" value="2" name="WindowGlass"/>
+			<param type="floating" value="2.3" name="WindowTile1TopSub" repeat="true"/>
 		</split>
 	</rule>
-	
-	<rule name="WindowDoubleColumn">
-		<split splitAxis="y">
-			<param type="relative" value="0.5" name="WindowSingle"/>
-			<param type="relative" value="0.5" name="WindowDoubleRow"/>
-		</split>
-	</rule>
-	
-	<rule name="WindowDoubleRow">
+	<rule name="WindowTile1TopSub">
 		<split splitAxis="x">
-			<param type="relative" value="0.5" name="WindowSingle"/>
-			<param type="relative" value="0.5" name="WindowSingle"/>
+			<param type="floating" value="0.3" name="WindowTile1ColumnSeparator" repeat="true"/>
+			<param type="floating" value="2" name="WindowGlass"/>
 		</split>
 	</rule>
-	
-	<rule name="WindowSingle">
-		<split splitAxis="x">
-			<param type="absolute" value="window_border" name="WindowBorder"/>
-			<param type="floating" value="1" name="WindowSingleMainColumn"/>
-			<param type="absolute" value="window_border" name="WindowBorder"/>
-		</split>
+	<rule name="WindowTile1ColumnSeparator">
+		<extrude height="0.5"/>
+		<comp>
+			<param name="side" value="WindowFrame"/>
+			<param name="top" value="WindowFrame"/>
+		</comp>
 	</rule>
-
-	<rule name="WindowSingleMainColumn">
-		<split splitAxis="y">
-			<param type="absolute" value="window_border" name="WindowBorder"/>
-			<param type="floating" value="1" name="WindowSingleMain"/>
-			<param type="absolute" value="window_border" name="WindowBorder"/>
-		</split>
-	</rule>
-	
-	<rule name="WindowSingleMain">
-		<extrude height="-window_depth"/>
-	</rule>
-</rules>
+</grammar>

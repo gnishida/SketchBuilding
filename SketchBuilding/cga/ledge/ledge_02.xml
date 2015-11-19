@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="Ledge">
+		<split splitAxis="z">
+			<param type="relative" value="0.5" name="LedgeLayer1"/>
+			<param type="relative" value="0.5" name="LedgeLayer2"/>
+		</split>
+	</rule>
+	<rule name="LedgeLayer1">
+		<extrude height="0.2"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+	<rule name="LedgeLayer2">
+		<extrude height="0.4"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+</grammar>

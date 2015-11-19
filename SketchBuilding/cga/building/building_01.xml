@@ -6,7 +6,7 @@
 		<extrude height="height"/>
 		<comp>
 			<param name="side" value="Facade"/>
-			<param name="top" value="TopFace"/>
+			<param name="top" value="Roof"/>
 			<param name="bottom" value="Base."/>
 		</comp>
 	</rule>

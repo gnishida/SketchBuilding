@@ -34,7 +34,7 @@ public:
 	bool ctrlPressed;
 	bool shiftPressed;
 		
-	int stage;
+	std::string stage;
 	//std::vector<Regression*> regressions;
 	std::map<std::string, std::vector<QImage> > grammarImages;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
@@ -58,14 +58,18 @@ public:
 	void updateBuildingOptions();
 	void updateRoofOptions();
 	void updateFacadeOptions();
+	void updateWindowOptions();
+	void updateLedgeOptions();
 
 	void predictBuilding(int grammar_id);
 	void predictRoof(int grammar_id);
 	void predictFacade(int grammar_id);
+	void predictWindow(int grammar_id);
+	void predictLedge(int grammar_id);
 
 	void fixGeometry();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
-	void changeStage(int stage);
+	void changeStage(const std::string& stage);
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 
