@@ -334,7 +334,8 @@ void GLWidget3D::fixGeometry() {
 		update();
 	}
 	else if (stage == STAGE_ROOF) {
-
+		clearSketch();
+		update();
 	}
 	else {
 
