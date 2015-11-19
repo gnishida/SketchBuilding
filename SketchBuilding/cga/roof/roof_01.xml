@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="TopFace">
+		<offset offsetDistance="0.3" inside="TopFaceOffset"/>
+	</rule>
+	<rule name="TopFaceOffset">
+		<extrude height="0.4"/>
+		<comp>
+			<param name="side" value="RoofLedge"/>
+			<param name="top" value="TopFaceOffsetTop"/>
+			<param name="bottom" value="RoofLedge"/>
+		</comp>
+	</rule>
+	<rule name="TopFaceOffsetTop">
+		<offset offsetDistance="0.2" inside="TopFaceOffsetTopOffset"/>
+	</rule>
+	<rule name="TopFaceOffsetTopOffset">
+		<extrude height="0.8"/>
+		<comp>
+			<param name="side" value="RoofLedge"/>
+			<param name="top" value="TopFaceOffsetTopOffsetTop"/>
+			<param name="bottom" value="RoofLedge"/>
+		</comp>
+	</rule>
+	<rule name="TopFaceOffsetTopOffsetTop">
+		<offset offsetDistance="-0.8" inside="TopFaceOffsetTopOffsetTopInside" border="RoofLedge"/>
+	</rule>
+	<rule name="TopFaceOffsetTopOffsetTopInside">
+		<extrude height="-0.4"/>
+		<comp>
+			<param name="side" value="RoofLedge"/>
+			<param name="top" value="RoofTop"/>
+		</comp>
+	</rule>
+	
+</grammar>

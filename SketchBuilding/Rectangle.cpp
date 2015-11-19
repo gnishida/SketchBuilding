@@ -117,6 +117,15 @@ void Rectangle::offset(const std::string& name, float offsetDistance, const std:
 	}
 }
 
+boost::shared_ptr<Shape> Rectangle::pyramid(const std::string& name, float height) {
+	std::vector<glm::vec2> points(4);
+	points[0] = glm::vec2(0, 0);
+	points[1] = glm::vec2(_scope.x, 0);
+	points[2] = glm::vec2(_scope.x, _scope.y);
+	points[3] = glm::vec2(0, _scope.y);
+	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+}
+
 boost::shared_ptr<Shape> Rectangle::roofGable(const std::string& name, float angle) {
 	std::vector<glm::vec2> points(4);
 	points[0] = glm::vec2(0, 0);

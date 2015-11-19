@@ -28,8 +28,7 @@ boost::shared_ptr<Shape> ShapeUOperator::apply(boost::shared_ptr<Shape>& shape, 
 		actual_backDepth = shape->_scope.y * grammar.evalFloat(backDepth.value, shape);
 	}
 
-	return shape->shapeU
-		(shape->_name, actual_frontWidth, actual_backDepth);
+	return shape->shapeU(shape->_name, actual_frontWidth, actual_backDepth);
 }
 
 }

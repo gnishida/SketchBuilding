@@ -9,6 +9,7 @@
 #include "InnerSemiCircleOperator.h"
 #include "InsertOperator.h"
 #include "OffsetOperator.h"
+#include "PyramidOperator.h"
 #include "RoofGableOperator.h"
 #include "RoofHipOperator.h"
 #include "RotateOperator.h"
@@ -90,6 +91,8 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 					grammar.addOperator(name, parseInsertOperator(operator_node));
 				} else if (operator_name == "offset") {
 					grammar.addOperator(name, parseOffsetOperator(operator_node));
+				} else if (operator_name == "pyramid") {
+					grammar.addOperator(name, parsePyramidOperator(operator_node));
 				} else if (operator_name == "roofGable") {
 					grammar.addOperator(name, parseRoofGableOperator(operator_node));
 				} else if (operator_name == "roofHip") {
@@ -112,9 +115,6 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 					grammar.addOperator(name, parseTextureOperator(operator_node));
 				} else if (operator_name == "translate") {
 					grammar.addOperator(name, parseTranslateOperator(operator_node));
-				}
-				else {
-					throw std::string("Unknown operator name: ") + operator_name;
 				}
 
 				operator_node = operator_node.nextSibling();
@@ -291,6 +291,16 @@ boost::shared_ptr<Operator> parseOffsetOperator(const QDomNode& node) {
 	std::string border = node.toElement().attribute("border").toUtf8().constData();
 
 	return boost::shared_ptr<Operator>(new OffsetOperator(offsetDistance, inside, border));
+}
+
+boost::shared_ptr<Operator> parsePyramidOperator(const QDomNode& node) {
+	if (!node.toElement().hasAttribute("height")) {
+		throw "pyramid node has to have height attribute.";
+	}
+
+	std::string height = node.toElement().attribute("height").toUtf8().constData();
+
+	return boost::shared_ptr<Operator>(new PyramidOperator(height));
 }
 
 boost::shared_ptr<Operator> parseRoofGableOperator(const QDomNode& node) {

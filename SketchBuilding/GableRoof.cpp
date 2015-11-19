@@ -111,7 +111,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 					}
 
 					// vertical faces
-					if (num_edges[count] == 3 && name_map.find("vertical") != name_map.end() && name_map.at("vertical") != "NIL") {
+					if (num_edges[count] == 3 && name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
 						glm::vec2 v1(1, 0);
 						glm::vec2 v2 = glm::normalize(p1 - p0);
 						float theta = acos(glm::dot(v1, v2));
@@ -128,7 +128,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 						pts2d.push_back(glm::vec2(inv * glm::vec4(prev_p, 1)));
 						pts2d.push_back(glm::vec2(pts2d[1].x * 0.5, z));
 
-						shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("vertical"), _pivot, _modelMat * mat, pts2d, _color, _texture)));
+						shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, _modelMat * mat, pts2d, _color, _texture)));
 					} else if (num_edges[count] > 3 && name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
 						std::vector<glm::vec3> pts3d;
 						std::vector<glm::vec3> normals;

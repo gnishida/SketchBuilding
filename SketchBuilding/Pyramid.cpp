@@ -30,87 +30,88 @@ boost::shared_ptr<Shape> Pyramid::clone(const std::string& name) const {
 }
 
 void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes) {
-	std::vector<glm::vec2> top_points(_points.size());
-	for (int i = 0; i < _points.size(); ++i) {
-		top_points[i] = (_points[i] - _center) * _top_ratio + _center;
-	}
+	if (_top_ratio == 0.0f) {
+		if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
+			glm::vec3 p2(_center, _height);
 
-	// front face (To be fixed)
-	if (name_map.find("front") != name_map.end() && name_map.at("front") != "NIL") {
-		std::vector<glm::vec2> points(3 + (_top_ratio > 0.0f ? 1 : 0));
+			for (int i = 0; i < _points.size(); ++i) {
+				glm::vec3 p0(_points[i], 0);
+				glm::vec3 p1(_points[(i + 1) % _points.size()], 0);
 
-		float dist = glutils::distance(glm::vec3(_points[0], 0), glm::vec3(_points[1], 0), glm::vec3(top_points[1], _height));
-		float angle = asin(_height / dist);
-		glm::mat4 mat = glm::rotate(glm::mat4(), -angle, glm::vec3(1, 0, 0));
+				glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
 
-		points[0] = glm::vec2(mat * glm::vec4(_points[0], 0, 1));
-		points[1] = glm::vec2(mat * glm::vec4(_points[1], 0, 1));
-		points[2] = glm::vec2(mat * glm::vec4(top_points[1], _height, 1));
-		if (points.size() > 3) {
-			points[3] = glm::vec2(mat * glm::vec4(top_points[0], _height, 1));
-		}
+				// set the conversion matrix
+				float rot_x = atan2f(sqrt(normal.x * normal.x + normal.y * normal.y), normal.z);
+				float rot_z = atan2f(p1.y - p0.y, p1.x - p0.x);
+				glm::mat4 convMat = glm::rotate(glm::rotate(glm::translate(glm::mat4(), p0), rot_z, glm::vec3(0, 0, 1)), rot_x, glm::vec3(1, 0, 0));
+				glm::mat4 invMat = glm::inverse(convMat);
+				glm::mat4 mat = _modelMat * convMat;
 
-		mat = glm::rotate(_modelMat, angle, glm::vec3(1, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("front"), _pivot, mat, points, _color, _texture)));
-	}
+				// convert the coordinates
+				std::vector<glm::vec2> pts;
+				pts.push_back(glm::vec2(invMat * glm::vec4(p0, 1)));
+				pts.push_back(glm::vec2(invMat * glm::vec4(p1, 1)));
+				pts.push_back(glm::vec2(invMat * glm::vec4(p2, 1)));
 
-	// side faces (To be fixed);
-	if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
-		glm::mat4 mat;
-		for (int i = 1; i < _points.size(); ++i) {
-			glm::vec2 a = _points[i] - _points[i - 1];
-			glm::vec2 b = _points[(i + 1) % _points.size()] - _points[i];
-			mat = glm::translate(mat, glm::vec3(glm::length(a), 0, 0));
-			float theta = acos(glm::dot(a, b) / glm::length(a) / glm::length(b));
-			if (a.x * b.y - a.y * b.x < 0) {
-				theta = -theta;
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
 			}
-			mat = glm::rotate(mat, theta, glm::vec3(0, 0, 1));
-
-			std::vector<glm::vec3> points3d(3 + (_top_ratio > 0.0f ? 1 : 0));
-			points3d[0] = glm::vec3(_points[i], 0);
-			points3d[1] = glm::vec3(_points[(i+1) % _points.size()], 0);
-			points3d[2] = glm::vec3(top_points[(i+1) % _points.size()], _height);
-			if (points3d.size() > 3) {
-				points3d[3] = glm::vec3(top_points[i], _height);
-			}
-
-			glm::mat4 invMat = glm::inverse(mat);
-			for (int k = 0; k < points3d.size(); ++k) {
-				points3d[k] = glm::vec3(invMat * glm::vec4(points3d[k], 1));
-			}
-
-			float dist = glutils::distance(points3d[0], points3d[1], points3d[2]);
-			float angle = acos(points3d[2].y / dist);
-			glm::mat4 matRot = glm::rotate(glm::mat4(), -angle, glm::vec3(1, 0, 0));
-
-			std::vector<glm::vec2> points(points3d.size());
-			for (int k = 0; k < points.size(); ++k) {
-				points[k] = glm::vec2(matRot * glm::vec4(points3d[k], 1));
-			}
-
-			glm::mat4 mat2 = glm::rotate(mat, angle, glm::vec3(1, 0, 0));
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, _modelMat * mat2, points, _color, _texture)));
 		}
 	}
+	else {
+		if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
+			for (int i = 0; i < _points.size(); ++i) {
+				glm::vec3 p0(_points[i], 0);
+				glm::vec3 p3(_points[i] * _top_ratio + _center * (1.0f - _top_ratio), _height);
 
-	// top face
-	if (_top_ratio > 0.0f && name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-		std::vector<glm::vec2> points = top_points;
-		glm::vec2 offset = points[0];
-		for (int i = 0; i < points.size(); ++i) {
-			points[i] -= offset;
+				glm::vec3 p1(_points[(i + 1) % _points.size()], 0);
+				glm::vec3 p2(_points[(i + 1) % _points.size()] * _top_ratio + _center * (1.0f - _top_ratio), _height);
+
+				glm::vec3 normal = glm::normalize(glm::cross(glm::vec3(p1 - p0), glm::vec3(p2 - p0)));
+
+				// set the conversion matrix
+				float rot_x = atan2f(sqrt(normal.x * normal.x + normal.y * normal.y), normal.z);
+				float rot_z = atan2f(p1.y - p0.y, p1.x - p0.x);
+				glm::mat4 convMat = glm::rotate(glm::rotate(glm::translate(glm::mat4(), p0), rot_z, glm::vec3(0, 0, 1)), rot_x, glm::vec3(1, 0, 0));
+				glm::mat4 invMat = glm::inverse(convMat);
+				glm::mat4 mat = _modelMat * convMat;
+
+				// convert the coordinates
+				std::vector<glm::vec2> pts;
+				pts.push_back(glm::vec2(invMat * glm::vec4(p0, 1)));
+				pts.push_back(glm::vec2(invMat * glm::vec4(p1, 1)));
+				pts.push_back(glm::vec2(invMat * glm::vec4(p2, 1)));
+				pts.push_back(glm::vec2(invMat * glm::vec4(p3, 1)));
+
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+			}
 		}
-		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(offset, _height));
 
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, points, _color, _texture)));
+		if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
+			glm::mat4 mat = glm::translate(_modelMat, glm::vec3(_points[0] * _top_ratio + _center * (1.0f - _top_ratio), _height));
+
+			glm::vec2 offset = _points[0] * _top_ratio + _center * (1.0f - _top_ratio);
+			std::vector<glm::vec2> pts;
+			for (auto point : _points) {
+				pts.push_back(point * _top_ratio + _center * (1.0f - _top_ratio) - offset);
+			}
+
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, pts, _color, _texture)));
+		}
 	}
 
-	// bottom face
 	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
-		//std::vector<glm::vec2> basePoints = _points;
-		//std::reverse(basePoints.begin(), basePoints.end());
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _pivot, _modelMat, _points, _color, _texture)));
+		// set the conversion matrix
+		glm::mat4 convMat = glm::rotate(glm::mat4(), M_PI, glm::vec3(1, 0, 0));
+		glm::mat4 invMat = glm::inverse(convMat);
+		glm::mat4 mat = _modelMat * convMat;
+		
+		// convert the coordinates
+		std::vector<glm::vec2> pts;
+		for (auto point : _points) {
+			pts.push_back(glm::vec2(invMat * glm::vec4(point, 0, 1)));
+		}
+
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _pivot, mat, pts, _color, _texture)));
 	}
 }
 

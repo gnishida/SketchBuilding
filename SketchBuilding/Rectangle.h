@@ -21,6 +21,7 @@ public:
 	boost::shared_ptr<Shape> innerCircle(const std::string& name);
 	boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
 	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
+	boost::shared_ptr<Shape> pyramid(const std::string& name, float height);
 	boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void setupProjection(int axesSelector, float texWidth, float texHeight);
