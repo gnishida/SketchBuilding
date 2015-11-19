@@ -45,9 +45,11 @@ public:
 	void newLayer();
 	void alignLayers();
 	ShapeLayer& currentLayer() { return _layers[_currentLayer]; }
-	bool selectFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace);
-	bool selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace);
-	bool selectSideFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace);
+	glutils::Face* selectedFace() { return _selectedFace; }
+	bool selectFace(const glm::vec3& p, const glm::vec3& v);
+	bool selectTopFace(const glm::vec3& p, const glm::vec3& v);
+	bool selectSideFace(const glm::vec3& p, const glm::vec3& v);
+	void unselectFace();
 
 	void generateGeometry(cga::CGA* system, RenderManager* renderManager);
 	void updateGeometry(RenderManager* renderManager);
@@ -66,7 +68,6 @@ public:
 
 	BuildingMass building;
 	Roof roof;
-
 
 public:
 	Scene();

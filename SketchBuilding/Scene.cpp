@@ -87,7 +87,7 @@ void BuildingMass::alignLayers() {
  * @param p			the point that emits ray.
  * @param v			the ray vector
  */
-bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace) {
+bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 	bool selected = false;
@@ -95,7 +95,7 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, glutils::F
 	glutils::Face* newSelectedFace = NULL;
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		if (i == _currentLayer) continue;
+		//if (i == _currentLayer) continue;
 
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
 			if (_layers[i].faces[j].vertices.size() < 3) continue;
@@ -120,16 +120,11 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, glutils::F
 			_selectedFace->unselect();
 		}
 		_selectedFace = newSelectedFace;
-		*selectedFace = _selectedFace;
 		_selectedFace->select();
 		return true;
 	}
 	else {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-			_selectedFace = NULL;
-		}
-		*selectedFace = NULL;
+		unselectFace();
 		return false;
 	}
 }
@@ -140,7 +135,7 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, glutils::F
 * @param p			the point that emits ray.
 * @param v			the ray vector
 */
-bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace) {
+bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 	bool selected = false;
@@ -176,17 +171,12 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils
 			_selectedFace->unselect();
 		}
 		_selectedFace = newSelectedFace;
-		*selectedFace = _selectedFace;
 		_selectedFace->select();
 
 		return true;
 	}
 	else {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-			_selectedFace = NULL;
-		}
-		*selectedFace = NULL;
+		unselectFace();
 		return false;
 	}
 }
@@ -197,7 +187,7 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v, glutils
 * @param p			the point that emits ray.
 * @param v			the ray vector
 */
-bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v, glutils::Face** selectedFace) {
+bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 	bool selected = false;
@@ -205,7 +195,7 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v, glutil
 	glutils::Face* newSelectedFace = NULL;
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		if (i == _currentLayer) continue;
+		//if (i == _currentLayer) continue;
 
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
 			if (_layers[i].faces[j].vertices.size() < 3) continue;
@@ -232,26 +222,30 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v, glutil
 			_selectedFace->unselect();
 		}
 		_selectedFace = newSelectedFace;
-		*selectedFace = _selectedFace;
 		_selectedFace->select();
 
 		return true;
 	}
 	else {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-			_selectedFace = NULL;
-		}
-		*selectedFace = NULL;
+		unselectFace();
 		return false;
 	}
 }
 
+void BuildingMass::unselectFace() {
+	if (_selectedFace != NULL) {
+		_selectedFace->unselect();
+		_selectedFace = NULL;
+	}
+}
+
 void BuildingMass::generateGeometry(cga::CGA* system, RenderManager* renderManager) {
+	// Since the geometry will be updated, the pointer to a face will not be valid any more.
+	unselectFace();
+
 	for (int i = 0; i < _layers.size(); ++i) {
 		_layers[i].generateGeometry(system, renderManager);
 	}
-
 }
 
 void BuildingMass::updateGeometry(RenderManager* renderManager) {
@@ -270,7 +264,6 @@ void Roof::clear() {
 
 Scene::Scene() {
 	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
-
 }
 
 void Scene::clear() {

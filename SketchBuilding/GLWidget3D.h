@@ -24,7 +24,7 @@ class MainWindow;
 
 class GLWidget3D : public QGLWidget {
 public:
-	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_FLOOR, STAGE_WINDOW, STAGE_LEDGE };
+	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
 
 	MainWindow* mainWin;
 	QImage sketch;
@@ -40,7 +40,6 @@ public:
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;
 	float current_z;
-	glutils::Face* selectedFace;
 
 	Camera camera;
 	glm::vec3 light_dir;
@@ -58,10 +57,11 @@ public:
 
 	void updateBuildingOptions();
 	void updateRoofOptions();
+	void updateFacadeOptions();
 
 	void predictBuilding(int grammar_id);
 	void predictRoof(int grammar_id);
-	void predictFacade();
+	void predictFacade(int grammar_id);
 
 	void fixGeometry();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);

@@ -32,7 +32,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	glm::mat4 light_mvMatrix = glm::lookAt(-light_dir * 50.0f, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	light_mvpMatrix = light_pMatrix * light_mvMatrix;
 
-	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
+	std::string stage_names[6] = { "building", "roof", "facade", "window", "ledge" };
 
 	// load grammar
 	for (int i = 0; i < 6; ++i) {
@@ -75,7 +75,6 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
 	*/
 
-	selectedFace = NULL;
 	changeStage(STAGE_BUILDING);
 }
 
@@ -167,6 +166,8 @@ void GLWidget3D::selectOption(int option_index) {
 		predictRoof(option_index);
 		break;
 	case STAGE_FACADE:
+		scene.building.currentLayer().setGrammar("Facade", grammars["facade"][option_index]);
+		scene.generateGeometry(&renderManager);
 		break;
 	case STAGE_FLOOR:
 		break;
@@ -201,6 +202,19 @@ void GLWidget3D::updateRoofOptions() {
 	}
 
 	predictRoof(0);
+
+	update();
+}
+
+void GLWidget3D::updateFacadeOptions() {
+	mainWin->thumbsList->clear();
+
+	QPainter painter(&sketch);
+	for (size_t i = 0; i < grammarImages["facade"].size(); ++i) {
+		mainWin->addListItem("???", grammarImages["facade"][i], i);
+	}
+
+	predictFacade(0);
 
 	update();
 }
@@ -277,38 +291,38 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	update();
 }
 
-void GLWidget3D::predictFacade() {
-	if (selectedFace == NULL) return;
+void GLWidget3D::predictFacade(int grammar_id) {
+	if (scene.building.selectedFace() == NULL) return;
 
 	// list up y coordinates
-	std::vector<float> ys;
-	for (int i = 0; i < strokes.size(); ++i) {
-		if (strokes[i].size() <= 1) continue;
+	std::vector<float> y_coordinates;
+	for (auto stroke : strokes) {
+		if (stroke.size() <= 1) continue;
 
-		float y = height() - (strokes[i][0].y + strokes[i].back().y) * 0.5f;
+		float y = height() - (stroke[0].y + stroke.back().y) * 0.5f;
 
-		// check if there is any y that is close to this y
+		// check if there is any other y coordinate that is close to this y
 		bool tooClose = false;
-		for (int j = 0; j < ys.size(); ++j) {
-			if (fabs(ys[i] - y) < 1) {
+		for (auto y_coord : y_coordinates) {
+			if (fabs(y_coord - y) < 1) {
 				tooClose = true;
 				break;
 			}
 		}
-
 		if (tooClose) continue;
 
-		ys.push_back(y);
+		y_coordinates.push_back(y);
+
 	}
 
 	// order the lines by Y
-	std::sort(ys.begin(), ys.end());
+	std::sort(y_coordinates.begin(), y_coordinates.end());
 
 	// project the face to the image plane, and find the y coordinates of the bottom and top lines
 	float bottom_y = height();
 	float top_y = 0.0f;
-	for (int i = 0; i < selectedFace->vertices.size(); ++i) {
-		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(selectedFace->vertices[i].position, 1);
+	for (int i = 0; i < scene.building.selectedFace()->vertices.size(); ++i) {
+		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(scene.building.selectedFace()->vertices[i].position, 1);
 		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height();
 		if (y < bottom_y) {
 			bottom_y = y;
@@ -319,12 +333,17 @@ void GLWidget3D::predictFacade() {
 	}
 
 	std::cout << bottom_y << std::endl;
-	for (int i = 0; i < ys.size(); ++i) {
-		std::cout << ys[i] << std::endl;
+	for (auto y_coord : y_coordinates) {
+		std::cout << y_coord << std::endl;
 	}
 	std::cout << top_y << std::endl;
 
-	//scene.building.currentLayer().setGrammar()
+	// DEBUG用に、facade grammarを固定で選択
+	//scene.building.currentLayer().setGrammar("Facade", grammars["facade"][grammar_id]);
+
+	//scene.generateGeometry(&renderManager);
+
+	update();
 }
 
 void GLWidget3D::fixGeometry() {
@@ -334,6 +353,10 @@ void GLWidget3D::fixGeometry() {
 		update();
 	}
 	else if (stage == STAGE_ROOF) {
+		clearSketch();
+		update();
+	}
+	else if (stage == STAGE_FACADE) {
 		clearSketch();
 		update();
 	}
@@ -350,9 +373,9 @@ glm::vec3 GLWidget3D::viewVector(const glm::vec2& point, const glm::mat4& mvMatr
 void GLWidget3D::changeStage(int stage) {
 	this->stage = stage;
 	clearSketch();
-	if (selectedFace != NULL) {
-		selectedFace->unselect();
-		selectedFace = NULL;
+	if (scene.building.selectedFace() != NULL) {
+		scene.building.selectedFace()->unselect();
+		scene.building.unselectFace();
 	}
 
 	switch (stage) {
@@ -362,6 +385,8 @@ void GLWidget3D::changeStage(int stage) {
 		camera.yrot = -45.0f;
 		camera.zrot = 0.0f;
 		current_z = 0.0f;
+		break;
+	case STAGE_ROOF:
 		break;
 	case STAGE_FACADE:
 		break;
@@ -408,13 +433,13 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 		glm::vec3 view_v1 = viewVector(glm::vec2(e->x(), e->y()), camera.mvMatrix, camera.f(), camera.aspect());
 
 		if (stage == STAGE_BUILDING) {
-			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
+			if (scene.building.selectTopFace(cameraPos, view_v1)) {
 				// shift the camera such that the selected face becomes a ground plane.
-				camera.pos = glm::vec3(0, selectedFace->vertices[0].position.y, 40);
+				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, 40);
 				camera.xrot = 30.0f;
 				camera.yrot = -45.0f;
 				camera.zrot = 0.0f;
-				current_z = selectedFace->vertices[0].position.y;
+				current_z = scene.building.selectedFace()->vertices[0].position.y;
 			}
 			else {
 				// shift the camera such that the ground plane becomes really a ground plane.
@@ -427,22 +452,22 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			camera.updateMVPMatrix();
 		}
 		else if (stage == STAGE_ROOF) {
-			if (scene.building.selectTopFace(cameraPos, view_v1, &selectedFace)) {
+			if (scene.building.selectTopFace(cameraPos, view_v1)) {
 				// shift the camera such that the selected face becomes a ground plane.
-				camera.pos = glm::vec3(0, selectedFace->vertices[0].position.y, 40);
+				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, 40);
 				camera.xrot = 30.0f;
 				camera.yrot = -45.0f;
 				camera.zrot = 0.0f;
-				current_z = selectedFace->vertices[0].position.y;
+				current_z = scene.building.selectedFace()->vertices[0].position.y;
 			}
 			camera.updateMVPMatrix();
 		}
 		else if (stage == STAGE_FACADE) {
-			if (scene.building.selectSideFace(cameraPos, view_v1, &selectedFace)) {
+			if (scene.building.selectSideFace(cameraPos, view_v1)) {
 				// shift the camera such that the selected face becomes parallel to the image plane.
-				camera.pos.y = selectedFace->bbox.center().y;
+				camera.pos.y = scene.building.selectedFace()->bbox.center().y;
 				camera.xrot = 0.0f;
-				camera.yrot = -atan2f(selectedFace->vertices[0].normal.x, selectedFace->vertices[0].normal.z) / 3.141592653 * 180;
+				camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
 				camera.zrot = 0.0f;
 			}
 			camera.updateMVPMatrix();
@@ -480,7 +505,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 			updateRoofOptions();
 		}
 		else if (stage == STAGE_FACADE) {
-			predictFacade();
+			updateFacadeOptions();
 		}
 		else if (stage == STAGE_FLOOR) {
 			// To Do
