@@ -18,6 +18,7 @@ ShapeLayer::ShapeLayer() : offset_x(0), offset_y(0), object_width(0), object_dep
 		cga::parseGrammar("cga/default_window_sill.xml", grammars["WindowSill"]);
 		cga::parseGrammar("cga/default_window_frame.xml", grammars["WindowFrame"]);
 		cga::parseGrammar("cga/default_window_glass.xml", grammars["WindowGlass"]);
+		cga::parseGrammar("cga/default_window_shutter_frame.xml", grammars["WindowShutterFrame"]);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;

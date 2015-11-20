@@ -95,7 +95,7 @@
 
 	<rule name="WindowShutterArea">
 		<split splitAxis="y">
-			<param type="absolute" value="0.3" name="NIL"/>
+			<param type="absolute" value="0.3" name="Wall"/>
 			<param type="floating" value="1" name="WindowShutterAreaMain"/>
 		</split>
 	</rule>
@@ -118,14 +118,14 @@
 	</rule>
 	<rule name="WindowShutterAreaMainTopInsideBottom">
 		<split splitAxis="y">
-			<param type="floating" value="0.2" name="WindowShutterFrame"/>
-			<param type="floating" value="0.3" name="WindowShutterRow" repeat="true"/>
+			<param type="floating" value="0.1" name="WindowShutterFrame"/>
+			<param type="floating" value="0.2" name="WindowShutterRow" repeat="true"/>
 		</split>
 	</rule>
 	<rule name="WindowShutterRow">
 		<split splitAxis="y">
 			<param type="floating" value="0.1" name="WindowShutterRowSeparator"/>
-			<param type="floating" value="0.2" name="WindowShutterFrame"/>
+			<param type="floating" value="0.1" name="WindowShutterFrame"/>
 		</split>
 	</rule>
 	<rule name="WindowShutterRowSeparator">

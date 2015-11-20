@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="WindowShutterFrame">
+		<color s="#492e38"/>
+	</rule>
+</grammar>
+
