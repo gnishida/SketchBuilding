@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="RoofTop">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/roof.jpg"/>
+	</rule>
+</grammar>
+

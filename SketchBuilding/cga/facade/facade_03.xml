@@ -1,10 +1,19 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
 	<rule name="Facade">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="5"/>
+			<param name="texHeight" type="absolute" value="5"/>
+		</setupProjection>
 		<split splitAxis="y">
 			<param type="floating" value="4" name="Floor"/>
-			<param type="absolute" value="0.5" name="Ledge"/>
-			<param type="floating" value="4" name="Floor" repeat="true"/>
+			<param type="floating" value="4" name="LedgeAndFloor" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="LedgeAndFloor">
+		<split splitAxis="y">
+			<param type="floating" value="0.5" name="Ledge"/>
+			<param type="floating" value="3.5" name="Floor"/>
 		</split>
 	</rule>
 	<rule name="Floor">
@@ -14,23 +23,17 @@
 	</rule>
 	<rule name="FloorColumn">
 		<split splitAxis="x">
-			<param type="floating" value="0.5" name="Wall"/>
-			<param type="absolute" value="2" name="FloorColumn2"/>
-			<param type="floating" value="0.5" name="Wall"/>
+			<param type="relative" value="0.22" name="Wall"/>
+			<param type="relative" value="0.56" name="FloorColumn2"/>
+			<param type="relative" value="0.22" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn2">
 		<split splitAxis="y">
-			<param type="floating" value="1" name="Wall"/>
-			<param type="absolute" value="2" name="Window"/>
-			<param type="floating" value="0.5" name="Wall"/>
+			<param type="relative" value="0.32" name="Wall"/>
+			<param type="relative" value="0.5" name="Window"/>
+			<param type="relative" value="0.18" name="Wall"/>
 		</split>
 	</rule>
-	
-	<rule name="Window">
-		<color s="#aaaaff">
-	</rule>
-	<rule name="Ledge">
-		<color s="#aaffaa">
-	</rule>
 </grammar>
+

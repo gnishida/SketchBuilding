@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
 	<rule name="Facade">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="5"/>
+			<param name="texHeight" type="absolute" value="5"/>
+		</setupProjection>
 		<split splitAxis="y">
 			<param type="floating" value="4" name="Floor" repeat="true"/>
 		</split>
@@ -23,9 +27,5 @@
 			<param type="absolute" value="2" name="Window"/>
 			<param type="floating" value="0.5" name="Wall"/>
 		</split>
-	</rule>
-	
-	<rule name="Window">
-		<color s="#aaaaff">
 	</rule>
 </grammar>

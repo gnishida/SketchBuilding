@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="WindowSill">
+		<color s="#a0a0a0"/>
+	</rule>
+</grammar>
+

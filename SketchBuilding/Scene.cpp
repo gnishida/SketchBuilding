@@ -2,8 +2,30 @@
 #include "RenderManager.h"
 #include "Rectangle.h"
 #include <iostream>
+#include "GrammarParser.h"
 
 namespace sc {
+
+ShapeLayer::ShapeLayer() : offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {
+	// set the default grammar for Window, Ledge, and Wall
+	try {
+		cga::parseGrammar("cga/default_window.xml", grammars["Window"]);
+		cga::parseGrammar("cga/default_ledge.xml", grammars["Ledge"]);
+		cga::parseGrammar("cga/default_wall.xml", grammars["Wall"]);
+		cga::parseGrammar("cga/default_roof_ledge.xml", grammars["RoofLedge"]);
+		cga::parseGrammar("cga/default_roof_top.xml", grammars["RoofTop"]);
+		cga::parseGrammar("cga/default_ledge_face.xml", grammars["LedgeFace"]);
+		cga::parseGrammar("cga/default_window_sill.xml", grammars["WindowSill"]);
+		cga::parseGrammar("cga/default_window_frame.xml", grammars["WindowFrame"]);
+		cga::parseGrammar("cga/default_window_glass.xml", grammars["WindowGlass"]);
+	}
+	catch (const std::string& ex) {
+		std::cout << "ERROR:" << std::endl << ex << std::endl;
+	}
+	catch (const char* ex) {
+		std::cout << "ERROR:" << std::endl << ex << std::endl;
+	}
+}
 
 void ShapeLayer::setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth) {
 	this->offset_x = offset_x;
@@ -143,7 +165,7 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 	glutils::Face* newSelectedFace = NULL;
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		if (i == _currentLayer) continue;
+		//if (i == _currentLayer) continue;
 
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
 			if (_layers[i].faces[j].vertices.size() < 3) continue;

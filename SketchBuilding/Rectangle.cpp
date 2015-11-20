@@ -222,8 +222,8 @@ void Rectangle::generateGeometry(std::vector<glutils::Face>& faces, float opacit
 
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 
-	if (_textureEnabled) {
-		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
+	if (!_texture.empty() && _texCoords.size() >= 4) {
+		glutils::drawQuad(_scope.x, _scope.y, _texCoords[0], _texCoords[1], _texCoords[2], _texCoords[3], mat, vertices);
 		faces.push_back(glutils::Face(_name, vertices, _texture));
 	} else {
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);

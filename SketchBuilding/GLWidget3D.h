@@ -25,6 +25,8 @@ class MainWindow;
 class GLWidget3D : public QGLWidget {
 public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
+	
+	const float CAMERA_DEFAULT_DEPTH = 50.0f;
 
 	MainWindow* mainWin;
 	QImage sketch;

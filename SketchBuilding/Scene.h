@@ -21,7 +21,7 @@ public:
 	std::vector<glutils::Face> faces;
 
 public:
-	ShapeLayer() : offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {}
+	ShapeLayer();
 	ShapeLayer(float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
 	void setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth);
 	void setHeight(float height);

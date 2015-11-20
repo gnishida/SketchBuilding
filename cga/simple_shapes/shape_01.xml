@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<rules>
-	<attr name="height" value="5" range="4,10"/>
-	
-	<rule name="Start">
-		<extrude height="height"/>
-	</rule>
-</rules>

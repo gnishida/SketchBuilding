@@ -22,15 +22,15 @@
 	<rule name="WindowSillTileLayer1Main">
 		<extrude height="0.1"/>
 		<comp>
-			<param name="top" value="WindowSillFace"/>
-			<param name="side" value="WindowSillFace"/>
+			<param name="top" value="WindowSill"/>
+			<param name="side" value="WindowSill"/>
 		</comp>
 	</rule>
 	<rule name="WindowSillTileLayer2">
 		<extrude height="0.2"/>
 		<comp>
-			<param name="top" value="WindowSillFace"/>
-			<param name="side" value="WindowSillFace"/>
+			<param name="top" value="WindowSill"/>
+			<param name="side" value="WindowSill"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMain">
