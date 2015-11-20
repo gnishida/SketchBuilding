@@ -9,7 +9,6 @@
 #include "Polygon.h"
 #include "Cuboid.h"
 #include "SemiCircle.h"
-#include "OffsetRectangle.h"
 #include "UShape.h"
 #include "CGA.h"
 

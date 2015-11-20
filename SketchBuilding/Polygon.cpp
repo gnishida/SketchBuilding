@@ -2,7 +2,6 @@
 #include "Pyramid.h"
 #include "GableRoof.h"
 #include "HipRoof.h"
-#include "OffsetPolygon.h"
 #include "Prism.h"
 #include "GeneralObject.h"
 #include "CGA.h"

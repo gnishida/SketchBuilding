@@ -1,6 +1,5 @@
 #include "SemiCircle.h"
 #include "CGA.h"
-#include "OffsetSemiCircle.h"
 #include "GLUtils.h"
 
 namespace cga {
