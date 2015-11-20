@@ -166,6 +166,7 @@ void GLWidget3D::selectOption(int option_index) {
 	} else if (stage == "window") {
 		predictWindow(option_index);
 	} else if (stage == "ledge") {
+		predictLedge(option_index);
 	}
 
 	update();
@@ -265,8 +266,8 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	float offset_x = params[0] * 12 - 6;
 	float offset_y = params[1] * 12 - 6;
-	float object_width = params[2] * 8 + 8;
-	float object_depth = params[3] * 8 + 8;
+	float object_width = params[2] * 12 + 8;
+	float object_depth = params[3] * 12 + 8;
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
@@ -430,7 +431,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	}
 
 	if (stage == "building") {
-		camera.pos = glm::vec3(0, 0, 40);
+		camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
 		camera.xrot = 30.0f;
 		camera.yrot = -45.0f;
 		camera.zrot = 0.0f;
@@ -478,13 +479,13 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 		// camera position in the world coordinates
 		glm::vec3 cameraPos = camera.cameraPosInWorld();
 
-		// view vector
-		glm::vec3 view_v1 = viewVector(glm::vec2(e->x(), e->y()), camera.mvMatrix, camera.f(), camera.aspect());
+		// view direction
+		glm::vec3 view_dir = viewVector(glm::vec2(e->x(), e->y()), camera.mvMatrix, camera.f(), camera.aspect());
 
 		if (stage == "building") {
-			if (scene.building.selectTopFace(cameraPos, view_v1)) {
+			if (scene.building.selectTopFace(cameraPos, view_dir)) {
 				// shift the camera such that the selected face becomes a ground plane.
-				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, 40);
+				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 				camera.xrot = 30.0f;
 				camera.yrot = -45.0f;
 				camera.zrot = 0.0f;
@@ -492,7 +493,7 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			}
 			else {
 				// shift the camera such that the ground plane becomes really a ground plane.
-				camera.pos = glm::vec3(0, 0, 40);
+				camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
 				camera.xrot = 30.0f;
 				camera.yrot = -45.0f;
 				camera.zrot = 0.0f;
@@ -501,9 +502,9 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			camera.updateMVPMatrix();
 		}
 		else if (stage == "roof") {
-			if (scene.building.selectTopFace(cameraPos, view_v1)) {
+			if (scene.building.selectTopFace(cameraPos, view_dir)) {
 				// shift the camera such that the selected face becomes a ground plane.
-				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, 40);
+				camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 				camera.xrot = 30.0f;
 				camera.yrot = -45.0f;
 				camera.zrot = 0.0f;
@@ -513,8 +514,8 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			updateRoofOptions();
 		}
 		else if (stage == "facade") {
-			if (scene.building.selectSideFace(cameraPos, view_v1)) {
-				// shift the camera such that the selected face becomes parallel to the image plane.
+			if (scene.building.selectSideFace(cameraPos, view_dir)) {
+				// turn the camera such that the selected face becomes parallel to the image plane.
 				camera.pos.y = scene.building.selectedFace()->bbox.center().y;
 				camera.xrot = 0.0f;
 				camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
@@ -524,9 +525,26 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			updateFacadeOptions();
 		}
 		else if (stage == "window") {
+			if (scene.building.selectSideFace(cameraPos, view_dir)) {
+				// turn the camera such that the selected face becomes parallel to the image plane.
+				camera.pos.y = scene.building.selectedFace()->bbox.center().y;
+				camera.xrot = 0.0f;
+				camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+				camera.zrot = 0.0f;
+			}
+			camera.updateMVPMatrix();
 			updateWindowOptions();
 		}
 		else if (stage == "ledge") {
+			if (scene.building.selectSideFace(cameraPos, view_dir)) {
+				// turn the camera such that the selected face becomes perpendicular to the image plane.
+				camera.pos.y = scene.building.selectedFace()->bbox.center().y;
+				camera.xrot = 0.0f;
+				camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+				//camera.yrot = atan2f(scene.building.selectedFace()->vertices[0].normal.z, scene.building.selectedFace()->vertices[0].normal.x) / 3.141592653 * 180;
+				camera.zrot = 0.0f;
+			}
+			camera.updateMVPMatrix();
 			updateLedgeOptions();
 		}
 		scene.updateGeometry(&renderManager);
