@@ -18,7 +18,7 @@ namespace cga {
 		boost::shared_ptr<Shape> extrude(const std::string& name, float height);
 		void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 		boost::shared_ptr<Shape> pyramid(const std::string& name, float height);
-		void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
+		void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
 	};
 
 }

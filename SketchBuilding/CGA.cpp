@@ -116,7 +116,7 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 /**
  * Generate a geometry and add it to the render manager.
  */
-void CGA::generateGeometry(std::vector<glutils::Face>& faces) {
+void CGA::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces) {
 	for (int i = 0; i < shapes.size(); ++i) {
 		shapes[i]->generateGeometry(faces, 1.0f);
 	}

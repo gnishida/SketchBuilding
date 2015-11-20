@@ -293,11 +293,15 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	// DEBUG用に、Deeplearningを使わないで、固定のパラメータ値を使用する
 	std::vector<float> params(7);
 	for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
+	if (scene.building._currentLayer > 0) {
+		params[0] = 4.0f / 14.0f;
+		params[2] = 0.125f;
+	}
 
-	float offset_x = params[0] * 12 - 6;
-	float offset_y = params[1] * 12 - 6;
-	float object_width = params[2] * 12 + 8;
-	float object_depth = params[3] * 12 + 8;
+	float offset_x = params[0] * 14 - 7;
+	float offset_y = params[1] * 14 - 7;
+	float object_width = params[2] * 16 + 4;
+	float object_depth = params[3] * 16 + 4;
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
@@ -427,15 +431,18 @@ void GLWidget3D::predictLedge(int grammar_id) {
 }
 
 void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
-	std::cout << "shift clicked" << std::endl;
 	// camera position in the world coordinates
 	glm::vec3 cameraPos = camera.cameraPosInWorld();
+
+	clearSketch();
 
 	// view direction
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	if (stage == "building") {
 		if (scene.building.selectTopFace(cameraPos, view_dir)) {
+			scene.building.newLayer();
+
 			// shift the camera such that the selected face becomes a ground plane.
 			camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			camera.xrot = 30.0f;
@@ -501,7 +508,6 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	}
 	scene.updateGeometry(&renderManager);
 	update();
-
 }
 
 void GLWidget3D::addBuildingMass() {

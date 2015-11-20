@@ -44,9 +44,6 @@
     <property name="title">
      <string>Shape</string>
     </property>
-    <addaction name="actionCuboid"/>
-    <addaction name="actionLShape"/>
-    <addaction name="separator"/>
     <addaction name="actionAddBuildingMass"/>
    </widget>
    <addaction name="menuFile"/>

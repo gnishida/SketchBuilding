@@ -107,7 +107,7 @@ void HipRoof::comp(const std::map<std::string, std::string>& name_map, std::vect
 	}
 }
 
-void HipRoof::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	std::vector<Vertex> vertices;
 
 	Polygon_2 poly;
@@ -176,7 +176,7 @@ void HipRoof::generateGeometry(std::vector<glutils::Face>& faces, float opacity)
 		}
 	}
 
-	faces.push_back(glutils::Face(_name, vertices));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 }
 
 }

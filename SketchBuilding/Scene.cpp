@@ -113,24 +113,21 @@ void BuildingMass::alignLayers() {
 bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
-	bool selected = false;
 
-	glutils::Face* newSelectedFace = NULL;
+	unselectFace();
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		//if (i == _currentLayer) continue;
-
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
-			if (_layers[i].faces[j].vertices.size() < 3) continue;
+			if (_layers[i].faces[j]->vertices.size() < 3) continue;
 
-			for (int k = 0; k < _layers[i].faces[j].vertices.size(); k += 3) {
-				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j].vertices[k].position, _layers[i].faces[j].vertices[k+1].position, _layers[i].faces[j].vertices[k+2].position, intPt)) {
+			for (int k = 0; k < _layers[i].faces[j]->vertices.size(); k += 3) {
+				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j]->vertices[k].position, _layers[i].faces[j]->vertices[k + 1].position, _layers[i].faces[j]->vertices[k + 2].position, intPt)) {
 					float dist = glm::length(intPt - p);
 
 					if (dist < min_dist) {
 						min_dist = dist;
-						selected = true;
-						newSelectedFace = &_layers[i].faces[j];
+						_selectedFace = _layers[i].faces[j];
+						_currentLayer = i;
 					}
 				}
 
@@ -138,16 +135,11 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 		}
 	}
 
-	if (selected) {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-		}
-		_selectedFace = newSelectedFace;
+	if (_selectedFace) {
 		_selectedFace->select();
 		return true;
 	}
 	else {
-		unselectFace();
 		return false;
 	}
 }
@@ -161,26 +153,22 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
-	bool selected = false;
 
-	glutils::Face* newSelectedFace = NULL;
+	unselectFace();
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		//if (i == _currentLayer) continue;
-
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
-			if (_layers[i].faces[j].vertices.size() < 3) continue;
+			if (_layers[i].faces[j]->vertices.size() < 3) continue;
 
-			for (int k = 0; k < _layers[i].faces[j].vertices.size(); k += 3) {
-				if (glm::dot(_layers[i].faces[j].vertices[0].normal, glm::vec3(0, 1, 0)) < 0.9) continue;
+			for (int k = 0; k < _layers[i].faces[j]->vertices.size(); k += 3) {
+				if (glm::dot(_layers[i].faces[j]->vertices[0].normal, glm::vec3(0, 1, 0)) < 0.9) continue;
 
-				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j].vertices[k].position, _layers[i].faces[j].vertices[k + 1].position, _layers[i].faces[j].vertices[k + 2].position, intPt)) {
+				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j]->vertices[k].position, _layers[i].faces[j]->vertices[k + 1].position, _layers[i].faces[j]->vertices[k + 2].position, intPt)) {
 					float dist = glm::length(intPt - p);
 
 					if (dist < min_dist) {
 						min_dist = dist;
-						selected = true;
-						newSelectedFace = &_layers[i].faces[j];
+						_selectedFace = _layers[i].faces[j];
 						_currentLayer = i;
 					}
 				}
@@ -189,17 +177,11 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 		}
 	}
 
-	if (selected) {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-		}
-		_selectedFace = newSelectedFace;
+	if (_selectedFace) {
 		_selectedFace->select();
-
 		return true;
 	}
 	else {
-		unselectFace();
 		return false;
 	}
 }
@@ -213,26 +195,25 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
-	bool selected = false;
 
-	glutils::Face* newSelectedFace = NULL;
+	unselectFace();
 
 	for (int i = 0; i < _layers.size(); ++i) {
 		//if (i == _currentLayer) continue;
 
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
-			if (_layers[i].faces[j].vertices.size() < 3) continue;
+			if (_layers[i].faces[j]->vertices.size() < 3) continue;
 
-			for (int k = 0; k < _layers[i].faces[j].vertices.size(); k += 3) {
-				if (fabs(glm::dot(_layers[i].faces[j].vertices[0].normal, glm::vec3(0, 1, 0))) > 0.1) continue;
+			for (int k = 0; k < _layers[i].faces[j]->vertices.size(); k += 3) {
+				if (fabs(glm::dot(_layers[i].faces[j]->vertices[0].normal, glm::vec3(0, 1, 0))) > 0.1) continue;
 
-				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j].vertices[k].position, _layers[i].faces[j].vertices[k + 1].position, _layers[i].faces[j].vertices[k + 2].position, intPt)) {
+				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j]->vertices[k].position, _layers[i].faces[j]->vertices[k + 1].position, _layers[i].faces[j]->vertices[k + 2].position, intPt)) {
 					float dist = glm::length(intPt - p);
 
 					if (dist < min_dist) {
 						min_dist = dist;
-						selected = true;
-						newSelectedFace = &_layers[i].faces[j];
+						_selectedFace = _layers[i].faces[j];
+						_currentLayer = i;
 					}
 				}
 
@@ -240,25 +221,19 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 		}
 	}
 
-	if (selected) {
-		if (_selectedFace != NULL) {
-			_selectedFace->unselect();
-		}
-		_selectedFace = newSelectedFace;
+	if (_selectedFace) {
 		_selectedFace->select();
-
 		return true;
 	}
 	else {
-		unselectFace();
 		return false;
 	}
 }
 
 void BuildingMass::unselectFace() {
-	if (_selectedFace != NULL) {
+	if (_selectedFace) {
 		_selectedFace->unselect();
-		_selectedFace = NULL;
+		_selectedFace.reset();
 	}
 }
 

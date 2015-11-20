@@ -219,7 +219,7 @@ boost::shared_ptr<Shape> Rectangle::taper(const std::string& name, float height,
 	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, top_ratio, _color, _texture));
 }
 
-void Rectangle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void Rectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
@@ -228,10 +228,10 @@ void Rectangle::generateGeometry(std::vector<glutils::Face>& faces, float opacit
 
 	if (!_texture.empty() && _texCoords.size() >= 4) {
 		glutils::drawQuad(_scope.x, _scope.y, _texCoords[0], _texCoords[1], _texCoords[2], _texCoords[3], mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
 	} else {
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 }
 

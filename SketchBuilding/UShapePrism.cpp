@@ -159,7 +159,7 @@ void UShapePrism::split(int splitAxis, const std::vector<float>& sizes, const st
 	}
 }
 
-void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void UShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	// top
@@ -168,24 +168,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_depth) * 0.5, _scope.z)), vertices);
 		glutils::drawQuad(_scope.x, _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_depth * 0.5, _scope.z)), vertices);
 		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_depth) * 0.5, _scope.z)), vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-
-		/*
-		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::translate(_pivot * _modelMat, glm::vec3(0, 0, _scope.z));
-		std::vector<glm::vec2> pts(8);
-		pts[0] = glm::vec2(0, 0);
-		pts[1] = glm::vec2(_front_width, 0);
-		pts[2] = glm::vec2(_front_width, _scope.y - _back_depth);
-		pts[3] = glm::vec2(_scope.x - _front_width, _scope.y - _back_depth);
-		pts[4] = glm::vec2(_scope.x - _front_width, 0);
-		pts[5] = glm::vec2(_scope.x, 0);
-		pts[6] = glm::vec2(_scope.x, _scope.y);
-		pts[7] = glm::vec2(0, _scope.y);
-
-		glutils::drawConcavePolygon(pts, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-		*/
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 
 	// base
@@ -194,25 +177,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_depth) * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
 		glutils::drawQuad(_scope.x, _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_depth * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
 		glutils::drawQuad(_front_width, _scope.y - _back_depth, glm::vec4(_color, opacity), glm::rotate(glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_depth) * 0.5, 0)), M_PI, glm::vec3(1, 0, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-
-		/*
-		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::translate(glm::rotate(_pivot * _modelMat, M_PI, glm::vec3(1, 0, 0)), glm::vec3(0, -_scope.y, 0));
-
-		std::vector<glm::vec2> pts(8);
-		pts[0] = glm::vec2(0, 0);
-		pts[1] = glm::vec2(_scope.x, 0);
-		pts[2] = glm::vec2(_scope.x, _scope.y);
-		pts[3] = glm::vec2(_scope.x - _front_width, _scope.y);
-		pts[4] = glm::vec2(_scope.x - _front_width, _back_depth);
-		pts[5] = glm::vec2(_front_width, _back_depth);
-		pts[6] = glm::vec2(_front_width, _scope.y);
-		pts[7] = glm::vec2(0, _scope.y);
-
-		glutils::drawConcavePolygon(pts, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
-		*/
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 
 	// front
@@ -224,27 +189,27 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width * 0.5, 0, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_front_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_depth, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x - _front_width * 2, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width * 0.5, 0, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_front_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width, (_scope.y - _back_depth) * 0.5, _scope.z * 0.5)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y - _back_depth, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _front_width, (_scope.y - _back_depth) * 0.5, _scope.z * 0.5)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y - _back_depth, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 
 	// back
@@ -256,7 +221,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, 0, _scope.z * 0.5)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 
 	// right
@@ -268,7 +233,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y * 0.5, _scope.z * 0.5)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 
 	// left
@@ -280,7 +245,7 @@ void UShapePrism::generateGeometry(std::vector<glutils::Face>& faces, float opac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y * 0.5, 0, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 }
 

@@ -60,7 +60,7 @@ boost::shared_ptr<Shape> Circle::pyramid(const std::string& name, float height) 
 	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
 }
 
-void Circle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	std::vector<Vertex> vertices;
@@ -68,38 +68,7 @@ void Circle::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
 	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
 
-	/*
-	glm::vec3 p0 = glm::vec3(_pivot * _modelMat * glm::vec4(_scope.x * 0.5, 0, 0, 1));
-
-	glm::vec3 normal = glm::vec3(_pivot * _modelMat * glm::vec4(0, 0, 1, 0));
-
-	int numSlices = 12;
-	for (int i = 0; i < numSlices; ++i) {
-		float theta1 = (float)i / numSlices * M_PI * 2.0f;
-		float theta2 = (float)(i + 1) / numSlices * M_PI * 2.0f;
-
-		glm::vec4 p1(_scope.x * 0.5 * cosf(theta1) + _scope.x * 0.5, _scope.y * sinf(theta1), 0.0f, 1.0f);
-		p1 = _pivot * _modelMat * p1;
-		glm::vec4 p2(_scope.x * 0.5 * cosf(theta2) + _scope.x * 0.5, _scope.y * sinf(theta2), 0.0f, 1.0f);
-		p2 = _pivot * _modelMat * p2;
-
-		vertices.push_back(Vertex(p0, normal, glm::vec4(_color, opacity)));
-		if (i < numSlices) {
-			vertices.push_back(Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity), 1));
-		}
-		else {
-			vertices.push_back(Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity)));
-		}
-		if (i > 0) {
-			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), 1));
-		}
-		else {
-			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity)));
-		}
-	}
-	*/
-
-	faces.push_back(glutils::Face(_name, vertices));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 }
 
 }

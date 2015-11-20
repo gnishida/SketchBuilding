@@ -24,7 +24,7 @@ public:
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
 	void setupProjection(int axesSelector, float texWidth, float texHeight);
 	void size(float xSize, float ySize, float zSize, bool centered);
-	void generateGeometry(std::vector<glutils::Face>& faces, float opacity) const;
+	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
 };
 
 }

@@ -18,7 +18,7 @@ public:
 	float height;
 	//cga::Grammar grammar;
 	std::map<std::string, cga::Grammar> grammars;
-	std::vector<glutils::Face> faces;
+	std::vector<boost::shared_ptr<glutils::Face> > faces;
 
 public:
 	ShapeLayer();
@@ -33,10 +33,10 @@ public:
 };
 
 class BuildingMass {
-private:
+public:
 	std::vector<ShapeLayer> _layers;
 	int _currentLayer;
-	glutils::Face* _selectedFace;
+	boost::shared_ptr<glutils::Face> _selectedFace;
 
 public:
 	BuildingMass();
@@ -45,7 +45,7 @@ public:
 	void newLayer();
 	void alignLayers();
 	ShapeLayer& currentLayer() { return _layers[_currentLayer]; }
-	glutils::Face* selectedFace() { return _selectedFace; }
+	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
 	bool selectFace(const glm::vec3& p, const glm::vec3& v);
 	bool selectTopFace(const glm::vec3& p, const glm::vec3& v);
 	bool selectSideFace(const glm::vec3& p, const glm::vec3& v);

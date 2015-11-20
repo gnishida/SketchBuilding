@@ -7,6 +7,7 @@
 #include "ShadowMapping.h"
 #include "SketchyRenderingBuffer.h"
 #include "GLUtils.h"
+#include <boost/shared_ptr.hpp>
 
 class GeometryObject {
 public:
@@ -47,7 +48,7 @@ public:
 	RenderManager();
 
 	void init(const std::string& vertex_file, const std::string& geometry_file, const std::string& fragment_file, bool useShadow, int shadowMapSize = 4096);
-	void addFaces(const std::vector<glutils::Face>& faces);
+	void addFaces(const std::vector<boost::shared_ptr<glutils::Face> >& faces);
 	void addObject(const QString& object_name, const QString& texture_file, const std::vector<Vertex>& vertices);
 	void removeObjects();
 	void removeObject(const QString& object_name);

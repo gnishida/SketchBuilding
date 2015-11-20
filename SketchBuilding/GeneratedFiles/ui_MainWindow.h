@@ -98,9 +98,6 @@ public:
         menuFile->addAction(actionExit);
         menuTool->addAction(actionPredict);
         menuTool->addAction(actionFixGeometry);
-        menuShape->addAction(actionCuboid);
-        menuShape->addAction(actionLShape);
-        menuShape->addSeparator();
         menuShape->addAction(actionAddBuildingMass);
 
         retranslateUi(MainWindowClass);

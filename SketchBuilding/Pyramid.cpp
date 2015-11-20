@@ -115,7 +115,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 	}
 }
 
-void Pyramid::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	if (_top_ratio == 0.0f) {
@@ -140,7 +140,7 @@ void Pyramid::generateGeometry(std::vector<glutils::Face>& faces, float opacity)
 			p1 = p2;
 		}
 
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	} else {
 		std::vector<Vertex> vertices(_points.size() * 6);
 
@@ -172,11 +172,11 @@ void Pyramid::generateGeometry(std::vector<glutils::Face>& faces, float opacity)
 			p0 = p2;
 			p1 = p3;
 		}
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 
 		vertices.clear();
 		glutils::drawPolygon(pts3, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 }
 

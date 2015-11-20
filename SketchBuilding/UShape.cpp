@@ -138,7 +138,7 @@ void UShape::size(float xSize, float ySize, float zSize, bool centered) {
 	_scope.z = zSize;
 }
 
-void UShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void UShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	if (_textureEnabled) {
@@ -146,14 +146,14 @@ void UShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) 
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[7]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
 		glutils::drawQuad(_scope.x, _back_height, (_texCoords[0] + _texCoords[7]) * 0.5f, (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[6], _texCoords[7], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
 		glutils::drawQuad(_front_width, _scope.y - _back_height, _texCoords[4], _texCoords[5], (_texCoords[5] + _texCoords[6]) * 0.5f, _texCoords[3], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
 		glutils::drawQuad(_scope.x, _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _back_height * 0.5, 0)), vertices);
 		glutils::drawQuad(_front_width, _scope.y - _back_height, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x - _front_width * 0.5, (_scope.y - _back_height) * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
 	}
 }
 

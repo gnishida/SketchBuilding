@@ -130,20 +130,20 @@ void LShape::size(float xSize, float ySize, float zSize, bool centered) {
 	_scope.z = zSize;
 }
 
-void LShape::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
+void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (_removed) return;
 
 	if (_textureEnabled) {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[5]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, (_texCoords[0] + _texCoords[5]) * 0.5f, _texCoords[3], _texCoords[4], _texCoords[5], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(glutils::Face(_name, vertices, _texture));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
 	}
 }
 
