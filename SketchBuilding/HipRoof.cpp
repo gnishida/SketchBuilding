@@ -16,7 +16,7 @@ namespace cga {
 
 HipRoof::HipRoof(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -108,6 +108,8 @@ void HipRoof::comp(const std::map<std::string, std::string>& name_map, std::vect
 }
 
 void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+	if (!_active) return;
+
 	std::vector<Vertex> vertices;
 
 	Polygon_2 poly;

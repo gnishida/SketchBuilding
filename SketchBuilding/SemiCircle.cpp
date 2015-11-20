@@ -6,7 +6,7 @@ namespace cga {
 
 SemiCircle::SemiCircle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, height, 0);
@@ -36,7 +36,7 @@ void SemiCircle::offset(const std::string& name, float offsetDistance, const std
 }
 
 void SemiCircle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	std::vector<Vertex> vertices;
 

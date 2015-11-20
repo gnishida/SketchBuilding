@@ -8,7 +8,7 @@ namespace cga {
 
 Pyramid::Pyramid(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec2& center, float height, float top_ratio, const glm::vec3& color, const std::string& texture) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -115,7 +115,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 }
 
 void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	if (_top_ratio == 0.0f) {
 		std::vector<Vertex> vertices(_points.size() * 3);

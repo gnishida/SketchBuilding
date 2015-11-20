@@ -88,9 +88,16 @@ void CGA::derive(const Grammar& grammar, bool suppressWarning) {
 void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWarning) {
 	shapes.clear();
 
+	std::vector<boost::shared_ptr<Shape> > inactive_shapes;
+
 	while (!stack.empty()) {
 		boost::shared_ptr<Shape> shape = stack.front();
 		stack.pop_front();
+
+		// copy the current shape to the inactive list
+		boost::shared_ptr<Shape> copy_shape = shape->clone(shape->_name);
+		copy_shape->_active = false;
+		inactive_shapes.push_back(copy_shape);
 
 		bool found = false;
 		std::string name;
@@ -111,6 +118,10 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 			shapes.push_back(shape);
 		}
 	}
+
+	// merge the inactive list into the shape list
+	// Note: the resulting shape list contains many inactive shapes.
+	shapes.insert(shapes.end(), inactive_shapes.begin(), inactive_shapes.end());
 }
 
 /**

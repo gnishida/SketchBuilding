@@ -10,7 +10,7 @@ namespace cga {
 
 Polygon::Polygon(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -115,7 +115,7 @@ boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, f
 }
 
 void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	if (!_texture.empty() && _texCoords.size() >= _points.size()) {
 		std::vector<Vertex> vertices;

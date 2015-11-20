@@ -12,7 +12,7 @@ namespace cga {
 
 LShape::LShape(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, float front_width, float right_width, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, height, 0);
@@ -131,7 +131,7 @@ void LShape::size(float xSize, float ySize, float zSize, bool centered) {
 }
 
 void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	if (_textureEnabled) {
 		std::vector<Vertex> vertices;

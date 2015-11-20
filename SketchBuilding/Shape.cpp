@@ -160,10 +160,6 @@ boost::shared_ptr<Shape> Shape::insert(const std::string& name, const std::strin
 	}
 }
 
-void Shape::nil() {
-	_removed = true;
-}
-
 void Shape::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	throw "offset() is not supported.";
 }

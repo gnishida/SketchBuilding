@@ -6,7 +6,7 @@ namespace cga {
 
 GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points.push_back(points);
@@ -17,7 +17,7 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 
 GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -28,7 +28,7 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 
 GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color, const std::vector<glm::vec2>& texCoords, const std::string& texture) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points.push_back(points);
@@ -41,7 +41,7 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 
 GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color, const std::vector<std::vector<glm::vec2> >& texCoords, const std::string& texture) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -76,7 +76,7 @@ void GeneralObject::size(float xSize, float ySize, float zSize) {
 }
 
 void GeneralObject::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	for (int i = 0; i < _points.size(); ++i) {
 		std::vector<Vertex> vertices;

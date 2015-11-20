@@ -10,7 +10,7 @@ namespace cga {
 
 UShapePrism::UShapePrism(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, float front_width, float back_depth, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, depth, height);
@@ -160,7 +160,7 @@ void UShapePrism::split(int splitAxis, const std::vector<float>& sizes, const st
 }
 
 void UShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	// top
 	{

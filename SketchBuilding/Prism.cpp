@@ -8,7 +8,7 @@ namespace cga {
 
 Prism::Prism(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float height, const glm::vec3& color) {
 	this->_name = name;
-	this->_removed = false;
+	this->_active = true;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -105,7 +105,7 @@ void Prism::split(int splitAxis, const std::vector<float>& sizes, const std::vec
 }
 
 void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
-	if (_removed) return;
+	if (!_active) return;
 
 	// top
 	if (_scope.z >= 0) {

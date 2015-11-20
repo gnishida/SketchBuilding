@@ -16,7 +16,7 @@ namespace cga {
 class Shape {
 public:
 	std::string _name;
-	bool _removed;
+	bool _active;
 	glm::mat4 _modelMat;
 	glm::vec3 _color;
 	bool _textureEnabled;
@@ -37,7 +37,6 @@ public:
 	virtual boost::shared_ptr<Shape> innerCircle(const std::string& name);
 	virtual boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
 	boost::shared_ptr<Shape> insert(const std::string& name, const std::string& geometryPath);
-	void nil();
 	virtual void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	virtual boost::shared_ptr<Shape> pyramid(const std::string& name, float height);
 	virtual boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
