@@ -134,7 +134,7 @@ void GLWidget3D::loadCGA(char* filename) {
 		cga::parseGrammar(filename, grammar);
 		cga::CGA::randomParamValues(grammar);
 
-		sc::ShapeLayer sl;
+		sc::SceneObject sl;
 		sl.setFootprint(0, 0, 0, 16, 12);
 
 		std::vector<float> params(10);
@@ -161,7 +161,7 @@ void GLWidget3D::selectOption(int option_index) {
 	} else if (stage == "roof") {
 		predictRoof(option_index);
 	} else if (stage == "facade") {
-		scene.building.currentLayer().setGrammar("Facade", grammars["facade"][option_index]);
+		scene.currentLayer().setGrammar("Facade", grammars["facade"][option_index]);
 		scene.generateGeometry(&renderManager);
 	} else if (stage == "window") {
 		predictWindow(option_index);
@@ -293,7 +293,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	// DEBUG用に、Deeplearningを使わないで、固定のパラメータ値を使用する
 	std::vector<float> params(7);
 	for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
-	if (scene.building._currentLayer > 0) {
+	if (scene._currentObject > 0) {
 		params[0] = 4.0f / 14.0f;
 		params[2] = 0.125f;
 	}
@@ -305,7 +305,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
-	scene.building.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
+	scene.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
@@ -313,11 +313,11 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	params.erase(params.begin(), params.begin() + 4);
 	
 	// set parameter values
-	scene.building.currentLayer().setGrammar("Footprint", grammars["building"][grammar_id], params);
+	scene.currentLayer().setGrammar("Footprint", grammars["building"][grammar_id], params);
 	
 	// set height
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
-	scene.building.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
+	scene.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
 	scene.generateGeometry(&renderManager);
 
@@ -333,7 +333,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	renderManager.removeObjects();
 
 	// DEBUG用に、roof grammarを固定で選択
-	scene.building.currentLayer().setGrammar("Roof", grammars["roof"][grammar_id]);
+	scene.currentLayer().setGrammar("Roof", grammars["roof"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 
@@ -344,7 +344,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 }
 
 void GLWidget3D::predictFacade(int grammar_id) {
-	if (scene.building.selectedFace() == NULL) return;
+	if (scene.selectedFace() == NULL) return;
 
 	// list up y coordinates
 	std::vector<float> y_coordinates;
@@ -373,8 +373,8 @@ void GLWidget3D::predictFacade(int grammar_id) {
 	// project the face to the image plane, and find the y coordinates of the bottom and top lines
 	float bottom_y = height();
 	float top_y = 0.0f;
-	for (int i = 0; i < scene.building.selectedFace()->vertices.size(); ++i) {
-		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(scene.building.selectedFace()->vertices[i].position, 1);
+	for (int i = 0; i < scene.selectedFace()->vertices.size(); ++i) {
+		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(scene.selectedFace()->vertices[i].position, 1);
 		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height();
 		if (y < bottom_y) {
 			bottom_y = y;
@@ -404,7 +404,7 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	renderManager.removeObjects();
 
 	// DEBUG用に、window grammarを固定で選択
-	scene.building.currentLayer().setGrammar("Window", grammars["window"][grammar_id]);
+	scene.currentLayer().setGrammar("Window", grammars["window"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 
@@ -420,7 +420,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	renderManager.removeObjects();
 
 	// DEBUG用に、ledge grammarを固定で選択
-	scene.building.currentLayer().setGrammar("Ledge", grammars["ledge"][grammar_id]);
+	scene.currentLayer().setGrammar("Ledge", grammars["ledge"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 
@@ -440,15 +440,15 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	if (stage == "building") {
-		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
-			scene.building.newLayer();
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
+			scene.newLayer();
 
 			// shift the camera such that the selected face becomes a ground plane.
-			camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
+			camera.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			camera.xrot = 30.0f;
 			camera.yrot = -45.0f;
 			camera.zrot = 0.0f;
-			current_z = scene.building.selectedFace()->vertices[0].position.y;
+			current_z = scene.selectedFace()->vertices[0].position.y;
 		}
 		else {
 			// shift the camera such that the ground plane becomes really a ground plane.
@@ -461,45 +461,45 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "roof") {
-		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
 			// shift the camera such that the selected face becomes a ground plane.
-			camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
+			camera.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			camera.xrot = 30.0f;
 			camera.yrot = -45.0f;
 			camera.zrot = 0.0f;
-			current_z = scene.building.selectedFace()->vertices[0].position.y;
+			current_z = scene.selectedFace()->vertices[0].position.y;
 		}
 		camera.updateMVPMatrix();
 		//updateRoofOptions();
 	}
 	else if (stage == "facade") {
-		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
-			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
+			camera.pos.y = scene.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
 		camera.updateMVPMatrix();
 		//updateFacadeOptions();
 	}
 	else if (stage == "window") {
-		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
-			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
+			camera.pos.y = scene.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
 		camera.updateMVPMatrix();
 		//updateWindowOptions();
 	}
 	else if (stage == "ledge") {
-		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes perpendicular to the image plane.
-			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
+			camera.pos.y = scene.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.building.selectedFace()->vertices[0].normal.x, scene.building.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
 			//camera.yrot = atan2f(scene.building.selectedFace()->vertices[0].normal.z, scene.building.selectedFace()->vertices[0].normal.x) / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
@@ -514,7 +514,7 @@ void GLWidget3D::addBuildingMass() {
 	if (stage != "building") return;
 
 	clearSketch();
-	scene.building.newLayer();
+	scene.newLayer();
 	update();
 }
 
@@ -527,7 +527,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	this->stage = stage;
 	clearSketch();
 
-	scene.building.unselectFace();
+	scene.unselectFace();
 
 	if (stage == "building") {
 		camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
