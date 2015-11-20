@@ -33,7 +33,7 @@ public:
     QAction *actionOpenCGA;
     QAction *actionCuboid;
     QAction *actionLShape;
-    QAction *actionNewLayer;
+    QAction *actionAddBuildingMass;
     QAction *actionFixGeometry;
     QWidget *centralWidget;
     QMenuBar *menuBar;
@@ -64,8 +64,8 @@ public:
         actionLShape = new QAction(MainWindowClass);
         actionLShape->setObjectName(QStringLiteral("actionLShape"));
         actionLShape->setCheckable(true);
-        actionNewLayer = new QAction(MainWindowClass);
-        actionNewLayer->setObjectName(QStringLiteral("actionNewLayer"));
+        actionAddBuildingMass = new QAction(MainWindowClass);
+        actionAddBuildingMass->setObjectName(QStringLiteral("actionAddBuildingMass"));
         actionFixGeometry = new QAction(MainWindowClass);
         actionFixGeometry->setObjectName(QStringLiteral("actionFixGeometry"));
         centralWidget = new QWidget(MainWindowClass);
@@ -101,7 +101,7 @@ public:
         menuShape->addAction(actionCuboid);
         menuShape->addAction(actionLShape);
         menuShape->addSeparator();
-        menuShape->addAction(actionNewLayer);
+        menuShape->addAction(actionAddBuildingMass);
 
         retranslateUi(MainWindowClass);
 
@@ -121,7 +121,7 @@ public:
         actionOpenCGA->setText(QApplication::translate("MainWindowClass", "Open CGA", 0));
         actionCuboid->setText(QApplication::translate("MainWindowClass", "Cuboid", 0));
         actionLShape->setText(QApplication::translate("MainWindowClass", "L-Shape", 0));
-        actionNewLayer->setText(QApplication::translate("MainWindowClass", "New Layer", 0));
+        actionAddBuildingMass->setText(QApplication::translate("MainWindowClass", "Add Building Mass", 0));
         actionFixGeometry->setText(QApplication::translate("MainWindowClass", "Fix", 0));
         actionFixGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+F", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));

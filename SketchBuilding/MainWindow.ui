@@ -47,7 +47,7 @@
     <addaction name="actionCuboid"/>
     <addaction name="actionLShape"/>
     <addaction name="separator"/>
-    <addaction name="actionNewLayer"/>
+    <addaction name="actionAddBuildingMass"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTool"/>
@@ -112,9 +112,9 @@
     <string>L-Shape</string>
    </property>
   </action>
-  <action name="actionNewLayer">
+  <action name="actionAddBuildingMass">
    <property name="text">
-    <string>New Layer</string>
+    <string>Add Building Mass</string>
    </property>
   </action>
   <action name="actionFixGeometry">

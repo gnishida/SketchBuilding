@@ -69,7 +69,8 @@ public:
 	void predictWindow(int grammar_id);
 	void predictLedge(int grammar_id);
 
-	void fixGeometry();
+	void selectFace(const glm::vec2& mouse_pos);
+	void addBuildingMass();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(const std::string& stage);
 	void keyPressEvent(QKeyEvent* e);

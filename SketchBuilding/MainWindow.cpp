@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionOpenCGA, SIGNAL(triggered()), this, SLOT(onOpenCGA()));
-	connect(ui.actionFixGeometry, SIGNAL(triggered()), this, SLOT(onFixGeometry()));
+	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
 
 	// create tool bar
 	QActionGroup* stageGroup = new QActionGroup(this);
@@ -73,8 +73,8 @@ void MainWindow::onOpenCGA() {
 	glWidget->loadCGA(filename.toUtf8().data());
 }
 
-void MainWindow::onFixGeometry() {
-	glWidget->fixGeometry();
+void MainWindow::onAddBuildingMass() {
+	glWidget->addBuildingMass();
 }
 
 void MainWindow::onStageChanged() {
