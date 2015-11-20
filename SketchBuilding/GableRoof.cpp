@@ -72,21 +72,21 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 	// You can pass the polygon via an iterator pair
 	SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly);
 
-	std::map<int, glm::vec2> new_pts;
-	std::map<int, int> num_edges;
+	std::map<int, glm::vec2> pts_conv;
 
-	int count = 0;
-	for (auto face = iss->faces_begin(); face != iss->faces_end(); ++face, ++count) {
-		num_edges[count] = 0;
+	// compute the points conversion for the side face (this is only for the triangle)
+	for (auto face = iss->faces_begin(); face != iss->faces_end(); ++face) {
+		// count num of edges
+		int num_edges= 0;
 		{
 			auto edge0 = face->halfedge();
 			auto edge = edge0;
 			do {
-				num_edges[count]++;
+				num_edges++;
 			} while ((edge = edge->next()) != edge0);
 		}
 
-		if (num_edges[count] == 3) {
+		if (num_edges == 3) {
 			auto edge0 = face->halfedge();
 			auto edge = edge0;
 			glm::vec2 p0, p1, p2;
@@ -99,7 +99,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 					if (edge->is_inner_bisector()) { // 外側に接続されていない分割線
 					} else { // 外側と接続されている分割線
 						p2 = glm::vec2(head->point().x(), head->point().y());
-						new_pts[head->id()] = (p0 + p1) * 0.5f; // to be fixed
+						pts_conv[head->id()] = (p0 + p1) * 0.5f; // to be fixed
 					}
 				} else { // 一番外側のボーダー
 					p0 = glm::vec2(tail->point().x(), tail->point().y());
@@ -109,28 +109,28 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 		}
 	}
 
-	count = 0;
-	for (auto face = iss->faces_begin(); face != iss->faces_end(); ++face, ++count) {
-		// 各faceについて、ポリゴンを生成する
+	// create a face for eacy polygon
+	for (auto face = iss->faces_begin(); face != iss->faces_end(); ++face) {
 		auto edge0 = face->halfedge();
 		auto edge = edge0;
 
 		// 最初のエッジを保存する
 		glm::vec2 p0, p1;
-		bool first = true;
+		bool is_first_edge = true;
 
-		glm::vec3 prev_p;
+		std::vector<glm::vec3> pts3d;
 
 		do {
 			auto head = edge->vertex();
 			auto tail = edge->opposite()->vertex();
 
-			if (first) {
+			if (is_first_edge) {
 				p0 = glm::vec2(tail->point().x(), tail->point().y());
 				p1 = glm::vec2(head->point().x(), head->point().y());
-				first = false;
+				pts3d.push_back(glm::vec3(p0, 0));
+				pts3d.push_back(glm::vec3(p1, 0));
 
-				prev_p = glm::vec3(p1, 0);
+				is_first_edge = false;
 			} else {
 				glm::vec2 p2 = glm::vec2(head->point().x(), head->point().y());
 
@@ -138,46 +138,48 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 					// p2の高さを計算
 					float z = glutils::distance(p0, p1, p2) * tanf(_angle * M_PI / 180.0f);
 
-					if (new_pts.find(head->id()) != new_pts.end()) {
-						p2 = new_pts[head->id()];
+					if (pts_conv.find(head->id()) != pts_conv.end()) {
+						p2 = pts_conv[head->id()];
 					}
 
-					// vertical faces
-					if (num_edges[count] == 3 && name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
-						glm::vec2 v1(1, 0);
-						glm::vec2 v2 = glm::normalize(p1 - p0);
-						float theta = acos(glm::dot(v1, v2));
-						if (v1.x * v2.y - v1.y * v2.x < 0) {
-							theta = -theta;
-						}
-
-						glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(glm::mat4(), glm::vec3(p0, 0)), theta, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
-						glm::mat4 inv = glm::inverse(mat);
-
-						// この辺り、正しくない。to be fixed!!!!!
-						std::vector<glm::vec2> pts2d;
-						pts2d.push_back(glm::vec2(0, 0));
-						pts2d.push_back(glm::vec2(inv * glm::vec4(prev_p, 1)));
-						pts2d.push_back(glm::vec2(pts2d[1].x * 0.5, z));
-
-						shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, _modelMat * mat, pts2d, _color, _texture)));
-					} else if (num_edges[count] > 3 && name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-						std::vector<glm::vec3> pts3d;
-						std::vector<glm::vec3> normals;
-						pts3d.push_back(glm::vec3(p0, 0));
-						pts3d.push_back(prev_p);
-						pts3d.push_back(glm::vec3(p2, z));
-						glm::vec3 n = glm::cross(pts3d[1] - pts3d[0], pts3d[2] - pts3d[0]);
-						normals.push_back(n);
-						normals.push_back(n);
-						normals.push_back(n);
-						shapes.push_back(boost::shared_ptr<Shape>(new GeneralObject(name_map.at("top"), _pivot, _modelMat, pts3d, normals, _color)));
-					}
-	
-					prev_p = glm::vec3(p2, z);
+					pts3d.push_back(glm::vec3(p2, z));
 				}
 			}
 		} while ((edge = edge->next()) != edge0);
+
+		glm::vec3 normal = glm::normalize(glm::cross(pts3d[1] - pts3d[0], pts3d[2] - pts3d[0]));
+
+		if (glm::dot(glm::vec3(0, 0, 1), normal) < 0.01f) {	// vertical face
+			if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
+				float rot_z = atan2f(pts3d[1].y - pts3d[0].y, pts3d[1].x - pts3d[0].x);
+				glm::mat4 convMat = glm::rotate(glm::rotate(glm::translate(glm::mat4(), pts3d[0]), rot_z, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
+				glm::mat4 invMat = glm::inverse(convMat);
+				glm::mat4 mat = _modelMat * convMat;
+
+				std::vector<glm::vec2> pts2d;
+				for (int i = 0; i < pts3d.size(); ++i) {
+					pts2d.push_back(glm::vec2(invMat * glm::vec4(pts3d[i], 1)));
+				}
+
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts2d, _color, _texture)));
+			}
+		}
+		else {	// top face
+			if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
+				float rot_x = atan2f(sqrt(normal.x * normal.x + normal.y * normal.y), normal.z);
+				float rot_z = atan2f(pts3d[1].y - pts3d[0].y, pts3d[1].x - pts3d[0].x);
+				glm::mat4 convMat = glm::rotate(glm::rotate(glm::translate(glm::mat4(), pts3d[0]), rot_z, glm::vec3(0, 0, 1)), rot_x, glm::vec3(1, 0, 0));
+				glm::mat4 invMat = glm::inverse(convMat);
+				glm::mat4 mat = _modelMat * convMat;
+
+				std::vector<glm::vec2> pts2d;
+				for (int i = 0; i < pts3d.size(); ++i) {
+					pts2d.push_back(glm::vec2(invMat * glm::vec4(pts3d[i], 1)));
+				}
+
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, pts2d, _color, _texture)));
+			}
+		}
 	}
 }
 
