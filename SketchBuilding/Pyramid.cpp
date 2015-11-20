@@ -3,7 +3,6 @@
 #include "CGA.h"
 #include "GLUtils.h"
 #include "Polygon.h"
-#include "BoundingBox.h"
 
 namespace cga {
 
@@ -19,7 +18,7 @@ Pyramid::Pyramid(const std::string& name, const glm::mat4& pivot, const glm::mat
 	this->_color = color;
 	this->_texture = texture;
 
-	BoundingBox bbox(points);
+	glutils::BoundingBox bbox(points);
 	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, height);
 }
 
@@ -107,7 +106,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 		
 		// convert the coordinates
 		std::vector<glm::vec2> pts;
-		for (int i = _points.size() - 1; i >= 0; --i) {
+		for (size_t i = _points.size() - 1; i >= 0; --i) {
 			pts.push_back(glm::vec2(invMat * glm::vec4(_points[i], 0, 1)));
 		}
 

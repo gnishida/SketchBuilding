@@ -9,6 +9,7 @@
 namespace glutils {
 
 class BoundingBox {
+public:
 	glm::vec3 minPt;
 	glm::vec3 maxPt;
 

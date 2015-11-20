@@ -440,7 +440,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	if (stage == "building") {
-		if (scene.building.selectTopFace(cameraPos, view_dir)) {
+		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
 			scene.building.newLayer();
 
 			// shift the camera such that the selected face becomes a ground plane.
@@ -461,7 +461,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "roof") {
-		if (scene.building.selectTopFace(cameraPos, view_dir)) {
+		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
 			// shift the camera such that the selected face becomes a ground plane.
 			camera.pos = glm::vec3(0, scene.building.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			camera.xrot = 30.0f;
@@ -473,7 +473,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		//updateRoofOptions();
 	}
 	else if (stage == "facade") {
-		if (scene.building.selectSideFace(cameraPos, view_dir)) {
+		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;
@@ -484,7 +484,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		//updateFacadeOptions();
 	}
 	else if (stage == "window") {
-		if (scene.building.selectSideFace(cameraPos, view_dir)) {
+		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;
@@ -495,7 +495,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		//updateWindowOptions();
 	}
 	else if (stage == "ledge") {
-		if (scene.building.selectSideFace(cameraPos, view_dir)) {
+		if (scene.building.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes perpendicular to the image plane.
 			camera.pos.y = scene.building.selectedFace()->bbox.center().y;
 			camera.xrot = 0.0f;

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sstream>
 #include "CGA.h"
-#include "BoundingBox.h"
 
 namespace cga {
 
@@ -68,7 +67,7 @@ boost::shared_ptr<Shape> Shape::insert(const std::string& name, const std::strin
 	float scaleY = 1.0f;
 	float scaleZ = 1.0f;
 
-	BoundingBox bbox(asset.points);
+	glutils::BoundingBox bbox(asset.points);
 	if (_scope.x != 0 && _scope.y != 0 && _scope.z != 0) {			// all non-zero
 		scaleX = _scope.x / bbox.sx();
 		scaleY = _scope.y / bbox.sy();

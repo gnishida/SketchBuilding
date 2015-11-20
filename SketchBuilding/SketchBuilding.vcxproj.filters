@@ -85,9 +85,6 @@
     <ClCompile Include="Asset.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
-    <ClCompile Include="BoundingBox.cpp">
-      <Filter>Source Files\shape</Filter>
-    </ClCompile>
     <ClCompile Include="CGA.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
@@ -316,9 +313,6 @@
       <Filter>Source Files\rule</Filter>
     </ClInclude>
     <ClInclude Include="Asset.h">
-      <Filter>Source Files\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundingBox.h">
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="CGA.h">

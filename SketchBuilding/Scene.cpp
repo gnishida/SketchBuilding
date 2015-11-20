@@ -110,7 +110,7 @@ void BuildingMass::alignLayers() {
  * @param p			the point that emits ray.
  * @param v			the ray vector
  */
-bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
+bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 
@@ -121,6 +121,8 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 			if (_layers[i].faces[j]->vertices.size() < 3) continue;
 
 			for (int k = 0; k < _layers[i].faces[j]->vertices.size(); k += 3) {
+				if (glm::dot(_layers[i].faces[j]->vertices[0].normal, normal) < 0.99f) continue;
+
 				if (glutils::rayTriangleIntersection(p, v, _layers[i].faces[j]->vertices[k].position, _layers[i].faces[j]->vertices[k + 1].position, _layers[i].faces[j]->vertices[k + 2].position, intPt)) {
 					float dist = glm::length(intPt - p);
 
@@ -150,7 +152,7 @@ bool BuildingMass::selectFace(const glm::vec3& p, const glm::vec3& v) {
 * @param p			the point that emits ray.
 * @param v			the ray vector
 */
-bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
+/*bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 
@@ -184,7 +186,7 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 	else {
 		return false;
 	}
-}
+}*/
 
 /**
 * Select a side face by hit testing.
@@ -192,6 +194,7 @@ bool BuildingMass::selectTopFace(const glm::vec3& p, const glm::vec3& v) {
 * @param p			the point that emits ray.
 * @param v			the ray vector
 */
+/*
 bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
@@ -199,8 +202,6 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 	unselectFace();
 
 	for (int i = 0; i < _layers.size(); ++i) {
-		//if (i == _currentLayer) continue;
-
 		for (int j = 0; j < _layers[i].faces.size(); ++j) {
 			if (_layers[i].faces[j]->vertices.size() < 3) continue;
 
@@ -228,7 +229,7 @@ bool BuildingMass::selectSideFace(const glm::vec3& p, const glm::vec3& v) {
 	else {
 		return false;
 	}
-}
+}*/
 
 void BuildingMass::unselectFace() {
 	if (_selectedFace) {

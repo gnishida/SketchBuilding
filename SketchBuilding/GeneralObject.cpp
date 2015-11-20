@@ -1,6 +1,5 @@
 #include "GeneralObject.h"
 #include "CGA.h"
-#include "BoundingBox.h"
 #include "GLUtils.h"
 
 namespace cga {
@@ -62,7 +61,7 @@ boost::shared_ptr<Shape> GeneralObject::clone(const std::string& name) const {
 void GeneralObject::size(float xSize, float ySize, float zSize) {
 	_prev_scope = _scope;
 
-	BoundingBox bbox(_points);
+	glutils::BoundingBox bbox(_points);
 	float scale_x = xSize / bbox.sx();
 	float scale_y = xSize / bbox.sy();
 	float scale_z = xSize / bbox.sz();

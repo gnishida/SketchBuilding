@@ -3,7 +3,6 @@
 #include "Polygon.h"
 #include "CGA.h"
 #include "GLUtils.h"
-#include "BoundingBox.h"
 
 namespace cga {
 
@@ -15,7 +14,7 @@ Prism::Prism(const std::string& name, const glm::mat4& pivot, const glm::mat4& m
 	this->_points = points;
 	this->_color = color;
 
-	BoundingBox bbox(points);
+	glutils::BoundingBox bbox(points);
 	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, height);
 }
 
