@@ -47,8 +47,6 @@ public:
 	ShapeLayer& currentLayer() { return _layers[_currentLayer]; }
 	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
 	bool selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal = glm::vec3(1, 1, 1));
-	//bool selectTopFace(const glm::vec3& p, const glm::vec3& v);
-	//bool selectSideFace(const glm::vec3& p, const glm::vec3& v);
 	void unselectFace();
 
 	void generateGeometry(cga::CGA* system, RenderManager* renderManager);

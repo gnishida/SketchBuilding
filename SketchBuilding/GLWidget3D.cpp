@@ -527,10 +527,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	this->stage = stage;
 	clearSketch();
 
-	if (scene.building.selectedFace() != NULL) {
-		scene.building.selectedFace()->unselect();
-		scene.building.unselectFace();
-	}
+	scene.building.unselectFace();
 
 	if (stage == "building") {
 		camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
