@@ -6,7 +6,6 @@
 #include "Polygon.h"
 #include "Rectangle.h"
 #include "CGA.h"
-#include "GeneralObject.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 typedef K::Point_2 KPoint;

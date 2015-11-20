@@ -122,6 +122,38 @@ boost::shared_ptr<Shape> Shape::insert(const std::string& name, const std::strin
 		}
 	}
 
+	/*
+	for (int i = 0; i < asset.points.size(); ++i) {
+		glm::vec3 x_dir = glm::normalize(asset.points[i][1] - asset.points[i][0]);
+		glm::vec3 y_dir(0, 1, 0);
+		glm::vec3 z_dir(0, 0, 1);
+		if (glm::dot(x_dir, y_dir) < glm::dot(x_dir, z_dir)) {
+			z_dir = glm::cross(x_dir, y_dir);
+			y_dir = glm::cross(z_dir, x_dir);
+		}
+		else {
+			y_dir = glm::cross(z_dir, x_dir);
+			z_dir = glm::cross(x_dir, y_dir);
+		}
+
+		glm::mat4 convMat;
+		convMat[0] = glm::vec4(x_dir, 0);
+		convMat[1] = glm::vec4(y_dir, 0);
+		convMat[2] = glm::vec4(z_dir, 0);
+		convMat[3] = glm::vec4(0, 0, 0, 1);
+
+		glm::mat4 invMat = glm::inverse(convMat);
+
+		std::vector<glm::vec2> pts;
+		for (int j = 0; j < asset.points[i].size(); ++j) {
+			pts.push_back(glm::vec2(invMat * glm::vec4(asset.points[i][j] - asset.points[i][0], 1)));
+		}
+
+		glm::mat4 mat = glm::translate(glm::mat4(), asset.points[i][0]) * convMat;
+		boost::shared_ptr<Shape>(new Polygon(name, _pivot, mat, pts, _color, _texture));
+	}
+	*/
+
 	if (asset.texCoords.size() > 0) {
 		return boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, asset.points, asset.normals, _color, asset.texCoords, _texture));
 	} else {

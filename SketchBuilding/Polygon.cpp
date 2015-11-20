@@ -3,7 +3,6 @@
 #include "GableRoof.h"
 #include "HipRoof.h"
 #include "Prism.h"
-#include "GeneralObject.h"
 #include "CGA.h"
 #include "GLUtils.h"
 #include "BoundingBox.h"
@@ -44,38 +43,37 @@ boost::shared_ptr<Shape> Polygon::inscribeCircle(const std::string& name) {
 }
 
 void Polygon::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	std::vector<glm::vec2> offset_points;
+	glutils::offsetPolygon(_points, offsetDistance, offset_points);
+
 	// inner shape
 	if (!inside.empty()) {
-		std::vector<glm::vec2> offset_points;
-		glutils::offsetPolygon(_points, offsetDistance, offset_points);
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, offset_points, _color, _texture)));
 	}
 
 	// border shape
 	if (!border.empty()) {
-		std::vector<glm::vec2> offset_points;
-		glutils::offsetPolygon(_points, offsetDistance, offset_points);
-
 		std::vector<glm::vec3> pts;
 		std::vector<glm::vec3> normals;
 		for (int i = 0; i < _points.size(); ++i) {
 			pts.push_back(glm::vec3(offset_points[i], 0));
 			pts.push_back(glm::vec3(_points[i], 0));
 			pts.push_back(glm::vec3(_points[(i+1) % _points.size()], 0));
-
-			pts.push_back(glm::vec3(offset_points[i], 0));
-			pts.push_back(glm::vec3(_points[(i+1) % _points.size()], 0));
 			pts.push_back(glm::vec3(offset_points[(i+1) % offset_points.size()], 0));
 
-			normals.push_back(glm::vec3(0, 0, 1));
-			normals.push_back(glm::vec3(0, 0, 1));
-			normals.push_back(glm::vec3(0, 0, 1));
-			normals.push_back(glm::vec3(0, 0, 1));
-			normals.push_back(glm::vec3(0, 0, 1));
-			normals.push_back(glm::vec3(0, 0, 1));
-		}
-		
-		shapes.push_back(boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, pts, normals, _color)));
+			float rot_z = atan2f(_points[(i + 1) % _points.size()].y - _points[i].y, _points[(i + 1) % _points.size()].x - _points[i].x);
+			glm::mat4 convMat = glm::rotate(glm::translate(glm::mat4(), glm::vec3(_points[i], 0)), rot_z, glm::vec3(0, 0, 1));
+			glm::mat4 invMat = glm::inverse(convMat);
+			glm::mat4 mat = _modelMat * convMat;
+
+			std::vector<glm::vec2> pts2d;
+			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[0], 1)));
+			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[1], 1)));
+			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[2], 1)));
+			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[3], 1)));
+
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _pivot, mat, pts2d, _color, _texture)));
+		}		
 	}
 }
 
