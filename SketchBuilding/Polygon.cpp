@@ -88,10 +88,15 @@ boost::shared_ptr<Shape> Polygon::roofGable(const std::string& name, float angle
 	return boost::shared_ptr<Shape>(new GableRoof(name, _pivot, _modelMat, _points, angle, _color));
 }
 
-void Polygon::setupProjection(float texWidth, float texHeight) {
-	_texCoords.resize(_points.size());
-	for (int i = 0; i < _points.size(); ++i) {
-		_texCoords[i] = glm::vec2(_points[i].x / texWidth, _points[i].y / texHeight);
+void Polygon::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	if (axesSelector == AXES_SCOPE_XY) {
+		_texCoords.resize(_points.size());
+		for (int i = 0; i < _points.size(); ++i) {
+			_texCoords[i] = glm::vec2(_points[i].x / texWidth, _points[i].y / texHeight);
+		}
+	}
+	else {
+		throw "Polygon supports only scope.xy for setupProjection().";
 	}
 }
 
@@ -116,10 +121,17 @@ boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, f
 void Polygon::generateGeometry(std::vector<glutils::Face>& faces, float opacity) const {
 	if (_removed) return;
 
-	std::vector<Vertex> vertices;
-	glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+	if (!_texture.empty() && _texCoords.size() >= _points.size()) {
+		std::vector<Vertex> vertices;
+		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _texCoords, _pivot * _modelMat, vertices);
 
-	faces.push_back(glutils::Face(_name, vertices));
+		faces.push_back(glutils::Face(_name, vertices, _texture));
+	} else {
+		std::vector<Vertex> vertices;
+		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+
+		faces.push_back(glutils::Face(_name, vertices));
+	}
 }
 
 }

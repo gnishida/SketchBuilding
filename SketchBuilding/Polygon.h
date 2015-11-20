@@ -24,7 +24,7 @@ public:
 	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
 	boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
-	void setupProjection(float texWidth, float texHeight);
+	void setupProjection(int axesSelector, float texWidth, float texHeight);
 	void size(float xSize, float ySize, float zSize);
 	//void split(int direction, const std::vector<float> ratios, const std::vector<std::string> names, std::vector<Object*>& objects);
 	boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);

@@ -145,11 +145,16 @@ boost::shared_ptr<Shape> Rectangle::roofHip(const std::string& name, float angle
 }
 
 void Rectangle::setupProjection(int axesSelector, float texWidth, float texHeight) {
-	_texCoords.resize(4);
-	_texCoords[0] = glm::vec2(0, 0);
-	_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
-	_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
-	_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+	if (axesSelector == AXES_SCOPE_XY) {
+		_texCoords.resize(4);
+		_texCoords[0] = glm::vec2(0, 0);
+		_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
+		_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
+		_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+	}
+	else {
+		throw "Rectangle supports only scope.xy for setupProjection().";
+	}
 }
 
 boost::shared_ptr<Shape> Rectangle::shapeL(const std::string& name, float frontWidth, float leftWidth) {

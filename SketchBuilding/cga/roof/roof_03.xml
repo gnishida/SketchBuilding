@@ -14,7 +14,7 @@
 	<rule name="TopFaceOffsetTop">
 		<roofGable angle="30"/>
 		<comp>
-			<param name="side" value="RoofSide"/>
+			<param name="side" value="Wall"/>
 			<param name="top" value="RoofTop"/>
 		</comp>
 	</rule>

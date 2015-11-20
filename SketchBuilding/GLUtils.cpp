@@ -259,6 +259,23 @@ bool rayTriangleIntersection(const glm::vec3& a, const glm::vec3& v, const glm::
 	else return false;
 }
 
+/**
+ * Compute the barycentroic coordinates.
+ *
+ * @param p1	point 1
+ * @param p2	point 2
+ * @param p3	point 3
+ * @param p		point
+ * @return		the barycentroic coodinates
+ */
+glm::vec2 barycentricCoordinates(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p) {
+	float den = (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
+	float alpha = ((p.x - p1.x) * (p3.y - p1.y) - (p.y - p1.y) * (p3.x - p1.x)) / den;
+	float beta = ((p.y - p1.y) * (p2.x - p1.x) - (p.x - p1.x) * (p2.y - p1.y)) / den;
+
+	return glm::vec2(alpha, beta);
+}
+
 void drawCircle(float r1, float r2, const glm::vec4& color, const glm::mat4& mat, std::vector<Vertex>& vertices, int slices) {
 	glm::vec4 p1(0, 0, 0, 1);
 	glm::vec4 n(0, 0, 1, 0);
@@ -500,6 +517,59 @@ void drawConcavePolygon(const std::vector<glm::vec2>& points, const glm::vec4& c
 		}
 
 		drawPolygon(pts, color, texCoords, mat, vertices);
+	}
+}
+
+void drawConcavePolygon(const std::vector<glm::vec2>& points, const glm::vec4& color, const std::vector<glm::vec2>& texCoords, const glm::mat4& mat, std::vector<Vertex>& vertices) {
+	Polygon_2 polygon;
+	for (int i = 0; i < points.size(); ++i) {
+		polygon.push_back(Point_2(points[i].x, points[i].y));
+	}
+		
+	// tesselate the concave polygon
+	Polygon_list partition_polys;
+	Traits       partition_traits;
+	CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(), polygon.vertices_end(), std::back_inserter(partition_polys), partition_traits);
+
+	for (auto fit = partition_polys.begin(); fit != partition_polys.end(); ++fit) {
+		std::vector<glm::vec2> pts;
+		std::vector<glm::vec2> tex;
+
+		for (auto vit = fit->vertices_begin(); vit != fit->vertices_end(); ++vit) {
+			glm::vec2 pt(vit->x(), vit->y());
+			pts.push_back(pt);
+
+			// find the same point to get texture coordinates
+			bool found = false;
+			glm::vec2 texCoord;
+			for (int i = 0; i < points.size(); ++i) {
+				if (glm::length(points[i] - pt) < 0.01f) {
+					found = true;
+					texCoord = texCoords[i];
+				}
+			}
+
+			// if not, estimate the texture coordinates based on the three neighbors
+			if (!found) {
+				glm::vec2 p1 = points[0];
+				glm::vec2 t1 = texCoords[0];
+				glm::vec2 p2 = points[1];
+				glm::vec2 t2 = texCoords[1];
+				glm::vec2 p3 = points[2];
+				glm::vec2 t3 = texCoords[2];
+				if (glm::dot(glm::normalize(p2 - p1), glm::normalize(p3 - p2)) > 0.99f && points.size() > 3 && texCoords.size() > 3) {
+					p3 = points[3];
+					t3 = texCoords[3];
+				}
+
+				glm::vec2 bc = barycentricCoordinates(p1, p2, p3, pt);
+				texCoord = t1 * (1.0f - bc.x - bc.y) + t2 * bc.x + t3 * bc.y;
+			}
+
+			tex.push_back(texCoord);
+		}
+
+		drawPolygon(pts, color, tex, mat, vertices);
 	}
 }
 
