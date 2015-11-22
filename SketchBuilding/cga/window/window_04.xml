@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
-	<rule name="Window">
+	<rule name="Start">
 		<split splitAxis="y">
 			<param type="absolute" value="0.3" name="WindowSillTile"/>
 			<param type="floating" value="1" name="WindowTileMain"/>

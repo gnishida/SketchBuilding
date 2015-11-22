@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
-	<rule name="Window">
+	<rule name="Start">
 		<split splitAxis="x">
 			<param type="relative" value="0.2" name="WindowShutterArea"/>
 			<param type="relative" value="0.6" name="WindowMainArea"/>

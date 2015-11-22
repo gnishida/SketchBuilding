@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
-	<rule name="Window">
+	<rule name="Start">
 		<extrude height="-0.1"/>
 		<comp>
 			<param name="side" value="WindowFrame"/>

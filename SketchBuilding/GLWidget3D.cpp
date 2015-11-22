@@ -13,6 +13,7 @@
 //#include "Regression.h"
 #include <time.h>
 #include "LeftWindowItemWidget.h"
+#include "Scene.h"
 
 GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	mainWin = (MainWindow*)parent;
@@ -161,8 +162,10 @@ void GLWidget3D::selectOption(int option_index) {
 	} else if (stage == "roof") {
 		predictRoof(option_index);
 	} else if (stage == "facade") {
-		scene.currentLayer().setGrammar("Facade", grammars["facade"][option_index]);
-		scene.generateGeometry(&renderManager);
+		if (!scene._selectedFaceName.empty()) {
+			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][option_index]);
+			scene.generateGeometry(&renderManager);
+		}
 	} else if (stage == "window") {
 		predictWindow(option_index);
 	} else if (stage == "ledge") {
@@ -305,7 +308,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
-	scene.currentLayer().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
+	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
@@ -313,11 +316,11 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	params.erase(params.begin(), params.begin() + 4);
 	
 	// set parameter values
-	scene.currentLayer().setGrammar("Footprint", grammars["building"][grammar_id], params);
+	scene.currentObject().setGrammar("Start", grammars["building"][grammar_id], params);
 	
 	// set height
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
-	scene.currentLayer().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
+	scene.currentObject().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
 	scene.generateGeometry(&renderManager);
 
@@ -328,12 +331,17 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 }
 
 void GLWidget3D::predictRoof(int grammar_id) {
+	if (scene._selectedFaceName.empty()) {
+		std::cout << "Warning: face is not selected." << std::endl;
+		return;
+	}
+
 	time_t start = clock();
 
 	renderManager.removeObjects();
 
 	// DEBUG用に、roof grammarを固定で選択
-	scene.currentLayer().setGrammar("Roof", grammars["roof"][grammar_id]);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["roof"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 
@@ -399,12 +407,17 @@ void GLWidget3D::predictFacade(int grammar_id) {
 }
 
 void GLWidget3D::predictWindow(int grammar_id) {
+	if (scene._selectedFaceName.empty()) {
+		std::cout << "Warning: face is not selected." << std::endl;
+		return;
+	}
+
 	time_t start = clock();
 
 	renderManager.removeObjects();
 
 	// DEBUG用に、window grammarを固定で選択
-	scene.currentLayer().setGrammar("Window", grammars["window"][grammar_id]);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["window"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 
@@ -415,12 +428,17 @@ void GLWidget3D::predictWindow(int grammar_id) {
 }
 
 void GLWidget3D::predictLedge(int grammar_id) {
+	if (scene._selectedFaceName.empty()) {
+		std::cout << "Warning: face is not selected." << std::endl;
+		return;
+	}
+
 	time_t start = clock();
 
 	renderManager.removeObjects();
 
 	// DEBUG用に、ledge grammarを固定で選択
-	scene.currentLayer().setGrammar("Ledge", grammars["ledge"][grammar_id]);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["ledge"][grammar_id]);
 
 	scene.generateGeometry(&renderManager);
 

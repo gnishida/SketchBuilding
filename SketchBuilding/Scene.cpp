@@ -42,11 +42,31 @@ void SceneObject::setHeight(float height) {
 
 void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar) {
 	grammars[name] = grammar;
+
+	// rewrite the axiom to the name
+	for (auto it = grammars[name].rules.begin(); it != grammars[name].rules.end(); ++it) {
+		if (it->first == "Start") {
+			cga::Rule rule = it->second;
+			grammars[name].rules.erase(it->first);
+			grammars[name].rules[name] = rule;
+			break;
+		}
+	}
 }
 
 void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params) {
 	grammars[name] = grammar;
 	cga::CGA::setParamValues(grammars[name], params);
+
+	// rewrite the axiom to the name
+	for (auto it = grammars[name].rules.begin(); it != grammars[name].rules.end(); ++it) {
+		if (it->first == "Start") {
+			cga::Rule rule = it->second;
+			grammars[name].rules.erase(it->first);
+			grammars[name].rules[name] = rule;
+			break;
+		}
+	}
 }
 
 void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager) {
@@ -72,6 +92,8 @@ void SceneObject::updateGeometry(RenderManager* renderManager) {
 
 Scene::Scene() {
 	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
+	_objects.resize(1);
+	_currentObject = 0;
 }
 
 void Scene::clear() {
@@ -137,9 +159,11 @@ bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& 
 
 	if (_selectedFace) {
 		_selectedFace->select();
+		_selectedFaceName = _selectedFace->name;
 		return true;
 	}
 	else {
+		_selectedFaceName = "";
 		return false;
 	}
 }

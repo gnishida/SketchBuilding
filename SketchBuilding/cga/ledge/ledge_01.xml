@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
-	<rule name="Ledge">
+	<rule name="Start">
 		<extrude height="0.3"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>

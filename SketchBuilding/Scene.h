@@ -38,6 +38,7 @@ public:
 	std::vector<SceneObject> _objects;
 	int _currentObject;
 	boost::shared_ptr<glutils::Face> _selectedFace;
+	std::string _selectedFaceName;
 
 public:
 	Scene();
@@ -45,7 +46,7 @@ public:
 	void clear();
 	void newLayer();
 	void alignLayers();
-	SceneObject& currentLayer() { return _objects[_currentObject]; }
+	SceneObject& currentObject() { return _objects[_currentObject]; }
 	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
 	bool selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal = glm::vec3(1, 1, 1));
 	void unselectFace();

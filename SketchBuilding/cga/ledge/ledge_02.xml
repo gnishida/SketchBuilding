@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar version="1.0" author="Gen Nishida">
-	<rule name="Ledge">
+	<rule name="Start">
 		<split splitAxis="y">
 			<param type="relative" value="0.5" name="LedgeLayer1"/>
 			<param type="relative" value="0.5" name="LedgeLayer2"/>
