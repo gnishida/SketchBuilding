@@ -28,8 +28,8 @@ public:
 	void setGrammar(const std::string& name, const cga::Grammar& grammar);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params);
 
-	void generateGeometry(cga::CGA* system, RenderManager* renderManager);
-	void updateGeometry(RenderManager* renderManager);
+	void generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage);
+	void updateGeometry(RenderManager* renderManager, const std::string& stage);
 };
 
 class Scene {
@@ -51,8 +51,8 @@ public:
 	bool selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal = glm::vec3(1, 1, 1));
 	void unselectFace();
 
-	void generateGeometry(RenderManager* renderManager);
-	void updateGeometry(RenderManager* renderManager);
+	void generateGeometry(RenderManager* renderManager, const std::string& stage);
+	void updateGeometry(RenderManager* renderManager, const std::string& stage);
 };
 
 }

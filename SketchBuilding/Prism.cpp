@@ -6,9 +6,10 @@
 
 namespace cga {
 
-Prism::Prism(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float height, const glm::vec3& color) {
-	this->_name = name;
+Prism::Prism(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -27,7 +28,7 @@ boost::shared_ptr<Shape> Prism::clone(const std::string& name) const {
 void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	// front face
 	if (name_map.find("front") != name_map.end() && name_map.at("front") != "NIL") {
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _pivot, glm::rotate(_modelMat, M_PI * 0.5f, glm::vec3(1, 0, 0)), glm::length(_points[1] - _points[0]), _scope.z, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _grammar_type, _pivot, glm::rotate(_modelMat, M_PI * 0.5f, glm::vec3(1, 0, 0)), glm::length(_points[1] - _points[0]), _scope.z, _color)));
 	}
 
 	// side faces
@@ -49,20 +50,20 @@ void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector
 			sidePoints[2] = glm::vec2(invMat * glm::vec4(_points[(i + 1) % _points.size()], _scope.z, 1));
 			sidePoints[3] = glm::vec2(invMat * glm::vec4(_points[i], _scope.z, 1));
 
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, _modelMat * mat2, glm::length(_points[(i + 1) % _points.size()] - _points[i]), _scope.z, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, _modelMat * mat2, glm::length(_points[(i + 1) % _points.size()] - _points[i]), _scope.z, _color)));
 		}
 	}
 
 	// top face
 	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
 	}
 
 	// bottom face
 	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
 		//std::vector<glm::vec2> basePoints = _points;
 		//std::reverse(basePoints.begin(), basePoints.end());
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _pivot, _modelMat, _points, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture)));
 	}
 }
 
@@ -113,14 +114,14 @@ void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fac
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(0, 0, _scope.z));
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), mat, vertices);
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// bottom
 	{
 		std::vector<Vertex> vertices;
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// side
@@ -148,7 +149,7 @@ void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fac
 			vertices.push_back(Vertex(glm::vec3(p4), normal, glm::vec4(_color, opacity)));
 			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), 1));
 
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 
 			p1 = p3;
 			p2 = p4;

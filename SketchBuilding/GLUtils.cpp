@@ -108,8 +108,9 @@ void BoundingBox::addPoint(const glm::vec3& point) {
 	maxPt.z = std::max(maxPt.z, point.z);
 }
 
-Face::Face(const std::string& name, const std::vector<Vertex>& vertices) {
+Face::Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices) {
 	this->name = name;
+	this->grammar_type = grammar_type;
 	this->vertices = vertices;
 
 	for (int i = 0; i < vertices.size(); ++i) {
@@ -117,8 +118,9 @@ Face::Face(const std::string& name, const std::vector<Vertex>& vertices) {
 	}
 }
 
-Face::Face(const std::string& name, const std::vector<Vertex>& vertices, const std::string& texture) {
+Face::Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices, const std::string& texture) {
 	this->name = name;
+	this->grammar_type = grammar_type;
 	this->vertices = vertices;
 	this->texture = texture;
 
@@ -151,7 +153,7 @@ Face Face::rotate(float rad, const glm::vec3& axis) {
 		rotatedVertices[i].position = glm::vec3(mat * glm::vec4(vertices[i].position, 1));
 	}
 
-	return Face(name, rotatedVertices, texture);
+	return Face(name, grammar_type, rotatedVertices, texture);
 }
 
 /**

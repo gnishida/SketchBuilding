@@ -108,7 +108,7 @@ void GLWidget3D::clearSketch() {
 
 void GLWidget3D::clearGeometry() {
 	scene.clear();
-	scene.generateGeometry(&renderManager);
+	scene.generateGeometry(&renderManager, stage);
 	update();
 }
 
@@ -132,23 +132,22 @@ void GLWidget3D::drawScene(int drawMode) {
  */
 void GLWidget3D::loadCGA(char* filename) {
 	renderManager.removeObjects();
-
-
+	
 	try {
 		cga::Grammar grammar;
 		cga::parseGrammar(filename, grammar);
 		cga::CGA::randomParamValues(grammar);
 
-		sc::SceneObject sl;
-		sl.setFootprint(0, 0, 0, 16, 12);
+		sc::SceneObject so;
+		so.setFootprint(0, 0, 0, 16, 12);
 
 		std::vector<float> params(10);
 		for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
-		sl.setGrammar("Start", grammar, params);
-		//sl.setGrammar(grammar, params);
+		so.setGrammar("Start", grammar, params);
+		//so.setGrammar(grammar, params);
 
 		cga::CGA system;
-		sl.generateGeometry(&system, &renderManager);
+		so.generateGeometry(&system, &renderManager, "");
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -168,12 +167,12 @@ void GLWidget3D::selectOption(int option_index) {
 	} else if (stage == "facade") {
 		if (!scene._selectedFaceName.empty()) {
 			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][option_index]);
-			scene.generateGeometry(&renderManager);
+			scene.generateGeometry(&renderManager, "facade");
 		}
 	} else if (stage == "floor") {
 		if (!scene._selectedFaceName.empty()) {
 			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][option_index]);
-			scene.generateGeometry(&renderManager);
+			scene.generateGeometry(&renderManager, "floor");
 		}
 	} else if (stage == "window") {
 		predictWindow(option_index);
@@ -350,7 +349,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
 	scene.currentObject().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
-	scene.generateGeometry(&renderManager);
+	scene.generateGeometry(&renderManager, "building");
 
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -371,7 +370,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	// DEBUG用に、roof grammarを固定で選択
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["roof"][grammar_id]);
 
-	scene.generateGeometry(&renderManager);
+	scene.generateGeometry(&renderManager, "roof");
 
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -461,8 +460,8 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	// DEBUG用に、window grammarを固定で選択
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["window"][grammar_id]);
 
-	scene.generateGeometry(&renderManager);
-
+	scene.generateGeometry(&renderManager, "window");
+	
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
@@ -482,7 +481,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	// DEBUG用に、ledge grammarを固定で選択
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["ledge"][grammar_id]);
 
-	scene.generateGeometry(&renderManager);
+	scene.generateGeometry(&renderManager, "ledge");
 
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -616,7 +615,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 		camera.updateMVPMatrix();
 	}
-	scene.updateGeometry(&renderManager);
+	scene.updateGeometry(&renderManager, stage);
 	update();
 }
 
@@ -652,6 +651,8 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	} else if (stage == "window") {
 	} else if (stage == "ledge") {
 	}
+
+	scene.updateGeometry(&renderManager, stage);
 
 	update();
 }
@@ -802,7 +803,9 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 
-
+	// for transparacy
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Model view projection行列をシェーダに渡す
 	glUniformMatrix4fv(glGetUniformLocation(renderManager.program, "mvpMatrix"), 1, GL_FALSE, &camera.mvpMatrix[0][0]);

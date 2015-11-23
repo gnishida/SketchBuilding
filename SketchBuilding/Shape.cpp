@@ -154,9 +154,9 @@ boost::shared_ptr<Shape> Shape::insert(const std::string& name, const std::strin
 	*/
 
 	if (asset.texCoords.size() > 0) {
-		return boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, asset.points, asset.normals, _color, asset.texCoords, _texture));
+		return boost::shared_ptr<Shape>(new GeneralObject(name, _grammar_type, _pivot, _modelMat, asset.points, asset.normals, _color, asset.texCoords, _texture));
 	} else {
-		return boost::shared_ptr<Shape>(new GeneralObject(name, _pivot, _modelMat, asset.points, asset.normals, _color));
+		return boost::shared_ptr<Shape>(new GeneralObject(name, _grammar_type, _pivot, _modelMat, asset.points, asset.normals, _color));
 	}
 }
 

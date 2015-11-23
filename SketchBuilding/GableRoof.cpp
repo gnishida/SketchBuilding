@@ -15,9 +15,10 @@ typedef boost::shared_ptr<Ss> SsPtr ;
 
 namespace cga {
 
-GableRoof::GableRoof(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color) {
-	this->_name = name;
+GableRoof::GableRoof(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -41,24 +42,24 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 
 		float rot_x = atan2f(height, depth * 0.5f);
 		glm::mat4 mat = glm::rotate(_modelMat, rot_x, glm::vec3(1, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _grammar_type, _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(width, depth, 0)), M_PI, glm::vec3(0, 0, 1)), rot_x, glm::vec3(1, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _grammar_type, _pivot, mat, width, sqrt(depth * 0.5 * depth * 0.5 + height * height), _color)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, depth, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
 		std::vector<glm::vec2> pts;
 		pts.push_back(glm::vec2(0, 0));
 		pts.push_back(glm::vec2(depth, 0));
 		pts.push_back(glm::vec2(depth * 0.5, height));
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(width, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
 		pts.clear();
 		pts.push_back(glm::vec2(0, 0));
 		pts.push_back(glm::vec2(depth, 0));
 		pts.push_back(glm::vec2(depth * 0.5, height));
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 
 		return;
 	}
@@ -160,7 +161,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 					pts2d.push_back(glm::vec2(invMat * glm::vec4(pts3d[i], 1)));
 				}
 
-				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts2d, _color, _texture)));
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, pts2d, _color, _texture)));
 			}
 		}
 		else {	// top face
@@ -176,7 +177,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 					pts2d.push_back(glm::vec2(invMat * glm::vec4(pts3d[i], 1)));
 				}
 
-				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, pts2d, _color, _texture)));
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, mat, pts2d, _color, _texture)));
 			}
 		}
 	}
@@ -277,7 +278,7 @@ void GableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >&
 		} while ((edge = edge->next()) != edge0);
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 }
 
 }

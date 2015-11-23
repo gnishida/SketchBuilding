@@ -4,9 +4,10 @@
 
 namespace cga {
 
-SemiCircle::SemiCircle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color) {
-	this->_name = name;
+SemiCircle::SemiCircle(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, height, 0);
@@ -26,7 +27,7 @@ void SemiCircle::offset(const std::string& name, float offsetDistance, const std
 		float offset_width = _scope.x + offsetDistance * 2.0f;
 		float offset_height = _scope.y + offsetDistance;
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(-offsetDistance, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new SemiCircle(name, _pivot, mat, offset_width, offset_height, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new SemiCircle(name, _grammar_type, _pivot, mat, offset_width, offset_height, _color)));
 	}
 	
 	// border shape
@@ -67,7 +68,7 @@ void SemiCircle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >
 		}
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 }
 
 }

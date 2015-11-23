@@ -13,8 +13,8 @@ namespace cga {
 class Rectangle : public Shape {
 public:
 	Rectangle() {}
-	Rectangle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color);
-	Rectangle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2);
+	Rectangle(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color);
+	Rectangle(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> cornerCut(const std::string& name, int type, float length);
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);

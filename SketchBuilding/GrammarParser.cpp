@@ -34,6 +34,10 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 	doc.setContent(&file, true);
 	QDomElement root = doc.documentElement();
 
+	if (root.toElement().hasAttribute("type")) {
+		grammar.type = root.toElement().attribute("type").toUtf8().constData();
+	}
+
 	QDomNode child_node = root.firstChild();
 	while (!child_node.isNull()) {
 		if (child_node.toElement().tagName() == "attr") {

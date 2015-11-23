@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<grammar version="1.0" author="Gen Nishida">
+<grammar type="floor" version="1.0" author="Gen Nishida">
 	<rule name="Wall">
 		<texture texturePath="textures/bricks.jpg"/>
 	</rule>

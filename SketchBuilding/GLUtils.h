@@ -32,11 +32,12 @@ public:
 	std::string texture;
 	glm::vec4 backupColor;
 	BoundingBox bbox;
+	std::string grammar_type;
 
 public:
 	Face() {}
-	Face(const std::string& name, const std::vector<Vertex>& vertices);
-	Face(const std::string& name, const std::vector<Vertex>& vertices, const std::string& texture);
+	Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices);
+	Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices, const std::string& texture);
 
 	void select();
 	void unselect();

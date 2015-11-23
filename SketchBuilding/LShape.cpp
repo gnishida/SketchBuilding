@@ -10,9 +10,10 @@
 
 namespace cga {
 
-LShape::LShape(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, float front_width, float right_width, const glm::vec3& color) {
-	this->_name = name;
+LShape::LShape(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, float front_width, float right_width, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, height, 0);
@@ -29,7 +30,7 @@ boost::shared_ptr<Shape> LShape::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> LShape::extrude(const std::string& name, float height) {
-	return boost::shared_ptr<Shape>(new LShapePrism(name, _pivot, _modelMat, _scope.x, _scope.y, height, _front_width, _right_width, _color));
+	return boost::shared_ptr<Shape>(new LShapePrism(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _front_width, _right_width, _color));
 }
 
 void LShape::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
@@ -49,22 +50,22 @@ void LShape::offset(const std::string& name, float offsetDistance, const std::st
 		float offset_u2 = (_texCoords[2].x - _texCoords[0].x) * (_scope.x + offsetDistance) / _scope.x + _texCoords[0].x;
 		float offset_v2 = (_texCoords[2].y - _texCoords[0].y) * (_scope.y + offsetDistance) / _scope.y + _texCoords[0].y;
 		}
-		shapes.push_back(boost::shared_ptr<Shape>(new UShape(inside, _pivot, mat, offset_width, offset_height, _color, _texture, offset_u1, offset_v1, offset_u2, offset_v2)));
+		shapes.push_back(boost::shared_ptr<Shape>(new UShape(inside, _grammar_type, _pivot, mat, offset_width, offset_height, _color, _texture, offset_u1, offset_v1, offset_u2, offset_v2)));
 		}
 		else {*/
-		shapes.push_back(boost::shared_ptr<Shape>(new LShape(inside, _pivot, mat, offset_width, offset_height, _front_width + offsetDistance * 2.0f, _right_width + offsetDistance * 2.0f, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new LShape(inside, _grammar_type, _pivot, mat, offset_width, offset_height, _front_width + offsetDistance * 2.0f, _right_width + offsetDistance * 2.0f, _color)));
 		//}
 	}
 
 	// border shape
 	if (!border.empty()) {
 		if (offsetDistance < 0) {
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, 0)), _front_width, -offsetDistance, _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width, -offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y - _right_width + offsetDistance, -offsetDistance, _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::translate(_modelMat, glm::vec3(_front_width + offsetDistance, _scope.y - _right_width, 0)), _scope.x - _front_width - offsetDistance, -offsetDistance, _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y - _right_width - offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _right_width + offsetDistance * 2.0f, -offsetDistance, _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _scope.x, -offsetDistance, _color)));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2.0f, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, 0)), _front_width, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width, -offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y - _right_width + offsetDistance, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(_front_width + offsetDistance, _scope.y - _right_width, 0)), _scope.x - _front_width - offsetDistance, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y - _right_width - offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _right_width + offsetDistance * 2.0f, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _scope.x, -offsetDistance, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2.0f, -offsetDistance, _color)));
 		}
 		else {
 			// not supported
@@ -78,7 +79,7 @@ boost::shared_ptr<Shape> LShape::pyramid(const std::string& name, float height) 
 	points[1] = glm::vec2(_scope.x, 0);
 	points[2] = glm::vec2(_scope.x, _scope.y);
 	points[3] = glm::vec2(0, _scope.y);
-	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
 }
 
 boost::shared_ptr<Shape> LShape::roofGable(const std::string& name, float angle) {
@@ -90,7 +91,7 @@ boost::shared_ptr<Shape> LShape::roofGable(const std::string& name, float angle)
 	points.push_back(glm::vec2(_scope.x, _scope.y));
 	points.push_back(glm::vec2(0, _scope.y));
 
-	return boost::shared_ptr<Shape>(new GableRoof(name, _pivot, _modelMat, points, angle, _color));
+	return boost::shared_ptr<Shape>(new GableRoof(name, _grammar_type, _pivot, _modelMat, points, angle, _color));
 }
 
 boost::shared_ptr<Shape> LShape::roofHip(const std::string& name, float angle) {
@@ -102,7 +103,7 @@ boost::shared_ptr<Shape> LShape::roofHip(const std::string& name, float angle) {
 	points.push_back(glm::vec2(_scope.x, _scope.y));
 	points.push_back(glm::vec2(0, _scope.y));
 
-	return boost::shared_ptr<Shape>(new HipRoof(name, _pivot, _modelMat, points, angle, _color));
+	return boost::shared_ptr<Shape>(new HipRoof(name, _grammar_type, _pivot, _modelMat, points, angle, _color));
 }
 
 void LShape::setupProjection(int axesSelector, float texWidth, float texHeight) {
@@ -137,13 +138,13 @@ void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[5]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, (_texCoords[0] + _texCoords[5]) * 0.5f, _texCoords[3], _texCoords[4], _texCoords[5], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
 	}
 }
 

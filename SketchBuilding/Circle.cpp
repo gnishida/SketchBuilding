@@ -6,9 +6,10 @@
 
 namespace cga {
 
-Circle::Circle(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color) {
-	this->_name = name;
+Circle::Circle(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, height, 0);
@@ -23,7 +24,7 @@ boost::shared_ptr<Shape> Circle::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> Circle::extrude(const std::string& name, float height) {
-	return boost::shared_ptr<Shape>(new Cylinder(name, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
+	return boost::shared_ptr<Shape>(new Cylinder(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
 }
 
 void Circle::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
@@ -31,7 +32,7 @@ void Circle::offset(const std::string& name, float offsetDistance, const std::st
 	if (!inside.empty()) {
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(-offsetDistance, -offsetDistance, 0));
 
-		shapes.push_back(boost::shared_ptr<Shape>(new Circle(inside, _pivot, mat, _scope.x + offsetDistance * 2, _scope.y + offsetDistance * 2, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Circle(inside, _grammar_type, _pivot, mat, _scope.x + offsetDistance * 2, _scope.y + offsetDistance * 2, _color)));
 	}
 
 	// border shape
@@ -45,7 +46,7 @@ void Circle::offset(const std::string& name, float offsetDistance, const std::st
 			pts.push_back(glm::vec2(cosf(theta2) * _scope.x * 0.5 + _scope.x * 0.5, sinf(theta2) * _scope.y * 0.5 + _scope.y * 0.5));
 			pts.push_back(glm::vec2(cosf(theta2) * (_scope.x * 0.5 + offsetDistance) + _scope.x * 0.5, sinf(theta2) * (_scope.y * 0.5 + offsetDistance) + _scope.y * 0.5));
 			pts.push_back(glm::vec2(cosf(theta1) * (_scope.x * 0.5 + offsetDistance) + _scope.x * 0.5, sinf(theta1) * (_scope.y * 0.5 + offsetDistance) + _scope.y * 0.5));
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _pivot, _modelMat, pts, _color, _texture)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, _modelMat, pts, _color, _texture)));
 		}
 
 	}
@@ -57,7 +58,7 @@ boost::shared_ptr<Shape> Circle::pyramid(const std::string& name, float height) 
 		float theta = (float)i / CIRCLE_SLICES * M_PI * 2.0f;
 		points.push_back(glm::vec2(cosf(theta) * _scope.x * 0.5 + _scope.x * 0.5, sinf(theta) * _scope.y * 0.5 + _scope.y * 0.5));
 	}
-	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
 }
 
 void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
@@ -68,7 +69,7 @@ void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
 	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 }
 
 }

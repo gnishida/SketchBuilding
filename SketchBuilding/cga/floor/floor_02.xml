@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<grammar version="1.0" author="Gen Nishida">
+<grammar type="floor" version="1.0" author="Gen Nishida">
 	<rule name="Start">
 		<split splitAxis="x">
 			<param type="floating" value="6" name="FloorColumn_02" repeat="true"/>

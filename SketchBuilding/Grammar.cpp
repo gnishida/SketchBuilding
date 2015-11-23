@@ -50,10 +50,13 @@ void Rule::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::l
 		if (operators.size() == 0 || operators.back()->name == "copy") {
 			// copyで終わる場合、このshapeはもう必要ないので削除
 			shape->_active = false;
+			//shape->_grammar_type = grammar.type;
 			shapes.push_back(shape);
 		} else {
 			// copyで終わらない場合、このshapeは描画する必要があるので、
 			// shapesリストに格納する。
+			shape->_active = true;
+			//shape->_grammar_type = grammar.type;
 			shapes.push_back(shape);
 		}
 	}

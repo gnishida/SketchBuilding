@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<grammar version="1.0" author="Gen Nishida">
+<grammar type="roof" version="1.0" author="Gen Nishida">
 	<rule name="RoofTop">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="relative" value="1"/>

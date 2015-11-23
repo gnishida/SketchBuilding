@@ -64,6 +64,7 @@ public:
 
 class Grammar {
 public:
+	std::string type;
 	std::map<std::string, Attribute> attrs;
 	std::map<std::string, cga::Rule> rules;
 

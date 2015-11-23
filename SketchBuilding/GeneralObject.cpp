@@ -4,9 +4,10 @@
 
 namespace cga {
 
-GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color) {
-	this->_name = name;
+GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points.push_back(points);
@@ -15,9 +16,10 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 	this->_textureEnabled = false;
 }
 
-GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color) {
-	this->_name = name;
+GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -26,9 +28,10 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 	this->_textureEnabled = false;
 }
 
-GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color, const std::vector<glm::vec2>& texCoords, const std::string& texture) {
-	this->_name = name;
+GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color, const std::vector<glm::vec2>& texCoords, const std::string& texture) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points.push_back(points);
@@ -39,9 +42,10 @@ GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, co
 	this->_textureEnabled = true;
 }
 
-GeneralObject::GeneralObject(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color, const std::vector<std::vector<glm::vec2> >& texCoords, const std::string& texture) {
-	this->_name = name;
+GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color, const std::vector<std::vector<glm::vec2> >& texCoords, const std::string& texture) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -82,10 +86,10 @@ void GeneralObject::generateGeometry(std::vector<boost::shared_ptr<glutils::Face
 		std::vector<Vertex> vertices;
 		if (_textureEnabled) {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _texCoords[i], _pivot * _modelMat, vertices);
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
 		} else {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 		}
 	}
 }

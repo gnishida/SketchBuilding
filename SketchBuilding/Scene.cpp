@@ -69,13 +69,13 @@ void SceneObject::setGrammar(const std::string& name, const cga::Grammar& gramma
 	}
 }
 
-void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager) {
+void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage) {
 	faces.clear();
 
 	if (height == 0.0f) return;
 
 	// footprint
-	cga::Rectangle* footprint = new cga::Rectangle("Start", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
+	cga::Rectangle* footprint = new cga::Rectangle("Start", "building", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
 	system->stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
 
 	//system->derive(grammar, true);
@@ -83,10 +83,59 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 	
 	system->generateGeometry(faces);
 
-	renderManager->addFaces(faces);
+	//renderManager->addFaces(faces);
+	updateGeometry(renderManager, stage);
 }
 
-void SceneObject::updateGeometry(RenderManager* renderManager) {
+void SceneObject::updateGeometry(RenderManager* renderManager, const std::string& stage) {
+	for (int i = 0; i < faces.size(); ++i) {
+		bool transparent = false;
+
+		if (stage == "") {
+			transparent = false;
+		}
+		else if (stage == "building") {
+			if (faces[i]->grammar_type != "building") {
+				transparent = true;
+			}
+		}
+		else if (stage == "roof") {
+			if (faces[i]->grammar_type == "roof") {
+				transparent = true;
+			}
+		}
+		else if (stage == "facade") {
+			if (faces[i]->grammar_type != "building" && faces[i]->grammar_type != "roof") {
+				transparent = true;
+			}
+		}
+		else if (stage == "floor") {
+			if (faces[i]->grammar_type != "building" && faces[i]->grammar_type != "roof" && faces[i]->grammar_type != "facade") {
+				transparent = true;
+			}
+		}
+		else if (stage == "window") {
+			if (faces[i]->grammar_type == "window") {
+				transparent = true;
+			}
+		}
+		else if (stage == "ledge") {
+			if (faces[i]->grammar_type == "ledge") {
+				transparent = true;
+			}
+		}
+
+		if (transparent) {
+			for (int j = 0; j < faces[i]->vertices.size(); ++j) {
+				faces[i]->vertices[j].color.a = 0.5f;
+			}
+		} else {
+			for (int j = 0; j < faces[i]->vertices.size(); ++j) {
+				faces[i]->vertices[j].color.a = 1.0f;
+			}
+		}
+	}
+
 	renderManager->addFaces(faces);
 }
 
@@ -178,14 +227,14 @@ void Scene::unselectFace() {
 /**
  * Generate geometry by the grammars, and send the geometry to GPU memory.
  */
-void Scene::generateGeometry(RenderManager* renderManager) {
+void Scene::generateGeometry(RenderManager* renderManager, const std::string& stage) {
 	renderManager->removeObjects();
 
 	// Since the geometry will be updated, the pointer to a face will not be valid any more.
 	unselectFace();
 
 	for (int i = 0; i < _objects.size(); ++i) {
-		_objects[i].generateGeometry(&system, renderManager);
+		_objects[i].generateGeometry(&system, renderManager, stage);
 	}
 }
 
@@ -193,11 +242,11 @@ void Scene::generateGeometry(RenderManager* renderManager) {
  * Send the geometry to GPU memory. 
  * Note that the re-derivation by the grammars is not performed. Instead, already generated faces are used.
  */
-void Scene::updateGeometry(RenderManager* renderManager) {
+void Scene::updateGeometry(RenderManager* renderManager, const std::string& stage) {
 	renderManager->removeObjects();
 
 	for (int i = 0; i < _objects.size(); ++i) {
-		_objects[i].updateGeometry(renderManager);
+		_objects[i].updateGeometry(renderManager, stage);
 	}
 }
 

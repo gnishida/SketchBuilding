@@ -25,6 +25,7 @@ public:
 	glm::vec3 _scope;
 	glm::vec3 _prev_scope;
 	glm::mat4 _pivot;
+	std::string _grammar_type;
 
 	static std::map<std::string, Asset> assets;
 

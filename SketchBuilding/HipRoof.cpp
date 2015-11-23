@@ -14,9 +14,10 @@ typedef boost::shared_ptr<Ss> SsPtr ;
 
 namespace cga {
 
-HipRoof::HipRoof(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color) {
-	this->_name = name;
+HipRoof::HipRoof(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float angle, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -103,7 +104,7 @@ void HipRoof::comp(const std::map<std::string, std::string>& name_map, std::vect
 			pts.push_back(glm::vec2(invMat * glm::vec4(point, 1)));
 		}
 
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, pts, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 	}
 }
 
@@ -178,7 +179,7 @@ void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 		}
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 }
 
 }

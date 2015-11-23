@@ -102,6 +102,7 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 		}
 
 		if (found) {
+			shape->_grammar_type = grammars.at(name).type;
 			grammars.at(name).getRule(shape->_name).apply(shape, grammars.at(name), stack, shapes);
 		} else {
 			if (!suppressWarning && shape->_name.back() != '!' && shape->_name.back() != '.') {

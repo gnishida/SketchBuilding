@@ -18,7 +18,7 @@ private:
 	float _top_ratio;
 
 public:
-	Pyramid(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec2& center, float height, float top_ratio, const glm::vec3& color, const std::string& texture);
+	Pyramid(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec2& center, float height, float top_ratio, const glm::vec3& color, const std::string& texture);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	void comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes);
 	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;

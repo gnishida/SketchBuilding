@@ -6,9 +6,10 @@
 
 namespace cga {
 
-Cuboid::Cuboid(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
-	this->_name = name;
+Cuboid::Cuboid(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope = glm::vec3(width, depth, height);
@@ -25,12 +26,12 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 	// top face
 	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(0, 0, _scope.z));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _pivot, mat, _scope.x, _scope.y, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _grammar_type, _pivot, mat, _scope.x, _scope.y, _color)));
 	}
 
 	// bottom face
 	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL" && _scope.z >= 0) {
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("bottom"), _pivot, _modelMat, _scope.x, _scope.y, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, _color)));
 	}
 
 	// front face
@@ -39,7 +40,7 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 		if (_scope.z < 0) {
 			rot_angle = -rot_angle;
 		}
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _pivot, glm::rotate(_modelMat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _grammar_type, _pivot, glm::rotate(_modelMat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
 	}
 
 	// right face
@@ -49,7 +50,7 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 			rot_angle = -rot_angle;
 		}
 		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("right"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("right"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
 	}
 
 	// left face
@@ -59,7 +60,7 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 			rot_angle = -rot_angle;
 		}
 		glm::mat4 mat = glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("left"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("left"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
 	}
 
 	// back face
@@ -69,7 +70,7 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 			rot_angle = -rot_angle;
 		}
 		glm::mat4 mat = glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("back"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("back"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
 	}
 
 	// side faces
@@ -81,32 +82,32 @@ void Cuboid::comp(const std::map<std::string, std::string>& name_map, std::vecto
 
 		// front face
 		if (name_map.find("front") == name_map.end()) {
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(_modelMat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, glm::rotate(_modelMat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
 		}
 
 		// right face
 		if (name_map.find("right") == name_map.end()) {
 			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
 		}
 
 		// left face
 		if (name_map.find("left") == name_map.end()) {
 			glm::mat4 mat = glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y, 0, 0));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.y, fabs(_scope.z), _color)));
 		}
 
 		// back face
 		if (name_map.find("back") == name_map.end()) {
 			glm::mat4 mat = glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, glm::rotate(mat, rot_angle, glm::vec3(1, 0, 0)), _scope.x, fabs(_scope.z), _color)));
 		}
 	}
 }
 
 void Cuboid::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	if (offsetDistance >= 0) {
-		shapes.push_back(boost::shared_ptr<Shape>(new Cuboid(inside, _pivot, glm::translate(_modelMat, glm::vec3(-offsetDistance, -offsetDistance, 0)), _scope.x + offsetDistance * 2, _scope.y + offsetDistance * 2, _scope.z, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Cuboid(inside, _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(-offsetDistance, -offsetDistance, 0)), _scope.x + offsetDistance * 2, _scope.y + offsetDistance * 2, _scope.z, _color)));
 	}
 	else {
 		// not supported
@@ -131,7 +132,7 @@ void Cuboid::split(int splitAxis, const std::vector<float>& sizes, const std::ve
 		glm::mat4 mat = this->_modelMat;
 		for (int i = 0; i < sizes.size(); ++i) {
 			if (names[i] != "NIL") {
-				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _pivot, mat, sizes[i], _scope.y, _scope.z, _color)));
+				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _grammar_type, _pivot, mat, sizes[i], _scope.y, _scope.z, _color)));
 			}
 			mat = glm::translate(mat, glm::vec3(sizes[i], 0, 0));
 		}
@@ -139,7 +140,7 @@ void Cuboid::split(int splitAxis, const std::vector<float>& sizes, const std::ve
 		glm::mat4 mat = this->_modelMat;
 		for (int i = 0; i < sizes.size(); ++i) {
 			if (names[i] != "NIL") {
-				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _pivot, mat, _scope.x, sizes[i], _scope.z, _color)));
+				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _grammar_type, _pivot, mat, _scope.x, sizes[i], _scope.z, _color)));
 			}
 			mat = glm::translate(mat, glm::vec3(0, sizes[i], 0));
 		}
@@ -147,7 +148,7 @@ void Cuboid::split(int splitAxis, const std::vector<float>& sizes, const std::ve
 		glm::mat4 mat = this->_modelMat;
 		for (int i = 0; i < sizes.size(); ++i) {
 			if (names[i] != "NIL") {
-				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _pivot, mat, _scope.x, _scope.y, sizes[i], _color)));
+				objects.push_back(boost::shared_ptr<Shape>(new Cuboid(names[i], _grammar_type, _pivot, mat, _scope.x, _scope.y, sizes[i], _color)));
 			}
 			mat = glm::translate(mat, glm::vec3(0, 0, sizes[i]));
 		}
@@ -164,13 +165,13 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z));
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z)), M_PI, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// base
@@ -178,7 +179,7 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// front
@@ -190,7 +191,7 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, 0, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// back
@@ -202,7 +203,7 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, 0, _scope.z * 0.5)), M_PI, glm::vec3(0, 0, 1)), glm::vec3(0, -_scope.y, 0)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// right
@@ -214,7 +215,7 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y * 0.5, _scope.z * 0.5)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// left
@@ -226,7 +227,7 @@ void Cuboid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(glm::rotate(_modelMat, -M_PI * 0.5f, glm::vec3(0, 0, 1)), glm::vec3(-_scope.y * 0.5, 0, _scope.z * 0.5)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 }
 

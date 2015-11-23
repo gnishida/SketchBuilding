@@ -8,9 +8,10 @@
 
 namespace cga {
 
-Polygon::Polygon(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture) {
-	this->_name = name;
+Polygon::Polygon(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -34,7 +35,7 @@ boost::shared_ptr<Shape> Polygon::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> Polygon::extrude(const std::string& name, float height) {
-	return boost::shared_ptr<Shape>(new Prism(name, _pivot, _modelMat, _points, height, _color));
+	return boost::shared_ptr<Shape>(new Prism(name, _grammar_type, _pivot, _modelMat, _points, height, _color));
 }
 
 boost::shared_ptr<Shape> Polygon::inscribeCircle(const std::string& name) {
@@ -47,7 +48,7 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 
 	// inner shape
 	if (!inside.empty()) {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _pivot, _modelMat, offset_points, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _grammar_type, _pivot, _modelMat, offset_points, _color, _texture)));
 	}
 
 	// border shape
@@ -71,17 +72,17 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[2], 1)));
 			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[3], 1)));
 
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _pivot, mat, pts2d, _color, _texture)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _grammar_type, _pivot, mat, pts2d, _color, _texture)));
 		}		
 	}
 }
 
 boost::shared_ptr<Shape> Polygon::roofHip(const std::string& name, float angle) {
-	return boost::shared_ptr<Shape>(new HipRoof(name, _pivot, _modelMat, _points, angle, _color));
+	return boost::shared_ptr<Shape>(new HipRoof(name, _grammar_type, _pivot, _modelMat, _points, angle, _color));
 }
 
 boost::shared_ptr<Shape> Polygon::roofGable(const std::string& name, float angle) {
-	return boost::shared_ptr<Shape>(new GableRoof(name, _pivot, _modelMat, _points, angle, _color));
+	return boost::shared_ptr<Shape>(new GableRoof(name, _grammar_type, _pivot, _modelMat, _points, angle, _color));
 }
 
 void Polygon::setupProjection(int axesSelector, float texWidth, float texHeight) {
@@ -111,7 +112,7 @@ void Polygon::size(float xSize, float ySize, float zSize) {
 }
 
 boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, float top_ratio) {
-	return boost::shared_ptr<Shape>(new Pyramid(name, _pivot, _modelMat, _points, _center, height, top_ratio, _color, _texture));
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, _points, _center, height, top_ratio, _color, _texture));
 }
 
 void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
@@ -121,12 +122,12 @@ void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 		std::vector<Vertex> vertices;
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _texCoords, _pivot * _modelMat, vertices);
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
 	} else {
 		std::vector<Vertex> vertices;
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 }
 

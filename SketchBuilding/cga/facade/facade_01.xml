@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<grammar version="1.0" author="Gen Nishida">
+<grammar type="facade" version="1.0" author="Gen Nishida">
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="absolute" value="5"/>

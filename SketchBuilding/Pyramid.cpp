@@ -6,9 +6,10 @@
 
 namespace cga {
 
-Pyramid::Pyramid(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec2& center, float height, float top_ratio, const glm::vec3& color, const std::string& texture) {
-	this->_name = name;
+Pyramid::Pyramid(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec2& center, float height, float top_ratio, const glm::vec3& color, const std::string& texture) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_points = points;
@@ -52,7 +53,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 				pts.push_back(glm::vec2(invMat * glm::vec4(p1, 1)));
 				pts.push_back(glm::vec2(invMat * glm::vec4(p2, 1)));
 
-				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 			}
 		}
 	}
@@ -81,7 +82,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 				pts.push_back(glm::vec2(invMat * glm::vec4(p2, 1)));
 				pts.push_back(glm::vec2(invMat * glm::vec4(p3, 1)));
 
-				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _pivot, mat, pts, _color, _texture)));
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 			}
 		}
 
@@ -94,7 +95,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 				pts.push_back(point * _top_ratio + _center * (1.0f - _top_ratio) - offset);
 			}
 
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _pivot, mat, pts, _color, _texture)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 		}
 	}
 
@@ -110,7 +111,7 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 			pts.push_back(glm::vec2(invMat * glm::vec4(_points[i], 0, 1)));
 		}
 
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _pivot, mat, pts, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, mat, pts, _color, _texture)));
 	}
 }
 
@@ -139,7 +140,7 @@ void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 			p1 = p2;
 		}
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	} else {
 		std::vector<Vertex> vertices(_points.size() * 6);
 
@@ -171,11 +172,11 @@ void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 			p0 = p2;
 			p1 = p3;
 		}
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 
 		vertices.clear();
 		glutils::drawPolygon(pts3, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 }
 

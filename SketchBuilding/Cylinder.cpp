@@ -6,9 +6,10 @@
 
 namespace cga {
 
-Cylinder::Cylinder(const std::string& name, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
-	this->_name = name;
+Cylinder::Cylinder(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
 	this->_scope.x = width;
@@ -27,13 +28,13 @@ void Cylinder::comp(const std::map<std::string, std::string>& name_map, std::vec
 	// top face
 	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(0, 0, _scope.z));
-		shapes.push_back(boost::shared_ptr<Shape>(new Circle(name_map.at("top"), _pivot, mat, _scope.x, _scope.y, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Circle(name_map.at("top"), _grammar_type, _pivot, mat, _scope.x, _scope.y, _color)));
 	}
 
 	// bottom face
 	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
 		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), M_PI, glm::vec3(1, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new Circle(name_map.at("bottom"), _pivot, mat, _scope.x, _scope.y, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Circle(name_map.at("bottom"), _grammar_type, _pivot, mat, _scope.x, _scope.y, _color)));
 	}
 
 	// side face
@@ -55,7 +56,7 @@ void Cylinder::comp(const std::map<std::string, std::string>& name_map, std::vec
 			//glm::mat4 invMat = glm::inverse(convMat);
 			//glm::mat4 mat = _modelMat * convMat;
 
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _pivot, mat, glm::length(p0 - p1), _scope.z, _color)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, mat, glm::length(p0 - p1), _scope.z, _color)));
 		}
 	}
 }
@@ -68,7 +69,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z));
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// base
@@ -76,7 +77,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
 	// side
@@ -84,7 +85,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
 		glutils::drawCylinderZ(_scope.x * 0.5f, _scope.y * 0.5f, _scope.x * 0.5f, _scope.y * 0.5f, _scope.z, glm::vec4(_color, opacity), mat, vertices, 24);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 }
 
