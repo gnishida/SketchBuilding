@@ -12,7 +12,7 @@
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTop">
-		<pyramid height="5"/>
+		<pyramid height="3"/>
 		<comp>
 			<param name="side" value="RoofTop"/>
 			<param name="bottom" value="RoofLedge"/>

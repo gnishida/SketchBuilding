@@ -4,7 +4,24 @@
 		<extrude height="-0.1"/>
 		<comp>
 			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowGlass"/>
+			<param name="top" value="WindowTop"/>
 		</comp>
+	</rule>
+	<rule name="WindowTop">
+		<offset offsetDistance="-0.1" inside="WindowTopInside" border="WindowFrame"/>
+	</rule>
+	<rule name="WindowTopInside">
+		<extrude height="-0.05"/>
+		<comp>
+			<param name="side" value="WindowFrame"/>
+			<param name="top" value="WindowGlassArea01"/>
+		</comp>
+	</rule>
+	<rule name="WindowGlassArea01">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<copy name="WindowGlass"/>
 	</rule>
 </grammar>

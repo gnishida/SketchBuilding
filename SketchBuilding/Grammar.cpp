@@ -40,7 +40,7 @@ float Value::getEstimateValue(float size, const Grammar& grammar, const boost::s
  * @param ruleSet	全ルール
  * @param stack		stack
  */
-void Rule::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack) const {
+void Rule::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack, std::vector<boost::shared_ptr<Shape> >& shapes) const {
 	for (int i = 0; i < operators.size(); ++i) {
 		shape = operators[i]->apply(shape, grammar, stack);
 		if (shape == NULL) break;
@@ -49,16 +49,12 @@ void Rule::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::l
 	if (shape != NULL) {
 		if (operators.size() == 0 || operators.back()->name == "copy") {
 			// copyで終わる場合、このshapeはもう必要ないので削除
-			//delete shape;
-			//shape = NULL;
-			shape = boost::shared_ptr<Shape>();
+			shape->_active = false;
+			shapes.push_back(shape);
 		} else {
-			// copyで終わらない場合、このshapeは描画する必要があるので、残す。
-			// 同じ名前でstackに格納すると無限再帰してしまうため、末尾に!を付加した名前にして格納する。
-			std::stringstream ss;
-			ss << shape->_name << "!";
-			shape->_name = ss.str();
-			stack.push_back(shape);
+			// copyで終わらない場合、このshapeは描画する必要があるので、
+			// shapesリストに格納する。
+			shapes.push_back(shape);
 		}
 	}
 }

@@ -72,7 +72,7 @@ void CGA::derive(const Grammar& grammar, bool suppressWarning) {
 		stack.pop_front();
 
 		if (grammar.contain(shape->_name)) {
-			grammar.getRule(shape->_name).apply(shape, grammar, stack);
+			grammar.getRule(shape->_name).apply(shape, grammar, stack, shapes);
 		} else {
 			if (!suppressWarning && shape->_name.back() != '!' && shape->_name.back() != '.') {
 				std::cout << "Warning: " << "no rule is found for " << shape->_name << "." << std::endl;
@@ -91,11 +91,6 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 		boost::shared_ptr<Shape> shape = stack.front();
 		stack.pop_front();
 
-		// copy the current shape to the inactive list
-		boost::shared_ptr<Shape> copy_shape = shape->clone(shape->_name);
-		copy_shape->_active = false;
-		inactive_shapes.push_back(copy_shape);
-
 		bool found = false;
 		std::string name;
 		for (auto it = grammars.begin(); it != grammars.end(); ++it) {
@@ -107,7 +102,7 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 		}
 
 		if (found) {
-			grammars.at(name).getRule(shape->_name).apply(shape, grammars.at(name), stack);
+			grammars.at(name).getRule(shape->_name).apply(shape, grammars.at(name), stack, shapes);
 		} else {
 			if (!suppressWarning && shape->_name.back() != '!' && shape->_name.back() != '.') {
 				std::cout << "Warning: " << "no rule is found for " << shape->_name << "." << std::endl;
@@ -115,10 +110,6 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 			shapes.push_back(shape);
 		}
 	}
-
-	// merge the inactive list into the shape list
-	// Note: the resulting shape list contains many inactive shapes.
-	shapes.insert(shapes.end(), inactive_shapes.begin(), inactive_shapes.end());
 }
 
 /**

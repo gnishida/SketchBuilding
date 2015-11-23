@@ -58,7 +58,7 @@ public:
 public:
 	Rule() {}
 
-	void apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack) const;
+	void apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack, std::vector<boost::shared_ptr<Shape> >& shapes) const;
 	static void decodeSplitSizes(float size, const std::vector<Value>& sizes, const std::vector<std::string>& output_names, const Grammar& grammar, const boost::shared_ptr<Shape>& shape, std::vector<float>& decoded_sizes, std::vector<std::string>& decoded_output_names);
 };
 

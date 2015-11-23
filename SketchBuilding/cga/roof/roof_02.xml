@@ -12,7 +12,7 @@
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTop">
-		<roofHip angle="45"/>
+		<roofHip angle="30"/>
 		<comp>
 			<param name="top" value="RoofTop"/>
 		</comp>
