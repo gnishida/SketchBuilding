@@ -6,7 +6,7 @@
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
 		<split splitAxis="y">
-			<param type="floating" value="4" name="GroundFloor"/>
+			<param type="floating" value="4" name="Floor"/>
 			<param type="floating" value="0.5" name="Ledge"/>
 			<param type="floating" value="3.5" name="Floor" repeat="true"/>
 		</split>

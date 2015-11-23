@@ -187,13 +187,13 @@ void GLWidget3D::updateBuildingOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["building"].size(); ++i) {
+	for (int i = 0; i < grammarImages["building"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["building"].size(); ++i) {
+	for (int i = 0; i < grammarImages["building"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["building"][indexes[i]], indexes[i]);
 	}
 
@@ -206,13 +206,13 @@ void GLWidget3D::updateRoofOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["roof"].size(); ++i) {
+	for (int i = 0; i < grammarImages["roof"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["roof"].size(); ++i) {
+	for (int i = 0; i < grammarImages["roof"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["roof"][indexes[i]], indexes[i]);
 	}
 
@@ -225,13 +225,13 @@ void GLWidget3D::updateFacadeOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["facade"].size(); ++i) {
+	for (int i = 0; i < grammarImages["facade"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["facade"].size(); ++i) {
+	for (int i = 0; i < grammarImages["facade"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["facade"][indexes[i]], indexes[i]);
 	}
 
@@ -244,13 +244,13 @@ void GLWidget3D::updateFloorOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["floor"].size(); ++i) {
+	for (int i = 0; i < grammarImages["floor"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["floor"].size(); ++i) {
+	for (int i = 0; i < grammarImages["floor"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["floor"][indexes[i]], indexes[i]);
 	}
 
@@ -263,13 +263,13 @@ void GLWidget3D::updateWindowOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["window"].size(); ++i) {
+	for (int i = 0; i < grammarImages["window"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["window"].size(); ++i) {
+	for (int i = 0; i < grammarImages["window"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["window"][indexes[i]], indexes[i]);
 	}
 
@@ -282,13 +282,13 @@ void GLWidget3D::updateLedgeOptions() {
 	mainWin->thumbsList->clear();
 
 	std::vector<int> indexes;
-	for (size_t i = 0; i < grammarImages["ledge"].size(); ++i) {
+	for (int i = 0; i < grammarImages["ledge"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
 
 	QPainter painter(&sketch);
-	for (size_t i = 0; i < grammarImages["ledge"].size(); ++i) {
+	for (int i = 0; i < grammarImages["ledge"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["ledge"][indexes[i]], indexes[i]);
 	}
 
