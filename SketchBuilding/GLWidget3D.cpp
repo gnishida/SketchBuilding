@@ -15,6 +15,10 @@
 #include "LeftWindowItemWidget.h"
 #include "Scene.h"
 
+#ifndef M_PI
+#define M_PI	3.141592
+#endif
+
 GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
 	mainWin = (MainWindow*)parent;
 	dragging = false;
@@ -493,36 +497,65 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "facade") {
 		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
-			camera.pos.y = scene.selectedFace()->bbox.center().y;
+			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
+
+			camera.pos.x = rotatedFace.bbox.center().x;
+			camera.pos.y = rotatedFace.bbox.center().y;
+			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
 		camera.updateMVPMatrix();
-		//updateFacadeOptions();
 	}
 	else if (stage == "window") {
 		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
-			camera.pos.y = scene.selectedFace()->bbox.center().y;
+			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
+
+			camera.pos.x = rotatedFace.bbox.center().x;
+			camera.pos.y = rotatedFace.bbox.center().y;
+			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
+			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
 		camera.updateMVPMatrix();
-		//updateWindowOptions();
 	}
 	else if (stage == "ledge") {
 		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
-			// turn the camera such that the selected face becomes perpendicular to the image plane.
-			camera.pos.y = scene.selectedFace()->bbox.center().y;
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
+
+			camera.pos.x = rotatedFace.bbox.center().x;
+			camera.pos.y = rotatedFace.bbox.center().y;
+			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+
 			camera.xrot = 0.0f;
-			camera.yrot = -atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z) / 3.141592653 * 180;
-			//camera.yrot = atan2f(scene.building.selectedFace()->vertices[0].normal.z, scene.building.selectedFace()->vertices[0].normal.x) / 3.141592653 * 180;
+			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
 		}
 		camera.updateMVPMatrix();
-		//updateLedgeOptions();
 	}
 	scene.updateGeometry(&renderManager);
 	update();

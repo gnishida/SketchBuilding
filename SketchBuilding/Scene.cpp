@@ -141,7 +141,7 @@ bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& 
 			if (_objects[i].faces[j]->vertices.size() < 3) continue;
 
 			for (int k = 0; k < _objects[i].faces[j]->vertices.size(); k += 3) {
-				if (glm::dot(_objects[i].faces[j]->vertices[0].normal, normal) < 0.99f) continue;
+				if (fabs(glm::dot(_objects[i].faces[j]->vertices[0].normal, normal)) < 0.99f) continue;
 
 				if (glutils::rayTriangleIntersection(p, v, _objects[i].faces[j]->vertices[k].position, _objects[i].faces[j]->vertices[k + 1].position, _objects[i].faces[j]->vertices[k + 2].position, intPt)) {
 					float dist = glm::length(intPt - p);

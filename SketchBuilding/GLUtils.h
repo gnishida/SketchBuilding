@@ -14,7 +14,7 @@ public:
 	glm::vec3 maxPt;
 
 public:
-	BoundingBox() {}
+	BoundingBox();
 	BoundingBox(const std::vector<glm::vec2>& points);
 	BoundingBox(const std::vector<glm::vec3>& points);
 	BoundingBox(const std::vector<std::vector<glm::vec3> >& points);
@@ -40,6 +40,8 @@ public:
 
 	void select();
 	void unselect();
+
+	Face rotate(float rad, const glm::vec3& axis);
 };
 
 // geometry computation

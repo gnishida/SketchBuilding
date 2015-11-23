@@ -34,8 +34,16 @@ typedef std::list<Polygon_2>                                Polygon_list;
 typedef CGAL::Creator_uniform_2<int, Point_2>               Creator;
 typedef CGAL::Random_points_in_square_2< Point_2, Creator > Point_generator;
 typedef boost::shared_ptr<Polygon_2>						PolygonPtr;
-//typedef boost::geometry::model::polygon<point_type>			polygon_type;
 typedef boost::geometry::model::d2::point_xy<double>		point_2d;
+
+BoundingBox::BoundingBox() {
+	minPt.x = (std::numeric_limits<float>::max)();
+	minPt.y = (std::numeric_limits<float>::max)();
+	minPt.z = (std::numeric_limits<float>::max)();
+	maxPt.x = -(std::numeric_limits<float>::max)();
+	maxPt.y = -(std::numeric_limits<float>::max)();
+	maxPt.z = -(std::numeric_limits<float>::max)();
+}
 
 BoundingBox::BoundingBox(const std::vector<glm::vec2>& points) {
 	minPt.x = (std::numeric_limits<float>::max)();
@@ -113,6 +121,10 @@ Face::Face(const std::string& name, const std::vector<Vertex>& vertices, const s
 	this->name = name;
 	this->vertices = vertices;
 	this->texture = texture;
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		bbox.addPoint(vertices[i].position);
+	}
 }
 
 void Face::select() {
@@ -128,6 +140,18 @@ void Face::unselect() {
 	for (int i = 0; i < vertices.size(); ++i) {
 		vertices[i].color = backupColor;
 	}
+}
+
+Face Face::rotate(float rad, const glm::vec3& axis) {
+	std::vector<Vertex> rotatedVertices(vertices.size());
+
+	glm::mat4 mat(glm::rotate(glm::mat4(), rad, axis));
+
+	for (int i = 0; i < vertices.size(); ++i) {
+		rotatedVertices[i].position = glm::vec3(mat * glm::vec4(vertices[i].position, 1));
+	}
+
+	return Face(name, rotatedVertices, texture);
 }
 
 /**
