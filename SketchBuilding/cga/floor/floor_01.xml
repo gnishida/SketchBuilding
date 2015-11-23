@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="Start">
+		<split splitAxis="x">
+			<param type="floating" value="4" name="FloorColumn_01" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="FloorColumn_01">
+		<split splitAxis="x">
+			<param type="relative" value="0.22" name="Wall"/>
+			<param type="relative" value="0.56" name="FloorColumn2_01"/>
+			<param type="relative" value="0.22" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="FloorColumn2_01">
+		<split splitAxis="y">
+			<param type="relative" value="0.32" name="Wall"/>
+			<param type="relative" value="0.5" name="Window_01"/>
+			<param type="relative" value="0.18" name="Wall"/>
+		</split>
+	</rule>
+</grammar>
+

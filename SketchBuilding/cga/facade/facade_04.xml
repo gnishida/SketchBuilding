@@ -5,44 +5,7 @@
 			<param name="texWidth" type="absolute" value="5"/>
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
-		<split splitAxis="y">
-			<param type="floating" value="4" name="Floor"/>
-			<param type="floating" value="4" name="LedgeAndFloor" repeat="true"/>
-		</split>
-	</rule>
-	<rule name="LedgeAndFloor">
-		<split splitAxis="y">
-			<param type="floating" value="0.5" name="Ledge"/>
-			<param type="floating" value="3.5" name="Floor"/>
-		</split>
-	</rule>
-	<rule name="Floor">
-		<split splitAxis="x">
-			<param type="floating" value="6" name="FloorColumn" repeat="true"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn">
-		<split splitAxis="x">
-			<param type="relative" value="0.16" name="Wall"/>
-			<param type="relative" value="0.16" name="FloorColumn2"/>
-			<param type="relative" value="0.16" name="Wall"/>
-			<param type="relative" value="0.36" name="FloorColumn3"/>
-			<param type="relative" value="0.16" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn2">
-		<split splitAxis="y">
-			<param type="relative" value="0.32" name="Wall"/>
-			<param type="relative" value="0.5" name="Window"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn3">
-		<split splitAxis="y">
-			<param type="relative" value="0.32" name="Wall"/>
-			<param type="relative" value="0.5" name="Window2"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
+		<copy name="Wall"/>
 	</rule>
 </grammar>
 

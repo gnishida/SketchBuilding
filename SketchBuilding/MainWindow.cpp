@@ -20,8 +20,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar
 	QActionGroup* stageGroup = new QActionGroup(this);
-	std::string stage_names[5] = { "building", "roof", "facade", "window", "ledge" };
-	for (int i = 0; i < 5; ++i) {
+	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
+	for (int i = 0; i < 6; ++i) {
 		actionStages[stage_names[i]] = new QAction(QIcon(std::string("resources/" + stage_names[i] + ".png").c_str()), std::string("&" + stage_names[i]).c_str(), this);
 		actionStages[stage_names[i]]->setCheckable(true);
 		stageGroup->addAction(actionStages[stage_names[i]]);
@@ -86,6 +86,9 @@ void MainWindow::onStageChanged() {
 	}
 	else if (actionStages["facade"]->isChecked()) {
 		glWidget->changeStage("facade");
+	}
+	else if (actionStages["floor"]->isChecked()) {
+		glWidget->changeStage("floor");
 	}
 	else if (actionStages["window"]->isChecked()) {
 		glWidget->changeStage("window");

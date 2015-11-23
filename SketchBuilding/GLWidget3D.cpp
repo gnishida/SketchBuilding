@@ -37,7 +37,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	glm::mat4 light_mvMatrix = glm::lookAt(-light_dir * 50.0f, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	light_mvpMatrix = light_pMatrix * light_mvMatrix;
 
-	std::string stage_names[6] = { "building", "roof", "facade", "window", "ledge" };
+	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
 
 	// load grammar
 	for (int i = 0; i < 6; ++i) {
@@ -170,6 +170,11 @@ void GLWidget3D::selectOption(int option_index) {
 			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][option_index]);
 			scene.generateGeometry(&renderManager);
 		}
+	} else if (stage == "floor") {
+		if (!scene._selectedFaceName.empty()) {
+			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][option_index]);
+			scene.generateGeometry(&renderManager);
+		}
 	} else if (stage == "window") {
 		predictWindow(option_index);
 	} else if (stage == "ledge") {
@@ -232,6 +237,25 @@ void GLWidget3D::updateFacadeOptions() {
 	}
 
 	predictFacade(0);
+
+	update();
+}
+
+void GLWidget3D::updateFloorOptions() {
+	mainWin->thumbsList->clear();
+
+	std::vector<int> indexes;
+	for (size_t i = 0; i < grammarImages["floor"].size(); ++i) {
+		indexes.push_back(i);
+	}
+	std::random_shuffle(indexes.begin(), indexes.end());
+
+	QPainter painter(&sketch);
+	for (size_t i = 0; i < grammarImages["floor"].size(); ++i) {
+		mainWin->addListItem("???", grammarImages["floor"][indexes[i]], indexes[i]);
+	}
+
+	predictFloor(0);
 
 	update();
 }
@@ -356,7 +380,10 @@ void GLWidget3D::predictRoof(int grammar_id) {
 }
 
 void GLWidget3D::predictFacade(int grammar_id) {
-	if (scene.selectedFace() == NULL) return;
+	if (scene._selectedFaceName.empty()) {
+		std::cout << "Warning: face is not selected." << std::endl;
+		return;
+	}
 
 	// list up y coordinates
 	std::vector<float> y_coordinates;
@@ -406,6 +433,17 @@ void GLWidget3D::predictFacade(int grammar_id) {
 	//scene.building.currentLayer().setGrammar("Facade", grammars["facade"][grammar_id]);
 
 	//scene.generateGeometry(&renderManager);
+
+	update();
+}
+
+void GLWidget3D::predictFloor(int grammar_id) {
+	if (scene._selectedFaceName.empty()) {
+		std::cout << "Warning: face is not selected." << std::endl;
+		return;
+	}
+
+
 
 	update();
 }
@@ -515,6 +553,27 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 		camera.updateMVPMatrix();
 	}
+	else if (stage == "floor") {
+		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
+
+			camera.pos.x = rotatedFace.bbox.center().x;
+			camera.pos.y = rotatedFace.bbox.center().y;
+			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+
+			camera.xrot = 0.0f;
+			camera.yrot = -rot_y / 3.141592653 * 180;
+			camera.zrot = 0.0f;
+		}
+		camera.updateMVPMatrix();
+	}
 	else if (stage == "window") {
 		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
@@ -589,6 +648,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 		camera.updateMVPMatrix();
 	} else if (stage == "roof") {
 	} else if (stage == "facade") {
+	} else if (stage == "floor") {
 	} else if (stage == "window") {
 	} else if (stage == "ledge") {
 	}
@@ -655,6 +715,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		}
 		else if (stage == "facade") {
 			updateFacadeOptions();
+		}
+		else if (stage == "floor") {
+			updateFloorOptions();
 		}
 		else if (stage == "window") {
 			updateWindowOptions();

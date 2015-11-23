@@ -60,12 +60,14 @@ public:
 	void updateBuildingOptions();
 	void updateRoofOptions();
 	void updateFacadeOptions();
+	void updateFloorOptions();
 	void updateWindowOptions();
 	void updateLedgeOptions();
 
 	void predictBuilding(int grammar_id);
 	void predictRoof(int grammar_id);
 	void predictFacade(int grammar_id);
+	void predictFloor(int grammar_id);
 	void predictWindow(int grammar_id);
 	void predictLedge(int grammar_id);
 

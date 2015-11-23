@@ -9,23 +9,4 @@
 			<param type="floating" value="4" name="Floor" repeat="true"/>
 		</split>
 	</rule>
-	<rule name="Floor">
-		<split splitAxis="x">
-			<param type="floating" value="4" name="FloorColumn" repeat="true"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn">
-		<split splitAxis="x">
-			<param type="floating" value="0.5" name="Wall"/>
-			<param type="absolute" value="2" name="FloorColumn2"/>
-			<param type="floating" value="0.5" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn2">
-		<split splitAxis="y">
-			<param type="floating" value="1" name="Wall"/>
-			<param type="absolute" value="2" name="Window"/>
-			<param type="floating" value="0.5" name="Wall"/>
-		</split>
-	</rule>
 </grammar>

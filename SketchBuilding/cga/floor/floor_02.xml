@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<grammar version="1.0" author="Gen Nishida">
+	<rule name="Start">
+		<split splitAxis="x">
+			<param type="floating" value="6" name="FloorColumn_02" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="FloorColumn_02">
+		<split splitAxis="x">
+			<param type="relative" value="0.16" name="Wall"/>
+			<param type="relative" value="0.16" name="FloorColumn2_02"/>
+			<param type="relative" value="0.16" name="Wall"/>
+			<param type="relative" value="0.36" name="FloorColumn3_02"/>
+			<param type="relative" value="0.16" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="FloorColumn2_02">
+		<split splitAxis="y">
+			<param type="relative" value="0.32" name="Wall"/>
+			<param type="relative" value="0.5" name="Window_02"/>
+			<param type="relative" value="0.18" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="FloorColumn3_02">
+		<split splitAxis="y">
+			<param type="relative" value="0.32" name="Wall"/>
+			<param type="relative" value="0.5" name="Window2_02"/>
+			<param type="relative" value="0.18" name="Wall"/>
+		</split>
+	</rule>
+</grammar>
+
