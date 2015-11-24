@@ -48,7 +48,7 @@ public:
 	void alignLayers();
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
-	bool selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal = glm::vec3(1, 1, 1));
+	bool selectFace(const glm::vec3& p, const glm::vec3& v, const std::string& stage, const glm::vec3& normal = glm::vec3(1, 1, 1));
 	void unselectFace();
 
 	void generateGeometry(RenderManager* renderManager, const std::string& stage);

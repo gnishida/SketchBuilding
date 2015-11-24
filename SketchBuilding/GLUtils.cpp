@@ -134,13 +134,18 @@ void Face::select() {
 	
 	for (int i = 0; i < vertices.size(); ++i) {
 		vertices[i].color = glm::vec4(1, 0, 0, 1);
-		std::cout << vertices[i].position.x << "," << vertices[i].position.y << "," << vertices[i].position.z << std::endl;
+
+		// Hack: translate the face upward so that it appears
+		vertices[i].position += vertices[i].normal * 0.05f;
 	}
 }
 
 void Face::unselect() {
 	for (int i = 0; i < vertices.size(); ++i) {
 		vertices[i].color = backupColor;
+
+		// Hack: translate the face downward so that it disappears
+		vertices[i].position -= vertices[i].normal * 0.05f;
 	}
 }
 

@@ -179,7 +179,7 @@ void Scene::alignLayers() {
 * @param p			the point that emits ray.
 * @param v			the ray vector
 */
-bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& normal) {
+bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const std::string& stage, const glm::vec3& normal) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 
@@ -188,6 +188,26 @@ bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const glm::vec3& 
 	for (int i = 0; i < _objects.size(); ++i) {
 		for (int j = 0; j < _objects[i].faces.size(); ++j) {
 			if (_objects[i].faces[j]->vertices.size() < 3) continue;
+
+			// check the face's type
+			if (stage == "building") {
+				if (_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "roof") {
+				if (_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "facade") {
+				if (_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "floor") {
+				if (_objects[i].faces[j]->grammar_type != "facade") continue;
+			}
+			else if (stage == "window") {
+				if (_objects[i].faces[j]->grammar_type != "floor") continue;
+			}
+			else if (stage == "ledge") {
+				if (_objects[i].faces[j]->grammar_type != "facade") continue;
+			}
 
 			for (int k = 0; k < _objects[i].faces[j]->vertices.size(); k += 3) {
 				if (fabs(glm::dot(_objects[i].faces[j]->vertices[0].normal, normal)) < 0.99f) continue;

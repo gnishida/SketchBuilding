@@ -499,7 +499,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	if (stage == "building") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			scene.newLayer();
 
 			// shift the camera such that the selected face becomes a ground plane.
@@ -520,7 +520,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "roof") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(0, 1, 0))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			// shift the camera such that the selected face becomes a ground plane.
 			camera.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			camera.xrot = 30.0f;
@@ -532,7 +532,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		//updateRoofOptions();
 	}
 	else if (stage == "facade") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
@@ -553,7 +553,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "floor") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
@@ -574,7 +574,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "window") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
@@ -595,7 +595,7 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		camera.updateMVPMatrix();
 	}
 	else if (stage == "ledge") {
-		if (scene.selectFace(cameraPos, view_dir, glm::vec3(1, 0, 1))) {
+		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));

@@ -17,6 +17,7 @@ class Shape {
 public:
 	std::string _name;
 	bool _active;
+	bool _axiom;
 	glm::mat4 _modelMat;
 	glm::vec3 _color;
 	bool _textureEnabled;

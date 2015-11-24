@@ -100,8 +100,18 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 				break;
 			}
 		}
-
+		
 		if (found) {
+			// if the shape's grammar is different from the grammar that is selected for this shape,
+			// this shape is marked as axiom, and is put into the shape list.
+			// This shape will be used when the user select a face,on which she will work.
+			if (shape->_grammar_type != grammars.at(name).type) {
+				boost::shared_ptr<Shape> copiedShape = shape->clone(shape->_name);
+				copiedShape->translate(MODE_RELATIVE, COORD_SYSTEM_OBJECT, 0, 0, -0.03);
+				copiedShape->_axiom = true;
+				shapes.push_back(copiedShape);
+			}
+
 			shape->_grammar_type = grammars.at(name).type;
 			grammars.at(name).getRule(shape->_name).apply(shape, grammars.at(name), stack, shapes);
 		} else {
