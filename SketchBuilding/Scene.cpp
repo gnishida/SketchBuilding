@@ -236,6 +236,10 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	for (int i = 0; i < _objects.size(); ++i) {
 		_objects[i].generateGeometry(&system, renderManager, stage);
 	}
+
+	std::vector<Vertex> vertices;
+	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 0.8), system.modelMat, vertices);
+	renderManager->addObject("grid", "", vertices);
 }
 
 /**
@@ -248,6 +252,11 @@ void Scene::updateGeometry(RenderManager* renderManager, const std::string& stag
 	for (int i = 0; i < _objects.size(); ++i) {
 		_objects[i].updateGeometry(renderManager, stage);
 	}
+
+	std::vector<Vertex> vertices;
+	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 0.8), system.modelMat, vertices);
+	renderManager->addObject("grid", "", vertices);
+
 }
 
 }
