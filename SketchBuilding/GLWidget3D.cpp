@@ -23,7 +23,6 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	mainWin = (MainWindow*)parent;
 	dragging = false;
 	ctrlPressed = false;
-	shiftPressed = false;
 
 	// これがないと、QPainterによって、OpenGLによる描画がクリアされてしまう
 	setAutoFillBackground(false);
@@ -489,7 +488,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	update();
 }
 
-void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
+bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	// camera position in the world coordinates
 	glm::vec3 cameraPos = camera.cameraPosInWorld();
 
@@ -518,6 +517,8 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			current_z = 0;
 		}
 		camera.updateMVPMatrix();
+
+		return true;
 	}
 	else if (stage == "roof") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
@@ -527,9 +528,12 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.yrot = -45.0f;
 			camera.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
+			camera.updateMVPMatrix();
+
+			return true;
+		} else {
+			return false;
 		}
-		camera.updateMVPMatrix();
-		//updateRoofOptions();
 	}
 	else if (stage == "facade") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
@@ -549,8 +553,13 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.xrot = 0.0f;
 			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
+			camera.updateMVPMatrix();
+
+			return true;
 		}
-		camera.updateMVPMatrix();
+		else {
+			return false;
+		}
 	}
 	else if (stage == "floor") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
@@ -570,8 +579,13 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.xrot = 0.0f;
 			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
+			camera.updateMVPMatrix();
+
+			return true;
 		}
-		camera.updateMVPMatrix();
+		else {
+			return false;
+		}
 	}
 	else if (stage == "window") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
@@ -591,8 +605,13 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.xrot = 0.0f;
 			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
+			camera.updateMVPMatrix();
+
+			return true;
 		}
-		camera.updateMVPMatrix();
+		else {
+			return false;
+		}
 	}
 	else if (stage == "ledge") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
@@ -612,11 +631,14 @@ void GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.xrot = 0.0f;
 			camera.yrot = -rot_y / 3.141592653 * 180;
 			camera.zrot = 0.0f;
+			camera.updateMVPMatrix();
+
+			return true;
 		}
-		camera.updateMVPMatrix();
+		else {
+			return false;
+		}
 	}
-	scene.updateGeometry(&renderManager, stage);
-	update();
 }
 
 void GLWidget3D::addBuildingMass() {
@@ -665,9 +687,6 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	case Qt::Key_Control:
 		ctrlPressed = true;
 		break;
-	case Qt::Key_Shift:
-		shiftPressed = true;
-		break;
 	default:
 		break;
 	}
@@ -675,7 +694,6 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 
 void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 	ctrlPressed = false;
-	shiftPressed = false;
 }
 
 /**
@@ -685,8 +703,8 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 	if (ctrlPressed) { // move camera
 		camera.mousePress(e->x(), e->y());
 	}
-	else if (shiftPressed) { // select a face
-		selectFace(glm::vec2(e->x(), e->y()));
+	else if (mode == MODE_SELECT) {
+		// do nothing
 	}
 	else { // start drawing a stroke
 		lastPos = e->pos();
@@ -702,8 +720,16 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	if (ctrlPressed) {
 		// do nothing
 	}
-	else if (shiftPressed) {
-		// do nothing
+	else if (mode == MODE_SELECT) { // select a face
+		if (selectFace(glm::vec2(e->x(), e->y()))) {
+			scene.updateGeometry(&renderManager, stage);
+
+			// When a face is selected, the user should start drawing.
+			mode = MODE_SKETCH;
+			mainWin->actionModes["sketch"]->setChecked(true);
+
+			update();
+		}
 	}
 	else {
 		dragging = false;
@@ -733,7 +759,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
  * This event handler is called when the mouse is dragged.
  */
 void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
-	if (ctrlPressed) { // movign a camera
+	if (ctrlPressed) { // moving a camera
 		if (e->buttons() & Qt::LeftButton) { // Rotate
 			camera.rotate(e->x(), e->y());
 		}
@@ -745,7 +771,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 		}
 		clearSketch();
 	}
-	else if (shiftPressed) {
+	else if (mode == MODE_SELECT) {
 		// do nothing
 	}
 	else { // keep drawing a stroke
@@ -770,6 +796,7 @@ void GLWidget3D::initializeGL() {
 	sketch.fill(qRgba(255, 255, 255, 255));
 
 	changeStage("building");
+	mode = MODE_SKETCH;
 }
 
 /**

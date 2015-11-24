@@ -25,6 +25,7 @@ class MainWindow;
 class GLWidget3D : public QGLWidget {
 public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
+	static enum { MODE_SKETCH = 0, MODE_SELECT };
 	
 	const float CAMERA_DEFAULT_DEPTH = 50.0f;
 
@@ -34,9 +35,9 @@ public:
 	QPoint lastPos;
 	bool dragging;
 	bool ctrlPressed;
-	bool shiftPressed;
 		
 	std::string stage;
+	int mode;
 	//std::vector<Regression*> regressions;
 	std::map<std::string, std::vector<QImage> > grammarImages;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
@@ -71,7 +72,7 @@ public:
 	void predictWindow(int grammar_id);
 	void predictLedge(int grammar_id);
 
-	void selectFace(const glm::vec2& mouse_pos);
+	bool selectFace(const glm::vec2& mouse_pos);
 	void addBuildingMass();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(const std::string& stage);

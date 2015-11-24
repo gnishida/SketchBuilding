@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionOpenCGA, SIGNAL(triggered()), this, SLOT(onOpenCGA()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
 
-	// create tool bar
+	// create tool bar for stages
 	QActionGroup* stageGroup = new QActionGroup(this);
 	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
 	for (int i = 0; i < 6; ++i) {
@@ -33,7 +33,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 			actionStages[stage_names[i]]->setChecked(true);
 		}
 	}
-	
+
+	ui.mainToolBar->addSeparator();
+
+	// create tool bar for modes
+	QActionGroup* modeGroup = new QActionGroup(this);
+	std::string mode_names[2] = { "sketch", "select" };
+	for (int i = 0; i < 2; ++i) {
+		actionModes[mode_names[i]] = new QAction(QIcon(std::string("resources/" + mode_names[i] + ".png").c_str()), std::string("&" + mode_names[i]).c_str(), this);
+		actionModes[mode_names[i]]->setCheckable(true);
+		modeGroup->addAction(actionModes[mode_names[i]]);
+		ui.mainToolBar->addAction(actionModes[mode_names[i]]);
+
+		connect(actionModes[mode_names[i]], SIGNAL(triggered()), this, SLOT(onModeChanged()));
+
+		if (i == 0) {
+			actionModes[mode_names[i]]->setChecked(true);
+		}
+	}
+
 	// setup layouts
 	glWidget = new GLWidget3D(this);
 
@@ -95,6 +113,20 @@ void MainWindow::onStageChanged() {
 	}
 	else if (actionStages["ledge"]->isChecked()) {
 		glWidget->changeStage("ledge");
+	}
+
+	// When the stage is changed, the user should to select a face.
+	actionModes["select"]->setChecked(true);
+	glWidget->mode = GLWidget3D::MODE_SELECT;
+
+}
+
+void MainWindow::onModeChanged() {
+	if (actionModes["sketch"]->isChecked()) {
+		glWidget->mode = GLWidget3D::MODE_SKETCH;
+	}
+	else if (actionModes["select"]->isChecked()) {
+		glWidget->mode = GLWidget3D::MODE_SELECT;
 	}
 }
 

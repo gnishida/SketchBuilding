@@ -16,6 +16,7 @@ public:
 	GLWidget3D* glWidget;
 	QListWidget *thumbsList;
 	std::map<std::string, QAction*> actionStages;
+	std::map<std::string, QAction*> actionModes;
 
 public:
 	MainWindow(QWidget *parent = 0);
@@ -29,6 +30,7 @@ public slots:
 	void onOpenCGA();
 	void onAddBuildingMass();
 	void onStageChanged();
+	void onModeChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);
 };
 
