@@ -23,6 +23,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	mainWin = (MainWindow*)parent;
 	dragging = false;
 	ctrlPressed = false;
+	demo_mode = 0;
 
 	// これがないと、QPainterによって、OpenGLによる描画がクリアされてしまう
 	setAutoFillBackground(false);
@@ -319,18 +320,31 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	// predict parameter values by deep learning
 	//std::vector<float> params = regressions[grammar_id]->Predict(grayMat);
 	
-	// DEBUG用に、Deeplearningを使わないで、固定のパラメータ値を使用する
+	//////////////////////// DEBUG ////////////////////////
 	std::vector<float> params(7);
 	for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
-	if (scene._currentObject > 0) {
-		params[0] = 4.0f / 14.0f;
-		params[2] = 0.125f;
+	std::cout << demo_mode << endl;
+	if (demo_mode == 0) {
+		if (scene._currentObject == 0) {
+			params[2] = 1.0f;
+			params[4] = 0.25f;
+		}
+		else if (scene._currentObject == 1) {
+			params[0] = 0.25f;
+			params[2] = 2.0f / 3.0f;
+			params[4] = 0.0f;
+		}
+		else if (scene._currentObject > 1) {
+			params[0] = 0.0;
+			params[2] = 1.0f / 3.0f;
+			params[4] = 0.0f;
+		}
 	}
 
-	float offset_x = params[0] * 14 - 7;
-	float offset_y = params[1] * 14 - 7;
-	float object_width = params[2] * 16 + 4;
-	float object_depth = params[3] * 16 + 4;
+	float offset_x = params[0] * 16 - 8;
+	float offset_y = params[1] * 16 - 8;
+	float object_width = params[2] * 24 + 4;
+	float object_depth = params[3] * 24 + 4;
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
@@ -366,7 +380,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 
 	renderManager.removeObjects();
 
-	// DEBUG用に、roof grammarを固定で選択
+	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["roof"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "roof");
@@ -427,7 +441,7 @@ void GLWidget3D::predictFacade(int grammar_id) {
 	}
 	std::cout << top_y << std::endl;
 
-	// DEBUG用に、facade grammarを固定で選択
+	//////////////////////// DEBUG ////////////////////////
 	//scene.building.currentLayer().setGrammar("Facade", grammars["facade"][grammar_id]);
 
 	//scene.generateGeometry(&renderManager);
@@ -456,7 +470,7 @@ void GLWidget3D::predictWindow(int grammar_id) {
 
 	renderManager.removeObjects();
 
-	// DEBUG用に、window grammarを固定で選択
+	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["window"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "window");
@@ -477,7 +491,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 
 	renderManager.removeObjects();
 
-	// DEBUG用に、ledge grammarを固定で選択
+	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["ledge"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "ledge");
@@ -686,6 +700,12 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	switch (e->key()) {
 	case Qt::Key_Control:
 		ctrlPressed = true;
+		break;
+	case Qt::Key_0:
+		demo_mode = 0;
+		break;
+	case Qt::Key_1:
+		demo_mode = 1;
 		break;
 	default:
 		break;

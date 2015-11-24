@@ -258,7 +258,7 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	}
 
 	std::vector<Vertex> vertices;
-	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 0.8), system.modelMat, vertices);
+	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 	renderManager->addObject("grid", "", vertices);
 }
 
@@ -274,7 +274,7 @@ void Scene::updateGeometry(RenderManager* renderManager, const std::string& stag
 	}
 
 	std::vector<Vertex> vertices;
-	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 0.8), system.modelMat, vertices);
+	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 	renderManager->addObject("grid", "", vertices);
 
 }
