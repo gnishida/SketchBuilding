@@ -16,7 +16,7 @@
 #include "Scene.h"
 
 #ifndef M_PI
-#define M_PI	3.141592
+#define M_PI	3.141592653
 #endif
 
 GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
@@ -565,7 +565,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
 
 			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / 3.141592653 * 180;
+			camera.yrot = -rot_y / M_PI * 180;
 			camera.zrot = 0.0f;
 			camera.updateMVPMatrix();
 
@@ -591,7 +591,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
 
 			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / 3.141592653 * 180;
+			camera.yrot = -rot_y / M_PI * 180;
 			camera.zrot = 0.0f;
 			camera.updateMVPMatrix();
 
@@ -617,7 +617,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
 
 			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / 3.141592653 * 180;
+			camera.yrot = -rot_y / M_PI * 180;
 			camera.zrot = 0.0f;
 			camera.updateMVPMatrix();
 
@@ -643,7 +643,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
 
 			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / 3.141592653 * 180;
+			camera.yrot = -rot_y / M_PI * 180;
 			camera.zrot = 0.0f;
 			camera.updateMVPMatrix();
 
