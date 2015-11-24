@@ -16,11 +16,41 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "Scene.h"
+#include <QTimer>
 
 using namespace std;
 class Classifier;
 class MainWindow;
 //class Regression;
+
+class InterpolationCamera {
+public:
+	Camera camera_start;
+	Camera camera_end;
+
+	float t;
+
+public:
+	InterpolationCamera() {}
+	InterpolationCamera(const Camera& camera_start, const Camera& camera_end) : camera_start(camera_start), camera_end(camera_end), t(0) {}
+	bool forward() {
+		t += 0.1f; 
+		if (t >= 1.0f) {
+			t = 1.0f;
+			return true;
+		}
+		else return false;
+	}
+
+	Camera currentCamera() {
+		Camera ret = camera_start;
+		ret.pos = camera_start.pos * (1.0f - t) + camera_end.pos * t;
+		ret.xrot = camera_start.xrot * (1.0f - t) + camera_end.xrot * t;
+		ret.yrot = camera_start.yrot * (1.0f - t) + camera_end.yrot * t;
+		ret.zrot = camera_start.zrot * (1.0f - t) + camera_end.zrot * t;
+		return ret;
+	}
+};
 
 class GLWidget3D : public QGLWidget {
 public:
@@ -50,6 +80,9 @@ public:
 	glm::mat4 light_mvpMatrix;
 	RenderManager renderManager;
 
+	InterpolationCamera intCamera;
+	QTimer* camera_timer;
+
 public:
 	GLWidget3D(QWidget *parent);
 	void drawLineTo(const QPoint &endPoint);
@@ -77,6 +110,7 @@ public:
 	void addBuildingMass();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(const std::string& stage);
+	void camera_update();
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 
@@ -87,6 +121,5 @@ protected:
 	void initializeGL();
 	void resizeGL(int width, int height);
 	void paintEvent(QPaintEvent *event);
-
 };
 

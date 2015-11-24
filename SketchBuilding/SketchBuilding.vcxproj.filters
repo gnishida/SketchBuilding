@@ -238,6 +238,9 @@
     <CustomBuild Include="LeftWindowItemWidget.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="GLWidget3D.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_MainWindow.h">
@@ -373,9 +376,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GLUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLWidget3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InsertOperator.h">

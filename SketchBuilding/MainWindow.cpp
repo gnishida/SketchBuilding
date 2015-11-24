@@ -144,3 +144,7 @@ void MainWindow::addListItem(const QString& text, const QImage& image, int optio
 	thumbsList->addItem(item);
 	thumbsList->setItemWidget(item, widget);
 }
+
+void MainWindow::camera_update() {
+	glWidget->camera_update();
+}

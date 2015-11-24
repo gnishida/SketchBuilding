@@ -25,7 +25,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	ctrlPressed = false;
 	demo_mode = 0;
 
-	// これがないと、QPainterによって、OpenGLによる描画がクリアされてしまう
+	// This is necessary to prevent the screen overdrawn by OpenGL
 	setAutoFillBackground(false);
 
 	// 光源位置をセット
@@ -39,9 +39,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
 
-	// load grammar
+	// load grammars and their thumbnail images
 	for (int i = 0; i < 6; ++i) {
-		// load grammar
 		{
 			QStringList filters;
 			filters << "*.xml";
@@ -327,7 +326,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	if (demo_mode == 0) {
 		if (scene._currentObject == 0) {
 			params[2] = 1.0f;
-			params[4] = 0.25f;
+			params[4] = 0.5f;
 		}
 		else if (scene._currentObject == 1) {
 			params[0] = 0.25f;
@@ -516,33 +515,34 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			scene.newLayer();
 
 			// shift the camera such that the selected face becomes a ground plane.
-			camera.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
-			camera.xrot = 30.0f;
-			camera.yrot = -45.0f;
-			camera.zrot = 0.0f;
+			intCamera = InterpolationCamera(camera, camera);
+			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
+			intCamera.camera_end.xrot = 30.0f;
+			intCamera.camera_end.yrot = -45.0f;
+			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
 		}
 		else {
 			// shift the camera such that the ground plane becomes really a ground plane.
-			camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
-			camera.xrot = 30.0f;
-			camera.yrot = -45.0f;
-			camera.zrot = 0.0f;
+			intCamera = InterpolationCamera(camera, camera);
+			intCamera.camera_end.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+			intCamera.camera_end.xrot = 30.0f;
+			intCamera.camera_end.yrot = -45.0f;
+			intCamera.camera_end.zrot = 0.0f;
 			current_z = 0;
 		}
-		camera.updateMVPMatrix();
 
 		return true;
 	}
 	else if (stage == "roof") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			// shift the camera such that the selected face becomes a ground plane.
-			camera.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
-			camera.xrot = 30.0f;
-			camera.yrot = -45.0f;
-			camera.zrot = 0.0f;
+			intCamera = InterpolationCamera(camera, camera);
+			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
+			intCamera.camera_end.xrot = 30.0f;
+			intCamera.camera_end.yrot = -45.0f;
+			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
-			camera.updateMVPMatrix();
 
 			return true;
 		} else {
@@ -552,22 +552,22 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "facade") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, camera);
+
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
 
 			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d = std::max(d1, d2) * 1.5f;
-			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
 
-			camera.pos.x = rotatedFace.bbox.center().x;
-			camera.pos.y = rotatedFace.bbox.center().y;
-			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+			intCamera.camera_end.pos.x = rotatedFace.bbox.center().x;
+			intCamera.camera_end.pos.y = rotatedFace.bbox.center().y;
+			intCamera.camera_end.pos.z = rotatedFace.bbox.maxPt.z + d;
 
-			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / M_PI * 180;
-			camera.zrot = 0.0f;
-			camera.updateMVPMatrix();
+			intCamera.camera_end.xrot = 0.0f;
+			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
+			intCamera.camera_end.zrot = 0.0f;
 
 			return true;
 		}
@@ -578,22 +578,22 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "floor") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, camera);
+
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
 
 			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d = std::max(d1, d2) * 1.5f;
-			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
 
-			camera.pos.x = rotatedFace.bbox.center().x;
-			camera.pos.y = rotatedFace.bbox.center().y;
-			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+			intCamera.camera_end.pos.x = rotatedFace.bbox.center().x;
+			intCamera.camera_end.pos.y = rotatedFace.bbox.center().y;
+			intCamera.camera_end.pos.z = rotatedFace.bbox.maxPt.z + d;
 
-			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / M_PI * 180;
-			camera.zrot = 0.0f;
-			camera.updateMVPMatrix();
+			intCamera.camera_end.xrot = 0.0f;
+			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
+			intCamera.camera_end.zrot = 0.0f;
 
 			return true;
 		}
@@ -604,22 +604,22 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "window") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, camera);
+
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
 
 			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d = std::max(d1, d2) * 1.5f;
-			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
 
-			camera.pos.x = rotatedFace.bbox.center().x;
-			camera.pos.y = rotatedFace.bbox.center().y;
-			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+			intCamera.camera_end.pos.x = rotatedFace.bbox.center().x;
+			intCamera.camera_end.pos.y = rotatedFace.bbox.center().y;
+			intCamera.camera_end.pos.z = rotatedFace.bbox.maxPt.z + d;
 
-			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / M_PI * 180;
-			camera.zrot = 0.0f;
-			camera.updateMVPMatrix();
+			intCamera.camera_end.xrot = 0.0f;
+			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
+			intCamera.camera_end.zrot = 0.0f;
 
 			return true;
 		}
@@ -630,22 +630,22 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "ledge") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, camera);
+
 			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
 
 			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
 			float d = std::max(d1, d2) * 1.5f;
-			std::cout << "Dist: " << d1 << "," << d2 << std::endl;
 
-			camera.pos.x = rotatedFace.bbox.center().x;
-			camera.pos.y = rotatedFace.bbox.center().y;
-			camera.pos.z = rotatedFace.bbox.maxPt.z + d;
+			intCamera.camera_end.pos.x = rotatedFace.bbox.center().x;
+			intCamera.camera_end.pos.y = rotatedFace.bbox.center().y;
+			intCamera.camera_end.pos.z = rotatedFace.bbox.maxPt.z + d;
 
-			camera.xrot = 0.0f;
-			camera.yrot = -rot_y / M_PI * 180;
-			camera.zrot = 0.0f;
-			camera.updateMVPMatrix();
+			intCamera.camera_end.xrot = 0.0f;
+			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
+			intCamera.camera_end.zrot = 0.0f;
 
 			return true;
 		}
@@ -675,12 +675,16 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	scene.unselectFace();
 
 	if (stage == "building") {
-		camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
-		camera.xrot = 30.0f;
-		camera.yrot = -45.0f;
-		camera.zrot = 0.0f;
+		intCamera = InterpolationCamera(camera, camera);
+		intCamera.camera_end.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+		intCamera.camera_end.xrot = 30.0f;
+		intCamera.camera_end.yrot = -45.0f;
+		intCamera.camera_end.zrot = 0.0f;
 		current_z = 0.0f;
-		camera.updateMVPMatrix();
+
+		camera_timer = new QTimer(this);
+		connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
+		camera_timer->start(20);
 	} else if (stage == "roof") {
 	} else if (stage == "facade") {
 	} else if (stage == "floor") {
@@ -693,6 +697,15 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	update();
 }
 
+void GLWidget3D::camera_update() {
+	if (intCamera.forward()) {
+		camera_timer->stop();
+	}
+
+	camera = intCamera.currentCamera();
+	camera.updateMVPMatrix();
+	update();
+}
 
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
@@ -747,6 +760,10 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 			// When a face is selected, the user should start drawing.
 			mode = MODE_SKETCH;
 			mainWin->actionModes["sketch"]->setChecked(true);
+
+			camera_timer = new QTimer(this);
+			connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
+			camera_timer->start(20);
 
 			update();
 		}
@@ -815,8 +832,17 @@ void GLWidget3D::initializeGL() {
 	sketch = QImage(this->width(), this->height(), QImage::Format_RGB888);
 	sketch.fill(qRgba(255, 255, 255, 255));
 
-	changeStage("building");
 	mode = MODE_SKETCH;
+	
+	camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+	camera.xrot = 30.0f;
+	camera.yrot = -45.0f;
+	camera.zrot = 0.0f;
+	current_z = 0.0f;
+	scene.updateGeometry(&renderManager, "building");
+
+	//changeStage("building");
+	stage = "building";
 }
 
 /**
@@ -885,6 +911,4 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 
 	glEnable(GL_DEPTH_TEST);
 }
-
-
 

@@ -32,6 +32,7 @@ public slots:
 	void onStageChanged();
 	void onModeChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);
+	void camera_update();
 };
 
 #endif // MAINWINDOW_H
