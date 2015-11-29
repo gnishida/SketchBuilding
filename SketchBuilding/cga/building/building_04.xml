@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <grammar type="building" version="1.0" author="Gen Nishida">
-	<attr name="height" value="5" range="4,20"/>
-	<attr name="u_width_ratio" value="0.4" range="0.2,0.4"/>
-	<attr name="u_depth_ratio" value="0.4" range="0.2,0.8"/>
+	<attr name="height" value="5" range="4,40"/>
 	
 	<rule name="Start">
 		<innerCircle/>

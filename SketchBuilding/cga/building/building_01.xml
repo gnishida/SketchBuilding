@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar type="building" version="1.0" author="Gen Nishida">
-	<attr name="height" value="5" range="4,20"/>
+	<attr name="height" value="5" range="4,40"/>
 	
 	<rule name="Start">
 		<extrude height="height"/>
