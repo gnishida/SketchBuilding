@@ -10,7 +10,8 @@
 #include "GrammarParser.h"
 #include "Rectangle.h"
 #include "GLUtils.h"
-//#include "Regression.h"
+#include "Regression.h"
+#include "Classifier.h"
 #include <time.h>
 #include "LeftWindowItemWidget.h"
 #include "Scene.h"
@@ -73,11 +74,13 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
-	/*
-	regressions.resize(2);
-	regressions[0] = new Regression("../models/cuboid_43/deploy.prototxt", "../models/cuboid_43/train_iter_64000.caffemodel");
-	regressions[1] = new Regression("../models/lshape_44/deploy.prototxt", "../models/lshape_44/train_iter_64000.caffemodel");
-	*/
+	classifiers["building"] = new Classifier("models/building/building.prototxt", "models/building/building.caffemodel", "models/building/mean.binaryproto");
+
+	regressions["building"].resize(4);
+	regressions["building"][0] = new Regression("models/building/building_01.prototxt", "models/building/building_01.caffemodel");
+	regressions["building"][1] = new Regression("models/building/building_02.prototxt", "models/building/building_02.caffemodel");
+	regressions["building"][2] = new Regression("models/building/building_03.prototxt", "models/building/building_03.caffemodel");
+	regressions["building"][3] = new Regression("models/building/building_04.prototxt", "models/building/building_04.caffemodel");
 }
 
 void GLWidget3D::drawLineTo(const QPoint &endPoint) {
@@ -185,6 +188,24 @@ void GLWidget3D::selectOption(int option_index) {
 void GLWidget3D::updateBuildingOptions() {
 	mainWin->thumbsList->clear();
 
+	QImage swapped = sketch.scaled(256, 256).rgbSwapped();
+	cv::Mat img = cv::Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar*>(swapped.bits()), swapped.bytesPerLine()).clone();
+
+	std::vector<Prediction> predictions = classifiers["building"]->Classify(img, 10);
+	
+	QPainter painter(&sketch);
+	int bestIndex;
+	for (int i = 0; i < predictions.size(); ++i) {
+		Prediction p = predictions[i];
+		mainWin->addListItem(QString::number(p.second, 'f', 3), grammarImages["building"][p.first], p.first);
+
+		if (i == 0) {
+			bestIndex = p.first;
+		}
+	}
+
+	/*
+	//////////////////////// DEBUG ////////////////////////
 	std::vector<int> indexes;
 	for (int i = 0; i < grammarImages["building"].size(); ++i) {
 		indexes.push_back(i);
@@ -195,8 +216,11 @@ void GLWidget3D::updateBuildingOptions() {
 	for (int i = 0; i < grammarImages["building"].size(); ++i) {
 		mainWin->addListItem("???", grammarImages["building"][indexes[i]], indexes[i]);
 	}
+	int bestIndex = 0;
+	//////////////////////// DEBUG ////////////////////////
+	*/
 
-	predictBuilding(0);
+	predictBuilding(bestIndex);
 
 	update();
 }
@@ -302,7 +326,7 @@ void GLWidget3D::updateLedgeOptions() {
  */
 void GLWidget3D::predictBuilding(int grammar_id) {
 	time_t start = clock();
-
+	
 	renderManager.removeObjects();
 
 	// convert the sketch to grayscale
@@ -317,9 +341,14 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
 
 	// predict parameter values by deep learning
-	//std::vector<float> params = regressions[grammar_id]->Predict(grayMat);
+	std::vector<float> params = regressions["building"][grammar_id]->Predict(grayMat);
+	for (int i = 0; i < params.size(); ++i) {
+		std::cout << params[i] << ",";
+	}
+	std::cout << std::endl;
 	
 	//////////////////////// DEBUG ////////////////////////
+	/*
 	std::vector<float> params(7);
 	for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
 	std::cout << demo_mode << endl;
@@ -339,6 +368,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 			params[4] = 0.0f;
 		}
 	}
+	*/
 
 	float offset_x = params[0] * 16 - 8;
 	float offset_y = params[1] * 16 - 8;
@@ -516,7 +546,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 
 			// shift the camera such that the selected face becomes a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
-			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
+			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
@@ -525,7 +555,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		else {
 			// shift the camera such that the ground plane becomes really a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
-			intCamera.camera_end.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+			intCamera.camera_end.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
@@ -676,7 +706,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 
 	if (stage == "building") {
 		intCamera = InterpolationCamera(camera, camera);
-		intCamera.camera_end.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+		intCamera.camera_end.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 		intCamera.camera_end.xrot = 30.0f;
 		intCamera.camera_end.yrot = -45.0f;
 		intCamera.camera_end.zrot = 0.0f;
@@ -834,7 +864,7 @@ void GLWidget3D::initializeGL() {
 
 	mode = MODE_SKETCH;
 	
-	camera.pos = glm::vec3(0, 0, CAMERA_DEFAULT_DEPTH);
+	camera.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 	camera.xrot = 30.0f;
 	camera.yrot = -45.0f;
 	camera.zrot = 0.0f;

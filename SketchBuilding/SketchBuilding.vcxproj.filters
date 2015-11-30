@@ -10,7 +10,13 @@
     <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_MainWindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Regression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CenterOperator.cpp">
@@ -85,6 +91,9 @@
     <ClCompile Include="Asset.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
     <ClCompile Include="CGA.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
@@ -157,14 +166,14 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_LeftWindowItemWidget.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_LeftWindowItemWidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="LeftWindowItemWidget.cpp">
+    <ClCompile Include="Classifier.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapeUOperator.cpp">
+      <Filter>Source Files\rule</Filter>
+    </ClCompile>
+    <ClCompile Include="PyramidOperator.cpp">
+      <Filter>Source Files\rule</Filter>
     </ClCompile>
     <ClCompile Include="LShape.cpp">
       <Filter>Source Files\shape</Filter>
@@ -172,11 +181,14 @@
     <ClCompile Include="LShapePrism.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeUOperator.cpp">
-      <Filter>Source Files\rule</Filter>
+    <ClCompile Include="LeftWindowItemWidget.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PyramidOperator.cpp">
-      <Filter>Source Files\rule</Filter>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LeftWindowItemWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LeftWindowItemWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,15 +248,15 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="LeftWindowItemWidget.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="GLWidget3D.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_MainWindow.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Regression.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CenterOperator.h">
       <Filter>Source Files\rule</Filter>
@@ -318,6 +330,9 @@
     <ClInclude Include="Asset.h">
       <Filter>Source Files\shape</Filter>
     </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
     <ClInclude Include="CGA.h">
       <Filter>Source Files\shape</Filter>
     </ClInclude>
@@ -378,6 +393,9 @@
     <ClInclude Include="GLUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLWidget3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="InsertOperator.h">
       <Filter>Source Files\rule</Filter>
     </ClInclude>
@@ -390,17 +408,20 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LShape.h">
-      <Filter>Source Files\shape</Filter>
-    </ClInclude>
-    <ClInclude Include="LShapePrism.h">
-      <Filter>Source Files\shape</Filter>
+    <ClInclude Include="Classifier.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShapeUOperator.h">
       <Filter>Source Files\rule</Filter>
     </ClInclude>
     <ClInclude Include="PyramidOperator.h">
       <Filter>Source Files\rule</Filter>
+    </ClInclude>
+    <ClInclude Include="LShape.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="LShapePrism.h">
+      <Filter>Source Files\shape</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

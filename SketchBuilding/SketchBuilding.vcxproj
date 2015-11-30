@@ -117,7 +117,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(BOOST_INCLUDEDIR);.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;..\opencv\include;$(CGAL_DIR)\include;$(CGAL_DIR)\auxiliary\gmp\include;..\glm;..\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_INCLUDEDIR);.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;../3rdparty/include;../src;../include;..\opencv\include;$(CGAL_DIR)\include;$(CGAL_DIR)\auxiliary\gmp\include;..\glm;..\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -132,8 +132,8 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(BOOST_LIBRARYDIR);../opencv/lib;../glew;$(CGAL_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;glew32.lib;opencv_world300d.lib;libboost_thread-vc120-mt-gd-1_58.lib;CGAL-vc120-mt-gd-4.7.lib;CGAL_Core-vc120-mt-gd-4.7.lib;CGAL_ImageIO-vc120-mt-gd-4.7.lib;CGAL_Qt5-vc120-mt-gd-4.7.lib;libgmp-10.lib;libmpfr-4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;../3rdparty/lib;../lib;$(BOOST_LIBRARYDIR);../opencv/lib;../glew;$(CGAL_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;glew32.lib;opencv_world300d.lib;libboost_thread-vc120-mt-gd-1_58.lib;CGAL-vc120-mt-gd-4.7.lib;CGAL_Core-vc120-mt-gd-4.7.lib;CGAL_ImageIO-vc120-mt-gd-4.7.lib;CGAL_Qt5-vc120-mt-gd-4.7.lib;libgmp-10.lib;libmpfr-4.lib;caffelibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;cudart.lib;cublas.lib;curand.lib;libprotobufd.lib;hdf5_tools.lib;hdf5_hl_fortran.lib;hdf5_fortran.lib;hdf5_hl_f90cstub.lib;hdf5_f90cstub.lib;hdf5_cpp.lib;hdf5_hl_cpp.lib;hdf5_hl.lib;hdf5.lib;opencv_world300.lib;leveldbd.lib;cublas_device.lib;cuda.lib;libglog.lib;lmdb.lib;libopenblas.dll.a;libgflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <CodeGeneration>compute_20,sm_20</CodeGeneration>
@@ -169,7 +169,7 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(BOOST_INCLUDEDIR);.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;..\opencv\include;$(CGAL_DIR)\include;$(CGAL_DIR)\auxiliary\gmp\include;..\glm;..\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_INCLUDEDIR);.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;../3rdparty/include;../src;../include;..\opencv\include;$(CGAL_DIR)\include;$(CGAL_DIR)\auxiliary\gmp\include;..\glm;..\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader />
@@ -184,8 +184,8 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(BOOST_LIBRARYDIR);../opencv/lib;../glew;$(CGAL_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;Qt5Xml.lib;glew32.lib;opencv_world300.lib;libboost_thread-vc120-mt-1_58.lib;CGAL-vc120-mt-4.7.lib;CGAL_Core-vc120-mt-4.7.lib;CGAL_ImageIO-vc120-mt-4.7.lib;CGAL_Qt5-vc120-mt-4.7.lib;libgmp-10.lib;libmpfr-4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;../3rdparty/lib;../lib;$(BOOST_LIBRARYDIR);../opencv/lib;../glew;$(CGAL_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;Qt5Xml.lib;glew32.lib;opencv_world300.lib;libboost_thread-vc120-mt-1_58.lib;CGAL-vc120-mt-4.7.lib;CGAL_Core-vc120-mt-4.7.lib;CGAL_ImageIO-vc120-mt-4.7.lib;CGAL_Qt5-vc120-mt-4.7.lib;libgmp-10.lib;libmpfr-4.lib;caffelib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;cudart.lib;cublas.lib;curand.lib;libprotobuf.lib;hdf5_tools.lib;hdf5_hl_fortran.lib;hdf5_fortran.lib;hdf5_hl_f90cstub.lib;hdf5_f90cstub.lib;hdf5_cpp.lib;hdf5_hl_cpp.lib;hdf5_hl.lib;hdf5.lib;leveldb.lib;cublas_device.lib;cuda.lib;libglog.lib;lmdb.lib;libopenblas.dll.a;libgflags.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
     </Link>
@@ -207,16 +207,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Asset.cpp" />
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CenterOperator.cpp" />
     <ClCompile Include="CGA.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Classifier.cpp" />
     <ClCompile Include="ColorOperator.cpp" />
     <ClCompile Include="CompOperator.cpp" />
     <ClCompile Include="CopyOperator.cpp" />
     <ClCompile Include="CornerCutOperator.cpp" />
     <ClCompile Include="Cuboid.cpp" />
-    <ClCompile Include="LeftWindowItemWidget.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="ExtrudeOperator.cpp" />
     <ClCompile Include="GableRoof.cpp" />
@@ -237,6 +238,7 @@
     <ClCompile Include="InnerCircleOperator.cpp" />
     <ClCompile Include="InnerSemiCircleOperator.cpp" />
     <ClCompile Include="InsertOperator.cpp" />
+    <ClCompile Include="LeftWindowItemWidget.cpp" />
     <ClCompile Include="LShape.cpp" />
     <ClCompile Include="LShapePrism.cpp" />
     <ClCompile Include="NumberEval.cpp" />
@@ -247,9 +249,20 @@
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="PyramidOperator.cpp" />
     <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Regression.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_MainWindow.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -277,6 +290,16 @@
     <ClCompile Include="TranslateOperator.cpp" />
     <ClCompile Include="UShape.cpp" />
     <ClCompile Include="UShapePrism.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\caffelib\caffelib.vcxproj">
+      <Project>{63a79297-9cc4-4081-adac-7f40ce965c95}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="MainWindow.h">
@@ -340,37 +363,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset.h" />
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CGA.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Classifier.h" />
     <ClInclude Include="Cuboid.h" />
-    <CustomBuild Include="LeftWindowItemWidget.h">
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing LeftWindowItemWidget.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS "-I.\..\..\3rdparty\include" "-I.\..\..\3rdparty\include\cuda" "-I.\..\..\src" "-I.\..\..\src\include" "-ID:\ThirdPartyLibrary\caffe\include" "-ID:\ThirdPartyLibrary\caffe\src" "-ID:\ThirdPartyLibrary\boost_1_57_0" "-ID:\CUDA\Toolkit\include" "-ID:\ThirdPartyLibrary\glog-0.3.3\src\windows" "-ID:\ThirdPartyLibrary\gflags-2.1.1\buildx64\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\mkl\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\compiler\include" "-ID:\ThirdPartyLibrary\hdf5\include" "-ID:\ThirdPartyLibrary\leveldb\include" "-ID:\ThirdPartyLibrary\snappy-windows\include" "-ID:\deeplearning\caffeold\3rdparty\include" "-ID:\ThirdPartyLibrary\opencv248\opencv\build\include" "-I." "-I.\GeneratedFiles"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing LeftWindowItemWidget.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_VARIADIC_MAX=10 -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS "-I$(BOOST_INCLUDEDIR)\." "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\..\opencv\include" "-I$(CGAL_DIR)\include" "-I$(CGAL_DIR)\auxiliary\gmp\include" "-I.\..\glm" "-I.\..\glew"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing LeftWindowItemWidget.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DWIN32 -DNDEBUG -D_CONSOLE -D_MBCS "-I.\..\..\3rdparty\include" "-I.\..\..\3rdparty\include\cuda" "-I.\..\..\src" "-I.\..\..\src\include" "-ID:\ThirdPartyLibrary\caffe\include" "-ID:\ThirdPartyLibrary\caffe\src" "-ID:\ThirdPartyLibrary\boost_1_57_0" "-ID:\CUDA\Toolkit\include" "-ID:\ThirdPartyLibrary\glog-0.3.3\src\windows" "-ID:\ThirdPartyLibrary\gflags-2.1.1\buildx64\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\mkl\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\compiler\include" "-ID:\ThirdPartyLibrary\hdf5\include" "-ID:\ThirdPartyLibrary\leveldb\include" "-ID:\ThirdPartyLibrary\snappy-windows\include" "-ID:\deeplearning\caffeold\3rdparty\include" "-ID:\ThirdPartyLibrary\opencv248\opencv\build\include" "-I." "-I.\GeneratedFiles"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing LeftWindowItemWidget.h...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_VARIADIC_MAX=10 -DWIN32 -DNDEBUG -D_CONSOLE -D_MBCS "-I$(BOOST_INCLUDEDIR)\." "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\..\opencv\include" "-I$(CGAL_DIR)\include" "-I$(CGAL_DIR)\auxiliary\gmp\include" "-I.\..\glm" "-I.\..\glew"</Command>
-    </CustomBuild>
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="GableRoof.h" />
     <ClInclude Include="GeneralObject.h" />
     <ClInclude Include="GLUtils.h" />
-    <CustomBuild Include="GLWidget3D.h" />
+    <ClInclude Include="GLWidget3D.h" />
     <ClInclude Include="Grammar.h" />
     <ClInclude Include="GrammarParser.h" />
     <ClInclude Include="HipRoof.h" />
     <ClInclude Include="InsertOperator.h" />
+    <CustomBuild Include="LeftWindowItemWidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing LeftWindowItemWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS "-I.\..\..\3rdparty\include" "-I.\..\..\3rdparty\include\cuda" "-I.\..\..\src" "-I.\..\..\src\include" "-ID:\ThirdPartyLibrary\caffe\include" "-ID:\ThirdPartyLibrary\caffe\src" "-ID:\ThirdPartyLibrary\boost_1_57_0" "-ID:\CUDA\Toolkit\include" "-ID:\ThirdPartyLibrary\glog-0.3.3\src\windows" "-ID:\ThirdPartyLibrary\gflags-2.1.1\buildx64\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\mkl\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\compiler\include" "-ID:\ThirdPartyLibrary\hdf5\include" "-ID:\ThirdPartyLibrary\leveldb\include" "-ID:\ThirdPartyLibrary\snappy-windows\include" "-ID:\deeplearning\caffeold\3rdparty\include" "-ID:\ThirdPartyLibrary\opencv248\opencv\build\include" "-I." "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing LeftWindowItemWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_VARIADIC_MAX=10 -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS "-I$(BOOST_INCLUDEDIR)\." "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\..\3rdparty\include" "-I.\..\src" "-I.\..\include" "-I.\..\opencv\include" "-I$(CGAL_DIR)\include" "-I$(CGAL_DIR)\auxiliary\gmp\include" "-I.\..\glm" "-I.\..\glew"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing LeftWindowItemWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DWIN32 -DNDEBUG -D_CONSOLE -D_MBCS "-I.\..\..\3rdparty\include" "-I.\..\..\3rdparty\include\cuda" "-I.\..\..\src" "-I.\..\..\src\include" "-ID:\ThirdPartyLibrary\caffe\include" "-ID:\ThirdPartyLibrary\caffe\src" "-ID:\ThirdPartyLibrary\boost_1_57_0" "-ID:\CUDA\Toolkit\include" "-ID:\ThirdPartyLibrary\glog-0.3.3\src\windows" "-ID:\ThirdPartyLibrary\gflags-2.1.1\buildx64\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\mkl\include" "-IC:\Program Files (x86)\Intel\Composer XE 2015\compiler\include" "-ID:\ThirdPartyLibrary\hdf5\include" "-ID:\ThirdPartyLibrary\leveldb\include" "-ID:\ThirdPartyLibrary\snappy-windows\include" "-ID:\deeplearning\caffeold\3rdparty\include" "-ID:\ThirdPartyLibrary\opencv248\opencv\build\include" "-I." "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing LeftWindowItemWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_VARIADIC_MAX=10 -DWIN32 -DNDEBUG -D_CONSOLE -D_MBCS "-I$(BOOST_INCLUDEDIR)\." "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\..\3rdparty\include" "-I.\..\src" "-I.\..\include" "-I.\..\opencv\include" "-I$(CGAL_DIR)\include" "-I$(CGAL_DIR)\auxiliary\gmp\include" "-I.\..\glm" "-I.\..\glew"</Command>
+    </CustomBuild>
     <ClInclude Include="LShape.h" />
     <ClInclude Include="LShapePrism.h" />
     <ClInclude Include="NumberEval.h" />
@@ -410,6 +435,7 @@
     <ClInclude Include="InnerCircleOperator.h" />
     <ClInclude Include="InnerSemiCircleOperator.h" />
     <ClInclude Include="OffsetOperator.h" />
+    <ClInclude Include="Regression.h" />
     <ClInclude Include="GeneratedFiles\ui_MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
