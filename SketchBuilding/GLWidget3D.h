@@ -19,9 +19,11 @@
 #include <QTimer>
 
 using namespace std;
+
 class Classifier;
 class MainWindow;
 class Regression;
+class MCMC;
 
 class InterpolationCamera {
 public:
@@ -57,7 +59,7 @@ public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
 	static enum { MODE_SKETCH = 0, MODE_SELECT };
 	
-	const float CAMERA_DEFAULT_HEIGHT = 15.0f;
+	const float CAMERA_DEFAULT_HEIGHT = 5.0f;
 	const float CAMERA_DEFAULT_DEPTH = 80.0f;// 50.0f;
 	
 	MainWindow* mainWin;
@@ -72,6 +74,7 @@ public:
 	int demo_mode;
 	std::map<std::string, std::vector<Regression*> > regressions;
 	std::map<std::string, Classifier*> classifiers;
+	MCMC* mcmc;
 	std::map<std::string, std::vector<QImage> > grammarImages;
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;

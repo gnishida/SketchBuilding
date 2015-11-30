@@ -12,6 +12,7 @@
 #include "GLUtils.h"
 #include "Regression.h"
 #include "Classifier.h"
+#include "MCMC.h"
 #include <time.h>
 #include "LeftWindowItemWidget.h"
 #include "Scene.h"
@@ -81,6 +82,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][1] = new Regression("models/building/building_02.prototxt", "models/building/building_02.caffemodel");
 	regressions["building"][2] = new Regression("models/building/building_03.prototxt", "models/building/building_03.caffemodel");
 	regressions["building"][3] = new Regression("models/building/building_04.prototxt", "models/building/building_04.caffemodel");
+
+	mcmc = new MCMC(this);
 }
 
 void GLWidget3D::drawLineTo(const QPoint &endPoint) {
@@ -335,17 +338,35 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	cv::cvtColor(mat, grayMat, CV_BGR2GRAY);
 
 	// resize the sketch
-	cv::resize(grayMat, grayMat, cv::Size(256, 256));
-	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
-	cv::resize(grayMat, grayMat, cv::Size(128, 128));
-	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
+	cv::Mat resizedGrayMat;
+	cv::resize(grayMat, resizedGrayMat, cv::Size(256, 256));
+	cv::threshold(resizedGrayMat, resizedGrayMat, 250, 255, CV_THRESH_BINARY);
+	cv::resize(resizedGrayMat, resizedGrayMat, cv::Size(128, 128));
+	cv::threshold(resizedGrayMat, resizedGrayMat, 250, 255, CV_THRESH_BINARY);
 
 	// predict parameter values by deep learning
-	std::vector<float> params = regressions["building"][grammar_id]->Predict(grayMat);
+	std::vector<float> params = regressions["building"][grammar_id]->Predict(resizedGrayMat);
+	/*
 	for (int i = 0; i < params.size(); ++i) {
 		std::cout << params[i] << ",";
 	}
 	std::cout << std::endl;
+	*/
+
+	//std::vector<float> params(7);
+	//for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
+
+	// optimize the parameter values by MCMC
+	mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, current_z, params);
+	/*
+	for (int i = 0; i < params.size(); ++i) {
+		std::cout << params[i] << ",";
+	}
+	std::cout << std::endl;
+	*/
+
+	renderManager.renderingMode = RenderManager::RENDERING_MODE_REGULAR;
+
 	
 	//////////////////////// DEBUG ////////////////////////
 	/*

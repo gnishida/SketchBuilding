@@ -241,6 +241,7 @@
     <ClCompile Include="LeftWindowItemWidget.cpp" />
     <ClCompile Include="LShape.cpp" />
     <ClCompile Include="LShapePrism.cpp" />
+    <ClCompile Include="MCMC.cpp" />
     <ClCompile Include="NumberEval.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="OffsetOperator.cpp" />
@@ -398,6 +399,7 @@
     </CustomBuild>
     <ClInclude Include="LShape.h" />
     <ClInclude Include="LShapePrism.h" />
+    <ClInclude Include="MCMC.h" />
     <ClInclude Include="NumberEval.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Polygon.h" />

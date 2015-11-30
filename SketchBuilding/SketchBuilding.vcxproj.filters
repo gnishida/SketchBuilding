@@ -190,6 +190,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_LeftWindowItemWidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="MCMC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -422,6 +425,9 @@
     </ClInclude>
     <ClInclude Include="LShapePrism.h">
       <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="MCMC.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
