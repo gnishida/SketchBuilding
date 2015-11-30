@@ -151,25 +151,40 @@ void Scene::clear() {
 	_currentObject = 0;
 }
 
-void Scene::newLayer() {
+void Scene::newObject() {
 	_objects.push_back(SceneObject());
 	_currentObject++;
 }
 
-void Scene::alignLayers() {
-	if (_currentObject == 0) return;
+void Scene::alignObjects() {
+	for (int i = 0; i < _objects.size(); ++i) {
+		if (i == _currentObject) continue;
 
-	if (fabs(_objects[_currentObject].offset_x - _objects[_currentObject - 1].offset_x) < 2.0f) {
-		_objects[_currentObject].offset_x = _objects[_currentObject - 1].offset_x;
-	}
-	if (fabs(_objects[_currentObject].offset_y - _objects[_currentObject - 1].offset_y) < 2.0f) {
-		_objects[_currentObject].offset_y = _objects[_currentObject - 1].offset_y;
-	}
-	if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[_currentObject - 1].offset_x - _objects[_currentObject - 1].object_width) < 2.0f) {
-		_objects[_currentObject].object_width = _objects[_currentObject - 1].offset_x + _objects[_currentObject - 1].object_width - _objects[_currentObject].offset_x;
-	}
-	if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[_currentObject - 1].offset_y - _objects[_currentObject - 1].object_depth) < 2.0f) {
-		_objects[_currentObject].object_depth = _objects[_currentObject - 1].offset_y + _objects[_currentObject - 1].object_depth - _objects[_currentObject].offset_y;
+		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x) < 3.0f) {
+			_objects[_currentObject].offset_x = _objects[i].offset_x;
+		}
+		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y) < 3.0f) {
+			_objects[_currentObject].offset_y = _objects[i].offset_y;
+		}
+		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < 3.0f) {
+			_objects[_currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
+		}
+		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < 3.0f) {
+			_objects[_currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
+		}
+
+		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < 3.0f) {
+			_objects[_currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+		}
+		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < 3.0f) {
+			_objects[_currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
+		}
+		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x)) {
+			_objects[_currentObject].object_width = _objects[i].offset_x - _objects[_currentObject].offset_x;
+		}
+		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y)) {
+			_objects[_currentObject].object_depth = _objects[i].offset_y - _objects[_currentObject].offset_y;
+		}
 	}
 }
 

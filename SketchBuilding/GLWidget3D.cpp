@@ -399,6 +399,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	offset_y -= object_depth * 0.5f;
 
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
+	scene.alignObjects();
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
@@ -563,7 +564,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 
 	if (stage == "building") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
-			scene.newLayer();
+			scene.newObject();
 
 			// shift the camera such that the selected face becomes a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
@@ -710,7 +711,7 @@ void GLWidget3D::addBuildingMass() {
 	if (stage != "building") return;
 
 	clearSketch();
-	scene.newLayer();
+	scene.newObject();
 	update();
 }
 
