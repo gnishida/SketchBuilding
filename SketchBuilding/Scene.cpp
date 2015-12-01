@@ -153,7 +153,7 @@ void Scene::clear() {
 
 void Scene::newObject() {
 	_objects.push_back(SceneObject());
-	_currentObject++;
+	_currentObject = _objects.size() - 1;
 }
 
 void Scene::alignObjects() {

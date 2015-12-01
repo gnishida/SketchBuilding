@@ -764,8 +764,10 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT) { // select a face
 		if (selectFace(glm::vec2(e->x(), e->y()))) {
-			// 選択した面のポインタは、geometryを再作成すると無効になるので、コピーしておく
-			selectedFace = *(scene.selectedFace());
+			// HACK: 選択した面のポインタは、geometryを再作成すると無効になるので、コピーしておく
+			if (scene.selectedFace() != NULL) {
+				selectedFace = *(scene.selectedFace());
+			}
 
 			scene.updateGeometry(&renderManager, stage);
 
