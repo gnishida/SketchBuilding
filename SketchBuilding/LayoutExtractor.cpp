@@ -1,7 +1,7 @@
 #include "LayoutExtractor.h"
 #include <iostream>
 
-std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int width, int height, const std::vector<std::vector<glm::vec2> >& strokes, boost::shared_ptr<glutils::Face> face, const glm::mat4& mvpMatrix) {
+std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int width, int height, const std::vector<std::vector<glm::vec2> >& strokes, const glutils::Face& face, const glm::mat4& mvpMatrix) {
 	// list up y coordinates
 	std::vector<float> y_coordinates;
 	for (auto stroke : strokes) {
@@ -18,16 +18,16 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 	float top_y_screen = 0.0f;
 	float bottom_y = 0.0f;
 	float top_y = 0.0f;
-	for (int i = 0; i < face->vertices.size(); ++i) {
-		glm::vec4 projectedPt = mvpMatrix * glm::vec4(face->vertices[i].position, 1);
+	for (int i = 0; i < face.vertices.size(); ++i) {
+		glm::vec4 projectedPt = mvpMatrix * glm::vec4(face.vertices[i].position, 1);
 		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height;
 		if (y < bottom_y_screen) {
 			bottom_y_screen = y;
-			bottom_y = face->vertices[i].position.y;
+			bottom_y = face.vertices[i].position.y;
 		}
 		if (y > top_y_screen) {
 			top_y_screen = y;
-			top_y = face->vertices[i].position.y;
+			top_y = face.vertices[i].position.y;
 		}
 	}
 
@@ -38,14 +38,26 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 	// order the lines by Y
 	std::sort(y_coordinates.begin(), y_coordinates.end());
 
+	std::vector<float> y_coordinates_revised;
 	for (int i = 0; i < y_coordinates.size(); ++i) {
-		// check if there is any other y coordinate that is close to this y
-		for (int j = 0; j < y_coordinates.size(); ++j) {
-			if (fabs(y_coordinates[i] - y_coordinates[j]) < 1) {
-				y_coordinates.erase(y_coordinates.begin() + j);
+		bool tooClose = false;
+
+		if (i > 0 && i < y_coordinates.size() - 1) {
+			// check if there is any other y coordinate that is close to this y
+			for (int j = 0; j < y_coordinates.size(); ++j) {
+				if (i == j) continue;
+				if (fabs(y_coordinates[i] - y_coordinates[j]) < 2.0f) {
+					tooClose = true;
+					break;
+				}
 			}
 		}
+
+		if (!tooClose) {
+			y_coordinates_revised.push_back(y_coordinates[i]);
+		}
 	}
+	y_coordinates = y_coordinates_revised;
 
 	////////////////////// DEBUG ///////////////////////
 	for (auto y_coord : y_coordinates) {
@@ -59,50 +71,64 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 		intervals.push_back(y_coordinates[i + 1] - y_coordinates[i]);
 	}
 
+	// count the num of ledges
+	int num_ledges = 0;
+	for (int i = 0; i < intervals.size(); ++i) {
+		if (intervals[i] < 14) num_ledges++;
+	}
+
 	std::vector<float> ret;
 
-	if (intervals.size() == 1 || fabs(intervals[0] - intervals[1]) < 0.5) {
+	if (num_ledges == 0) {
 		// A* pattern (i.e., same height for every floor)
 		float total = 0.0f;
-		for (int i = 0; i < intervals.size(); ++i) {
+		for (int i = 0; i < intervals.size() - 1; ++i) {
 			total += intervals[i];
 		}
 		
 		// compute #floors
-		float avg_height = total / intervals.size();
+		float avg_height = total / (intervals.size() - 1);
 		int num_floors = (top_y_screen - bottom_y_screen) / avg_height + 0.5f;
+		float floor_height = (top_y_screen - bottom_y_screen) / num_floors;
 
 		// return the actual height of the floors
-		ret.push_back((top_y - bottom_y) / num_floors);
+		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
 		return std::make_pair(0, ret);
 	}
-	else {
-		// AB* pattern (i.e., the ground floor has an exceptional height)
+	else if (num_ledges == 1) {
+		// A B C* pattern (B is a ledge)
 		float ground_height = intervals[0];
+		float ledge_height = intervals[1];
 
-		float total = 0.0f;
-		for (int i = 1; i < intervals.size(); ++i) {
-			total += intervals[i];
+		int num_floors = 2;
+		if (intervals.size() >= 3) {
+			num_floors = (top_y_screen - bottom_y_screen - ground_height - ledge_height) / intervals[2] + 0.5f;
 		}
+		float floor_height = (top_y_screen - bottom_y_screen - ground_height - ledge_height) / num_floors;
 
-		// compute #floors
-		float avg_height = total / (intervals.size() - 1);
-		int num_floors = (top_y_screen - bottom_y_screen) / avg_height + 0.5f + 1;
+		//float scale = (top_y - bottom_y) / (ground_height + ledge_height + floor_height * num_floors);
 
-
-		// return the actual height of the ground floor and the upper floors
-		float scale = (top_y - bottom_y) / (ground_height + total);
-		ground_height *= scale;
-
-		float height = (top_y - bottom_y - ground_height) / (num_floors - 1);
-
-		ret.push_back(ground_height);
-		ret.push_back(height);
+		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(ground_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(ledge_height / (top_y_screen - bottom_y_screen));
 		return std::make_pair(1, ret);
+	} else if (num_ledges > 1) {
+		// {AB}* pattern (B is a ledge)
+		int num_floors = (top_y_screen - bottom_y_screen) / (intervals[0] + intervals[1]) + 0.5f;
+
+		float floor_height = (top_y_screen - bottom_y_screen) / num_floors / (intervals[0] + intervals[1]) * intervals[0];
+		float ledge_height = (top_y_screen - bottom_y_screen) / num_floors / (intervals[0] + intervals[1]) * intervals[1];
+
+		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(ledge_height / (top_y_screen - bottom_y_screen));
+		return std::make_pair(2, ret);
+	}
+	else {
+		return std::make_pair(3, ret);
 	}
 }
 
-std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int width, int height, const std::vector<std::vector<glm::vec2> >& strokes, boost::shared_ptr<glutils::Face> face, const glm::mat4& mvpMatrix) {
+std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int width, int height, const std::vector<std::vector<glm::vec2> >& strokes, const glutils::Face& face, const glm::mat4& mvpMatrix) {
 	std::vector<glutils::BoundingBox> bboxes;
 
 	const float threshold = 3.0f;
@@ -142,26 +168,26 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 	float left = 0.0f;
 	float right = 0.0f;
 
-	for (int i = 0; i < face->vertices.size(); ++i) {
-		glm::vec4 projectedPt = mvpMatrix * glm::vec4(face->vertices[i].position, 1);
+	for (int i = 0; i < face.vertices.size(); ++i) {
+		glm::vec4 projectedPt = mvpMatrix * glm::vec4(face.vertices[i].position, 1);
 		float x = (projectedPt.x / projectedPt.w + 1.0) * 0.5 * width;
 		if (x < left_screen) {
 			left_screen = x;
-			left = face->vertices[i].position.x;
+			left = face.vertices[i].position.x;
 		}
 		if (x > right_screen) {
 			right_screen = x;
-			right = face->vertices[i].position.x;
+			right = face.vertices[i].position.x;
 		}
 
 		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height;
 		if (y < bottom_screen) {
 			bottom_screen = y;
-			bottom = face->vertices[i].position.y;
+			bottom = face.vertices[i].position.y;
 		}
 		if (y > top_screen) {
 			top_screen = y;
-			top = face->vertices[i].position.y;
+			top = face.vertices[i].position.y;
 		}
 	}
 

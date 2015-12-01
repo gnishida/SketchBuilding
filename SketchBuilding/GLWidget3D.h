@@ -79,6 +79,7 @@ public:
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;
 	float current_z;
+	glutils::Face selectedFace;
 
 	Camera camera;
 	glm::vec3 light_dir;

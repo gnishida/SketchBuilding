@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <grammar type="facade" version="1.0" author="Gen Nishida">
+	<attr name="floor_height" value="0.3" range="0.01,1"/>
+	
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="absolute" value="5"/>
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
 		<split splitAxis="y">
-			<param type="floating" value="4" name="Floor" repeat="true"/>
+			<param type="relative" value="floor_height" name="Floor" repeat="true"/>
 		</split>
 	</rule>
 </grammar>

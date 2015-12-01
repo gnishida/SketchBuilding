@@ -251,7 +251,7 @@ void GLWidget3D::updateRoofOptions() {
 void GLWidget3D::updateFacadeOptions() {
 	mainWin->thumbsList->clear();
 
-	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFacadePattern(width(), height(), strokes, scene.selectedFace(), camera.mvpMatrix);
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFacadePattern(width(), height(), strokes, selectedFace, camera.mvpMatrix);
 
 	QPainter painter(&sketch);
 	mainWin->addListItem("1.00", grammarImages["facade"][result.first], result.first);
@@ -269,7 +269,7 @@ void GLWidget3D::updateFacadeOptions() {
 void GLWidget3D::updateFloorOptions() {
 	mainWin->thumbsList->clear();
 
-	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, scene.selectedFace(), camera.mvpMatrix);
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, selectedFace, camera.mvpMatrix);
 
 	QPainter painter(&sketch);
 	mainWin->addListItem("1.00", grammarImages["floor"][result.first], result.first);
@@ -447,7 +447,7 @@ void GLWidget3D::predictFacade(int grammar_id, const std::vector<float>& params)
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar("Start", grammars["facade"][grammar_id], params);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][grammar_id], params);
 	scene.generateGeometry(&renderManager, "facade");
 
 	update();
@@ -460,7 +460,7 @@ void GLWidget3D::predictFloor(int grammar_id, const std::vector<float>& params) 
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar("Start", grammars["floor"][grammar_id], params);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][grammar_id], params);
 	scene.generateGeometry(&renderManager, "floor");
 
 	update();
@@ -764,6 +764,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT) { // select a face
 		if (selectFace(glm::vec2(e->x(), e->y()))) {
+			// 選択した面のポインタは、geometryを再作成すると無効になるので、コピーしておく
+			selectedFace = *(scene.selectedFace());
+
 			scene.updateGeometry(&renderManager, stage);
 
 			// When a face is selected, the user should start drawing.
