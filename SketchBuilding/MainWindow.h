@@ -27,6 +27,7 @@ protected:
 
 public slots:
 	void onNew();
+	void onClearSketch();
 	void onOpenCGA();
 	void onAddBuildingMass();
 	void onStageChanged();

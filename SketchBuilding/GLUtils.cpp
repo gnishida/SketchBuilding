@@ -99,6 +99,13 @@ BoundingBox::BoundingBox(const std::vector<std::vector<glm::vec3> >& points) {
 	}
 }
 
+void BoundingBox::addPoint(const glm::vec2& point) {
+	minPt.x = std::min(minPt.x, point.x);
+	minPt.y = std::min(minPt.y, point.y);
+	maxPt.x = std::max(maxPt.x, point.x);
+	maxPt.y = std::max(maxPt.y, point.y);
+}
+
 void BoundingBox::addPoint(const glm::vec3& point) {
 	minPt.x = std::min(minPt.x, point.x);
 	minPt.y = std::min(minPt.y, point.y);
@@ -106,6 +113,19 @@ void BoundingBox::addPoint(const glm::vec3& point) {
 	maxPt.x = std::max(maxPt.x, point.x);
 	maxPt.y = std::max(maxPt.y, point.y);
 	maxPt.z = std::max(maxPt.z, point.z);
+}
+
+bool BoundingBox::contains(const glm::vec2& point, float threshold) {
+	if (point.x < minPt.x - threshold || point.x > maxPt.x + threshold) return false;
+	if (point.y < minPt.y - threshold || point.y > maxPt.y + threshold) return false;
+	return true;
+}
+
+bool BoundingBox::contains(const glm::vec3& point, float threshold) {
+	if (point.x < minPt.x - threshold || point.x > maxPt.x + threshold) return false;
+	if (point.y < minPt.y - threshold || point.y > maxPt.y + threshold) return false;
+	if (point.z < minPt.z - threshold || point.z > maxPt.z + threshold) return false;
+	return true;
 }
 
 Face::Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices) {

@@ -28,7 +28,7 @@
      <string>File</string>
     </property>
     <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionClearSketch"/>
     <addaction name="actionOpenCGA"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -84,9 +84,6 @@
    <property name="text">
     <string>New</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
   </action>
   <action name="actionOpenCGA">
    <property name="text">
@@ -120,6 +117,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionClearSketch">
+   <property name="text">
+    <string>Clear Sketch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>

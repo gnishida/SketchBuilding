@@ -18,11 +18,14 @@ public:
 	BoundingBox(const std::vector<glm::vec2>& points);
 	BoundingBox(const std::vector<glm::vec3>& points);
 	BoundingBox(const std::vector<std::vector<glm::vec3> >& points);
+	void addPoint(const glm::vec2& point);
 	void addPoint(const glm::vec3& point);
 	float sx() { return maxPt.x - minPt.x; }
 	float sy() { return maxPt.y - minPt.y; }
 	float sz() { return maxPt.z - minPt.z; }
 	glm::vec3 center() { return (maxPt + minPt) * 0.5f; }
+	bool contains(const glm::vec2& point, float threshold);
+	bool contains(const glm::vec3& point, float threshold);
 };
 
 class Face {

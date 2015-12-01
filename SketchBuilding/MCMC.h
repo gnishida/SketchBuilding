@@ -15,7 +15,7 @@ public:
 public:
 	MCMC(GLWidget3D* glWidget);
 
-	void optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold, float offset_z, std::vector<float>& params);
+	void optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold, int maxIters, float offset_z, std::vector<float>& params);
 	//static void convertParams(const std::vector<float>& params, const std::vector<std::pair<float, float> >& ranges, float& offset_x, float& offset_y, float& object_width, float& object_depth, std::vector<float>& params2);
 
 private:

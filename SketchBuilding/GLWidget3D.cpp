@@ -16,6 +16,7 @@
 #include <time.h>
 #include "LeftWindowItemWidget.h"
 #include "Scene.h"
+#include "LayoutExtractor.h"
 
 #ifndef M_PI
 #define M_PI	3.141592653
@@ -96,7 +97,7 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 
 	painter.drawLine(pt1, pt2);
 
-	strokes.back().push_back(glm::vec2(endPoint.x(), endPoint.y()));
+	strokes.back().push_back(glm::vec2(endPoint.x(), height() - endPoint.y()));
 
 	lastPos = endPoint;
 }
@@ -250,18 +251,17 @@ void GLWidget3D::updateRoofOptions() {
 void GLWidget3D::updateFacadeOptions() {
 	mainWin->thumbsList->clear();
 
-	std::vector<int> indexes;
-	for (int i = 0; i < grammarImages["facade"].size(); ++i) {
-		indexes.push_back(i);
-	}
-	std::random_shuffle(indexes.begin(), indexes.end());
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFacadePattern(width(), height(), strokes, scene.selectedFace(), camera.mvpMatrix);
 
 	QPainter painter(&sketch);
+	mainWin->addListItem("1.00", grammarImages["facade"][result.first], result.first);
 	for (int i = 0; i < grammarImages["facade"].size(); ++i) {
-		mainWin->addListItem("???", grammarImages["facade"][indexes[i]], indexes[i]);
+		if (i == result.first) continue;
+
+		mainWin->addListItem("0.00", grammarImages["facade"][i], i);
 	}
 
-	predictFacade(0);
+	predictFacade(result.first, result.second);
 
 	update();
 }
@@ -269,18 +269,17 @@ void GLWidget3D::updateFacadeOptions() {
 void GLWidget3D::updateFloorOptions() {
 	mainWin->thumbsList->clear();
 
-	std::vector<int> indexes;
-	for (int i = 0; i < grammarImages["floor"].size(); ++i) {
-		indexes.push_back(i);
-	}
-	std::random_shuffle(indexes.begin(), indexes.end());
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, scene.selectedFace(), camera.mvpMatrix);
 
 	QPainter painter(&sketch);
+	mainWin->addListItem("1.00", grammarImages["floor"][result.first], result.first);
 	for (int i = 0; i < grammarImages["floor"].size(); ++i) {
-		mainWin->addListItem("???", grammarImages["floor"][indexes[i]], indexes[i]);
+		if (i == result.first) continue;
+
+		mainWin->addListItem("0.00", grammarImages["floor"][i], i);
 	}
 
-	predictFloor(0);
+	predictFloor(result.first, result.second);
 
 	update();
 }
@@ -299,7 +298,7 @@ void GLWidget3D::updateWindowOptions() {
 		mainWin->addListItem("???", grammarImages["window"][indexes[i]], indexes[i]);
 	}
 
-	predictFacade(0);
+	predictWindow(0);
 
 	update();
 }
@@ -318,7 +317,7 @@ void GLWidget3D::updateLedgeOptions() {
 		mainWin->addListItem("???", grammarImages["ledge"][indexes[i]], indexes[i]);
 	}
 
-	predictFacade(0);
+	predictLedge(0);
 
 	update();
 }
@@ -346,18 +345,16 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	// predict parameter values by deep learning
 	std::vector<float> params = regressions["building"][grammar_id]->Predict(resizedGrayMat);
-	/*
 	for (int i = 0; i < params.size(); ++i) {
 		std::cout << params[i] << ",";
 	}
 	std::cout << std::endl;
-	*/
 
 	//std::vector<float> params(7);
 	//for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
 
 	// optimize the parameter values by MCMC
-	mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, current_z, params);
+	mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
 	/*
 	for (int i = 0; i < params.size(); ++i) {
 		std::cout << params[i] << ",";
@@ -398,6 +395,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
+	std::cout << current_z << std::endl;
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	scene.alignObjects();
 	
@@ -442,71 +440,28 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	update();
 }
 
-void GLWidget3D::predictFacade(int grammar_id) {
+void GLWidget3D::predictFacade(int grammar_id, const std::vector<float>& params) {
 	if (scene._selectedFaceName.empty()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
 
-	// list up y coordinates
-	std::vector<float> y_coordinates;
-	for (auto stroke : strokes) {
-		if (stroke.size() <= 1) continue;
-
-		float y = height() - (stroke[0].y + stroke.back().y) * 0.5f;
-
-		// check if there is any other y coordinate that is close to this y
-		bool tooClose = false;
-		for (auto y_coord : y_coordinates) {
-			if (fabs(y_coord - y) < 1) {
-				tooClose = true;
-				break;
-			}
-		}
-		if (tooClose) continue;
-
-		y_coordinates.push_back(y);
-
-	}
-
-	// order the lines by Y
-	std::sort(y_coordinates.begin(), y_coordinates.end());
-
-	// project the face to the image plane, and find the y coordinates of the bottom and top lines
-	float bottom_y = height();
-	float top_y = 0.0f;
-	for (int i = 0; i < scene.selectedFace()->vertices.size(); ++i) {
-		glm::vec4 projectedPt = camera.mvpMatrix * glm::vec4(scene.selectedFace()->vertices[i].position, 1);
-		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height();
-		if (y < bottom_y) {
-			bottom_y = y;
-		}
-		if (y > top_y) {
-			top_y = y;
-		}
-	}
-
-	std::cout << bottom_y << std::endl;
-	for (auto y_coord : y_coordinates) {
-		std::cout << y_coord << std::endl;
-	}
-	std::cout << top_y << std::endl;
-
-	//////////////////////// DEBUG ////////////////////////
-	//scene.building.currentLayer().setGrammar("Facade", grammars["facade"][grammar_id]);
-
-	//scene.generateGeometry(&renderManager);
+	// set grammar
+	scene.currentObject().setGrammar("Start", grammars["facade"][grammar_id], params);
+	scene.generateGeometry(&renderManager, "facade");
 
 	update();
 }
 
-void GLWidget3D::predictFloor(int grammar_id) {
+void GLWidget3D::predictFloor(int grammar_id, const std::vector<float>& params) {
 	if (scene._selectedFaceName.empty()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
 
-
+	// set grammar
+	scene.currentObject().setGrammar("Start", grammars["floor"][grammar_id], params);
+	scene.generateGeometry(&renderManager, "floor");
 
 	update();
 }
@@ -575,6 +530,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			current_z = scene.selectedFace()->vertices[0].position.y;
 		}
 		else {
+			scene.newObject();
+
 			// shift the camera such that the ground plane becomes really a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
 			intCamera.camera_end.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);

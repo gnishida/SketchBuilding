@@ -14,8 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// add menu handlers
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
-	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
+	connect(ui.actionClearSketch, SIGNAL(triggered()), this, SLOT(onClearSketch()));
 	connect(ui.actionOpenCGA, SIGNAL(triggered()), this, SLOT(onOpenCGA()));
+	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
 
 	// create tool bar for stages
@@ -82,6 +83,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent* e) {
 void MainWindow::onNew() {
 	glWidget->clearSketch();
 	glWidget->clearGeometry();
+}
+
+void MainWindow::onClearSketch() {
+	glWidget->clearSketch();
 }
 
 void MainWindow::onOpenCGA() {

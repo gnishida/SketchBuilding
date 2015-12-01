@@ -193,6 +193,9 @@
     <ClCompile Include="MCMC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LayoutExtractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -427,6 +430,9 @@
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="MCMC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

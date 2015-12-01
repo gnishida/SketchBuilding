@@ -35,6 +35,7 @@ public:
     QAction *actionLShape;
     QAction *actionAddBuildingMass;
     QAction *actionFixGeometry;
+    QAction *actionClearSketch;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -68,6 +69,8 @@ public:
         actionAddBuildingMass->setObjectName(QStringLiteral("actionAddBuildingMass"));
         actionFixGeometry = new QAction(MainWindowClass);
         actionFixGeometry->setObjectName(QStringLiteral("actionFixGeometry"));
+        actionClearSketch = new QAction(MainWindowClass);
+        actionClearSketch->setObjectName(QStringLiteral("actionClearSketch"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -92,7 +95,7 @@ public:
         menuBar->addAction(menuTool->menuAction());
         menuBar->addAction(menuShape->menuAction());
         menuFile->addAction(actionNew);
-        menuFile->addAction(actionOpen);
+        menuFile->addAction(actionClearSketch);
         menuFile->addAction(actionOpenCGA);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
@@ -114,13 +117,14 @@ public:
         actionPredict->setText(QApplication::translate("MainWindowClass", "Predict", 0));
         actionPredict->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+P", 0));
         actionNew->setText(QApplication::translate("MainWindowClass", "New", 0));
-        actionNew->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
         actionOpenCGA->setText(QApplication::translate("MainWindowClass", "Open CGA", 0));
         actionCuboid->setText(QApplication::translate("MainWindowClass", "Cuboid", 0));
         actionLShape->setText(QApplication::translate("MainWindowClass", "L-Shape", 0));
         actionAddBuildingMass->setText(QApplication::translate("MainWindowClass", "Add Building Mass", 0));
         actionFixGeometry->setText(QApplication::translate("MainWindowClass", "Fix", 0));
         actionFixGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+F", 0));
+        actionClearSketch->setText(QApplication::translate("MainWindowClass", "Clear Sketch", 0));
+        actionClearSketch->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuTool->setTitle(QApplication::translate("MainWindowClass", "Command", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Shape", 0));

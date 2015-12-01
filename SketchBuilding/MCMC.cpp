@@ -7,7 +7,7 @@ MCMC::MCMC(GLWidget3D* glWidget) {
 	this->glWidget = glWidget;
 }
 
-void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold, float offset_z, std::vector<float>& params) {
+void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold, int maxIters, float offset_z, std::vector<float>& params) {
 	time_t start = clock();
 
 	// cretae a binary image
@@ -24,12 +24,12 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 	int WIDTH = image.cols;
 	int HEIGHT = image.rows;
 
-	float delta = 0.05f;
-	int stepsize = 20;
+	float delta = 0.1f;
+	int stepsize = 10;
 
 	int step_count = 0;
 	float dist = std::numeric_limits<float>::max();
-	for (int i = 0; i < 100; ++i) {
+	for (int i = 0; i < maxIters; ++i) {
 		///////////////////////////////// DEBUG ///////////////////////////////// 
 		/*
 		QImage hoge = renderImage(params, ranges);

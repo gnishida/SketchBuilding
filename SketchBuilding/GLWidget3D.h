@@ -106,8 +106,8 @@ public:
 
 	void predictBuilding(int grammar_id);
 	void predictRoof(int grammar_id);
-	void predictFacade(int grammar_id);
-	void predictFloor(int grammar_id);
+	void predictFacade(int grammar_id, const std::vector<float>& params);
+	void predictFloor(int grammar_id, const std::vector<float>& params);
 	void predictWindow(int grammar_id);
 	void predictLedge(int grammar_id);
 
