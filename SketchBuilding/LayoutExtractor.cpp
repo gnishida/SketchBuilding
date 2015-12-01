@@ -74,7 +74,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 	// count the num of ledges
 	int num_ledges = 0;
 	for (int i = 0; i < intervals.size(); ++i) {
-		if (intervals[i] < 14) num_ledges++;
+		if (intervals[i] <= 15) num_ledges++;
 	}
 
 	std::vector<float> ret;
@@ -208,7 +208,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		for (int i = 0; i < widths.size(); ++i) {
 			total_width += widths[i];
 		}
-		float avg_width = total_width / widths.size();
+		float window_width = total_width / widths.size();
 
 		// extract parameter values
 		float bottom_margin_total = 0.0f;
@@ -220,17 +220,28 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		float bottom_margin = bottom_margin_total / bboxes.size();
 		float top_margin = top_margin_total / bboxes.size();
 
-		float padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
-		float margin = (bboxes[0].minPt.x - left_screen) / padding;
+		float padding;
+		float margin;
+		if (bboxes.size() >= 2) {
+			padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
+			margin = (bboxes[0].minPt.x - left_screen) / padding;
+		}
+		else {
+			padding = (bboxes[0].minPt.x - left_screen) * 0.5f;
+			margin = (bboxes[0].minPt.x - left_screen) * 0.5f;
+		}
 
-		ret.push_back(bottom_margin * vertical_scale);
-		ret.push_back(top_margin * vertical_scale);
-		ret.push_back(padding * horizontal_scale);
-		ret.push_back(margin * horizontal_scale);
+		ret.push_back(bottom_margin / (top_screen - bottom_screen));
+		ret.push_back(margin / (right_screen - left_screen));
+		ret.push_back(padding / (right_screen - left_screen));
+		ret.push_back(top_margin / (top_screen - bottom_screen));
+		ret.push_back(window_width / (right_screen - left_screen));
 		return std::make_pair(0, ret);
 	}
 	else {
 		// {AB}* Pattern (i.e., every two windows have the same size)
+		float window_width1 = bboxes[0].sx();
+		float window_width2 = bboxes[1].sx();
 		float bottom_margin1 = bboxes[0].minPt.y - bottom_screen;
 		float top_margin1 = top_screen - bboxes[0].maxPt.y;
 		float bottom_margin2 = bboxes[1].minPt.y - bottom_screen;
@@ -238,13 +249,14 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		float padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
 		float margin = (bboxes[0].minPt.x - left_screen) / padding;
 
-		ret.push_back(bottom_margin1 * vertical_scale);
-		ret.push_back(top_margin1 * vertical_scale);
-		ret.push_back(bottom_margin2 * vertical_scale);
-		ret.push_back(top_margin2 * vertical_scale);
-		ret.push_back(padding * horizontal_scale);
-		ret.push_back(margin * horizontal_scale);
-
+		ret.push_back(bottom_margin1 / (top_screen - bottom_screen));
+		ret.push_back(bottom_margin2 / (top_screen - bottom_screen));
+		ret.push_back(margin / (right_screen - left_screen));
+		ret.push_back(padding / (right_screen - left_screen));
+		ret.push_back(top_margin1 / (top_screen - bottom_screen));
+		ret.push_back(top_margin2 / (top_screen - bottom_screen));
+		ret.push_back(window_width1 / (right_screen - left_screen));
+		ret.push_back(window_width2 / (right_screen - left_screen));
 		return std::make_pair(1, ret);
 	}
 }

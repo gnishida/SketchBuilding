@@ -98,9 +98,10 @@ void Rule::decodeSplitSizes(float size, const std::vector<Value>& sizes, const s
 
 	for (int i = 0; i < sizes.size(); ++i) {
 		if (sizes[i].repeat) {
-			float s = sizes[i].getEstimateValue(size - regular_sum - floating_sum * floating_scale, grammar, shape);
+			//float s = sizes[i].getEstimateValue(size - regular_sum - floating_sum * floating_scale, grammar, shape);
+			float s = sizes[i].getEstimateValue(size, grammar, shape);
 			int num = (size - regular_sum - floating_sum * floating_scale) / s + 0.5;
-			if (num <= 0) num = 1;
+			//if (num <= 0) num = 1;
 			s = (size - regular_sum - floating_sum * floating_scale) / num;
 			for (int k = 0; k < num; ++k) {
 				decoded_sizes.push_back(s);
