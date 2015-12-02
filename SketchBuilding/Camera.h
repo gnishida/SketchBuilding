@@ -16,6 +16,7 @@ public:
 	void updatePMatrix(int width,int height);
 	void updateMVPMatrix();
 	glm::vec3 cameraPosInWorld();
+	glm::vec3 cameraViewDir();
 
 public:
 	float fovy;

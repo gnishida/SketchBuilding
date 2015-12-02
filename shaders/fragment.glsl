@@ -39,9 +39,9 @@ float shadowCoef(){
 	vec3 ProjCoords = shadow_coord2.xyz / shadow_coord2.w;
 	vec2 UVCoords;
 	UVCoords.x = 0.5 * ProjCoords.x + 0.5;
-    UVCoords.y = 0.5 * ProjCoords.y + 0.5;
-    float z = 0.5 * ProjCoords.z + 0.5;
-	
+	UVCoords.y = 0.5 * ProjCoords.y + 0.5;
+	float z = 0.5 * ProjCoords.z + 0.5;
+
 	float visibility = 1.0f;
 	if (texture2D(shadowMap, UVCoords).z  <  z) {
 		visibility = 0;
@@ -63,11 +63,12 @@ void regularRendering() {
 
 	// lighting
 	vec4 ambient = vec4(0.2, 0.2, 0.2, 1.0);
-	vec4 diffuse = vec4(0.8, 0.8, 0.8, 1.0) * max(0.0, dot(-lightDir, fNormal));
+	//vec4 diffuse = vec4(0.8, 0.8, 0.8, 1.0) * max(0.0, dot(-lightDir, fNormal));
+	vec4 diffuse = vec4(0.8, 0.8, 0.8, 1.0) * max(0.0, max(dot(vec3(0.6, 0.1, 0.95), fNormal), dot(vec3(-0.2, 0.88, 0.1), fNormal)));
 
 	float shadow_coef = 1.0;
 	if (useShadow == 1) {
-		shadow_coef= shadowCoef();
+		shadow_coef = shadowCoef();
 	}
 	outputF = (ambient + (shadow_coef * 0.95 + 0.05) * diffuse) * outputF;
 
@@ -80,12 +81,13 @@ void wireframeRendering() {
 	outputF = vec4(fColor.xyz, 1);
 
 	// determine frag distance to closest edge
-	float nearD = min(min(dist[0],dist[1]),dist[2]);
+	float nearD = min(min(dist[0], dist[1]), dist[2]);
 	float edgeIntensity;
 	if (nearD < 1.0) {
 		edgeIntensity = 1.0;
-	} else {
-		edgeIntensity = exp2(-1.0*(nearD-1)*(nearD-1));
+	}
+	else {
+		edgeIntensity = exp2(-1.0*(nearD - 1)*(nearD - 1));
 	}
 
 	if (textureEnabled == 1) { // for texture mode
@@ -98,7 +100,7 @@ void wireframeRendering() {
 
 	float shadow_coef = 1.0;
 	if (useShadow == 1) {
-		shadow_coef= shadowCoef();
+		shadow_coef = shadowCoef();
 	}
 	outputF = (ambient + (shadow_coef * 0.95 + 0.05) * diffuse) * outputF;
 
@@ -121,12 +123,13 @@ void lineRendering() {
 		for (int yy = -range; yy <= range; ++yy) {
 			if (xx == 0 && yy == 0) continue;
 
-			vec3 nn = texture(normalMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).xyz;
-			float nn2 = texture(normalMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).w;
+			vec3 nn = texture(normalMap, vec2((gl_FragCoord.x + xx) / screenWidth, (gl_FragCoord.y + yy) / screenHeight)).xyz;
+			float nn2 = texture(normalMap, vec2((gl_FragCoord.x + xx) / screenWidth, (gl_FragCoord.y + yy) / screenHeight)).w;
 			if (nn.x == 0 && nn.y == 0 && nn.z == 0) {
 				normal_diff = normalSensitivity;
-			} else {
-				normal_diff = max(normal_diff, length(nn - n) * normalSensitivity);				
+			}
+			else {
+				normal_diff = max(normal_diff, length(nn - n) * normalSensitivity);
 				depth_diff = max(depth_diff, abs(nn2 - n2) * depthSensitivity);
 			}
 
@@ -140,7 +143,8 @@ void lineRendering() {
 	if (useThreshold == 1) {
 		if (diff < threshold) {
 			diff = 0.0;
-		} else {
+		}
+		else {
 			diff = 1.0;
 		}
 	}
@@ -161,7 +165,7 @@ void sketchyRendering() {
 	float scale_y[3] = float[](1.71, 2.57, 2.97);
 	float scale_z[3] = float[](1.43, 2.17, 2.77);
 	int cycle_size[3] = int[](273, 193, 311);
-	
+
 	float jitter_size = 2.3;
 
 	for (int iter = 0; iter < num_iterations; ++iter) {
@@ -178,11 +182,12 @@ void sketchyRendering() {
 			for (int yy = -range; yy <= range; ++yy) {
 				if (xx == 0 && yy == 0) continue;
 
-				vec3 nn = texture(normalMap, vec2((sx+xx) / screenWidth, (sy+yy) / screenHeight)).xyz;
-				float nn2 = texture(normalMap, vec2((gl_FragCoord.x+xx) / screenWidth, (gl_FragCoord.y+yy) / screenHeight)).w;
+				vec3 nn = texture(normalMap, vec2((sx + xx) / screenWidth, (sy + yy) / screenHeight)).xyz;
+				float nn2 = texture(normalMap, vec2((gl_FragCoord.x + xx) / screenWidth, (gl_FragCoord.y + yy) / screenHeight)).w;
 				if (nn.x == 0 && nn.y == 0 && nn.z == 0) {
 					diff = normalSensitivity;
-				} else {
+				}
+				else {
 					diff = max(diff, length(nn - n) * normalSensitivity);
 					diff = max(diff, abs(nn2 - n2) * depthSensitivity);
 				}
@@ -198,7 +203,8 @@ void sketchyRendering() {
 	diff = min(1, diff);
 	if (diff < threshold) {
 		diff = 0;
-	} else {
+	}
+	else {
 		diff = 1;
 	}
 	outputF = vec4(1 - diff, 1 - diff, 1 - diff, 1);
@@ -207,14 +213,18 @@ void sketchyRendering() {
 void main() {
 	if (pass == 1) {
 		outputF = vec4((fNormal + 1) * 0.5, abs(dot(fPosition, fNormal)));
-	} else {
+	}
+	else {
 		if (renderingMode == 1) {
 			regularRendering();
-		} else if (renderingMode == 2) {
+		}
+		else if (renderingMode == 2) {
 			wireframeRendering();
-		} else if (renderingMode == 3) {
+		}
+		else if (renderingMode == 3) {
 			lineRendering();
-		} else if (renderingMode == 4) {
+		}
+		else if (renderingMode == 4) {
 			sketchyRendering();
 		}
 	}

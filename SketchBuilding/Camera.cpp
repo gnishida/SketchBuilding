@@ -91,3 +91,7 @@ void Camera::updateMVPMatrix() {
 glm::vec3 Camera::cameraPosInWorld() {
 	return glm::vec3(glm::inverse(mvMatrix) * glm::vec4(0, 0, 0, 1));
 }
+
+glm::vec3 Camera::cameraViewDir() {
+	return glm::normalize(glm::vec3(cosf(xrot * (float)M_PI / 180.0f) * sinf(yrot * (float)M_PI / 180.0f), -sinf(xrot * (float)M_PI / 180.0f), -cosf(xrot * (float)M_PI / 180.0f) * cosf(yrot * (float)M_PI / 180.0f)));
+}

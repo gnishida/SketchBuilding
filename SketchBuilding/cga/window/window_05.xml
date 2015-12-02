@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <grammar type="window" version="1.0" author="Gen Nishida">
-	<attr name="horizontal_interval_ratio" value="0.5" range="0.2,0.5"/>
-	<attr name="vertical_interval_ratio" value="0.5" range="0.2,0.5"/>
-	<attr name="shutter_interval" value="0.05" range="0.03,0.3"/>
-
+	<attr name="horizontal_interval_ratio" value="0.5" range="0.3,0.5"/>
+	<attr name="offset_size" value="0.05" range="0.01,0.2"/>
+	<attr name="vertical_interval_ratio" value="0.5" range="0.3,0.5"/>
+	<attr name="shutter_interval" value="0.05" range="0.03,0.2"/>
+	<attr name="window_sill_height" value="0.05" range="0.01,0.2"/>
+	
 	<rule name="Start">
 		<split splitAxis="x">
 			<param type="relative" value="0.2" name="WindowShutterArea_05"/>
@@ -13,8 +15,8 @@
 	</rule>
 	<rule name="WindowMainArea_05">
 		<split splitAxis="y">
-			<param type="absolute" value="0.3" name="WindowSillTile_05"/>
-			<param type="floating" value="1" name="WindowTileMain_05"/>
+			<param type="relative" value="window_sill_height" name="WindowSillTile_05"/>
+			<param type="relative" value="1-window_sill_height" name="WindowTileMain_05"/>
 		</split>
 	</rule>
 	<rule name="WindowSillTile_05">
@@ -52,7 +54,7 @@
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainTop_05">
-		<offset offsetDistance="-0.1" inside="WindowTileMainMainTopInside_05" border="WindowFrame"/>
+		<offset offsetDistance="-offset_size" inside="WindowTileMainMainTopInside_05" border="WindowFrame"/>
 	</rule>
 	<rule name="WindowTileMainMainTopInside_05">
 		<extrude height="-0.1"/>
@@ -62,10 +64,10 @@
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainTopInsideBottom_05">
-		<offset offsetDistance="-0.1" inside="WindowTileMainMainTopInsideBottomInside_05" border="WindowFrame"/>
+		<offset offsetDistance="-0.02" inside="WindowTileMainMainTopInsideBottomInside_05" border="WindowFrame"/>
 	</rule>
 	<rule name="WindowTileMainMainTopInsideBottomInside_05">
-		<extrude height="-0.2"/>
+		<extrude height="-0.05"/>
 		<comp>
 			<param name="side" value="WindowFrame"/>
 			<param name="top" value="WindowGlassArea_05"/>
@@ -87,20 +89,20 @@
 	</rule>
 	<rule name="WindowGlassCellArea_05">
 		<split splitAxis="x">
-			<param type="absolute" value="0.02" name="WindowGlassSeparateTile_05"/>
+			<param type="relative" value="0.025" name="WindowGlassSeparateTile_05"/>
 			<param type="floating" value="1" name="WindowGlassCellColumnArea_05"/>
-			<param type="absolute" value="0.02" name="WindowGlassSeparateTile_05"/>
+			<param type="relative" value="0.025" name="WindowGlassSeparateTile_05"/>
 		</split>
 	</rule>
 	<rule name="WindowGlassCellColumnArea_05">
 		<split splitAxis="y">
-			<param type="absolute" value="0.02" name="WindowGlassSeparateTile_05"/>
+			<param type="relative" value="0.025" name="WindowGlassSeparateTile_05"/>
 			<param type="floating" value="1" name="WindowGlass"/>
-			<param type="absolute" value="0.02" name="WindowGlassSeparateTile_05"/>
+			<param type="relative" value="0.025" name="WindowGlassSeparateTile_05"/>
 		</split>
 	</rule>
 	<rule name="WindowGlassSeparateTile_05">
-		<extrude height="0.2"/>
+		<extrude height="0.05"/>
 		<comp>
 			<param name="side" value="WindowFrame"/>
 			<param name="top" value="WindowFrame"/>
@@ -110,22 +112,22 @@
 	<!-- Window Shutter -->
 	<rule name="WindowShutterArea_05">
 		<split splitAxis="y">
-			<param type="absolute" value="0.3" name="Wall"/>
-			<param type="floating" value="1" name="WindowShutterAreaMain_05"/>
+			<param type="relative" value="window_sill_height" name="Wall"/>
+			<param type="relative" value="1-window_sill_height" name="WindowShutterAreaMain_05"/>
 		</split>
 	</rule>
 	<rule name="WindowShutterAreaMain_05">
-		<extrude height="0.2"/>
+		<extrude height="0.1"/>
 		<comp>
 			<param name="side" value="WindowShutterFrame"/>
 			<param name="top" value="WindowShutterAreaMainTop_05"/>
 		</comp>
 	</rule>
 	<rule name="WindowShutterAreaMainTop_05">
-		<offset offsetDistance="-0.1" inside="WindowShutterAreaMainTopInside_05" border="WindowShutterFrame"/>
+		<offset offsetDistance="-0.03" inside="WindowShutterAreaMainTopInside_05" border="WindowShutterFrame"/>
 	</rule>
 	<rule name="WindowShutterAreaMainTopInside_05">
-		<extrude height="-0.1"/>
+		<extrude height="-0.05"/>
 		<comp>
 			<param name="side" value="WindowShutterFrame"/>
 			<param name="top" value="WindowShutterAreaMainTopInsideBottom_05"/>
@@ -133,14 +135,14 @@
 	</rule>
 	<rule name="WindowShutterAreaMainTopInsideBottom_05">
 		<split splitAxis="y">
-			<param type="floating" value="shutter_interval" name="WindowShutterFrame"/>
-			<param type="floating" value="shutter_interval*2" name="WindowShutterRow_05" repeat="true"/>
+			<param type="relative" value="shutter_interval" name="WindowShutterFrame"/>
+			<param type="relative" value="shutter_interval*2" name="WindowShutterRow_05" repeat="true"/>
 		</split>
 	</rule>
 	<rule name="WindowShutterRow_05">
 		<split splitAxis="y">
-			<param type="floating" value="shutter_interval" name="WindowShutterRowSeparator_05"/>
-			<param type="floating" value="shutter_interval" name="WindowShutterFrame"/>
+			<param type="relative" value="0.5" name="WindowShutterRowSeparator_05"/>
+			<param type="relative" value="0.5" name="WindowShutterFrame"/>
 		</split>
 	</rule>
 	<rule name="WindowShutterRowSeparator_05">
