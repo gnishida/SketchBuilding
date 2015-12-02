@@ -85,6 +85,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][2] = new Regression("models/building/building_03.prototxt", "models/building/building_03.caffemodel");
 	regressions["building"][3] = new Regression("models/building/building_04.prototxt", "models/building/building_04.caffemodel");
 
+	classifiers["window"] = new Classifier("models/window/window.prototxt", "models/window/window.caffemodel", "models/window/mean.binaryproto");
+
 	mcmc = new MCMC(this);
 }
 
@@ -286,18 +288,40 @@ void GLWidget3D::updateFloorOptions() {
 void GLWidget3D::updateWindowOptions() {
 	mainWin->thumbsList->clear();
 
+	// スケッチ画像を256x256に縮小
+	QImage swapped = sketch.rgbSwapped();
+	cv::Mat img = cv::Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar*>(swapped.bits()), swapped.bytesPerLine()).clone();
+	int size = std::min(img.rows, img.cols);
+	cv::Mat img2 = img(cv::Rect((img.cols - size) / 2, (img.rows - size) / 2, size, size));
+	if (size > 512) {
+		cv::resize(img2, img2, cv::Size(512, 512));
+		cv::threshold(img2, img2, 250, 255, CV_THRESH_BINARY);
+	}
+	cv::resize(img2, img2, cv::Size(256, 256));
+	cv::threshold(img2, img, 250, 255, CV_THRESH_BINARY);
+
+	std::vector<Prediction> predictions = classifiers["window"]->Classify(img, 10);
+	
+	/*
 	std::vector<int> indexes;
 	for (int i = 0; i < grammarImages["window"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
+	*/
 
 	QPainter painter(&sketch);
-	for (int i = 0; i < grammarImages["window"].size(); ++i) {
-		mainWin->addListItem("???", grammarImages["window"][indexes[i]], indexes[i]);
+	int bestIndex;
+	for (int i = 0; i < predictions.size(); ++i) {
+		Prediction p = predictions[i];
+		mainWin->addListItem(QString::number(p.second, 'f', 3), grammarImages["window"][p.first], p.first);
+
+		if (i == 0) {
+			bestIndex = p.first;
+		}
 	}
 
-	predictWindow(0);
+	predictWindow(bestIndex);
 
 	update();
 }
@@ -650,7 +674,7 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
-			float rot_y = atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
+			float rot_y = -M_PI * 0.4 + atan2f(scene.selectedFace()->vertices[0].normal.x, scene.selectedFace()->vertices[0].normal.z);
 			glutils::Face rotatedFace = scene.selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
 
 			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
