@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <grammar type="floor" version="1.0" author="Gen Nishida">
-	<attr name="floor_bottom_margin1" value="0.3" range="0.01,1"/>
-	<attr name="floor_bottom_margin2" value="0.3" range="0.01,1"/>
-	<attr name="floor_horizontal_margin" value="0.1" range="0.01,1"/>
-	<attr name="floor_padding" value="0.03" range="0.01,1"/>
-	<attr name="floor_top_margin1" value="0.2" range="0.01,1"/>
-	<attr name="floor_top_margin2" value="0.2" range="0.01,1"/>
-	<attr name="floor_window_width1" value="0.2" range="0.01,1"/>
-	<attr name="floor_window_width2" value="0.2" range="0.01,1"/>
+	<attr name="floor_bottom_margin1" value="0.5" range="0.01,3"/>
+	<attr name="floor_bottom_margin2" value="0.5" range="0.01,3"/>
+	<attr name="floor_horizontal_margin" value="1" range="0.01,5"/>
+	<attr name="floor_padding" value="1" range="0.01,5"/>
+	<attr name="floor_top_margin1" value="0.5" range="0.01,3"/>
+	<attr name="floor_top_margin2" value="0.5" range="0.01,3"/>
+	<attr name="floor_window_width1" value="1" range="0.1,10"/>
+	<attr name="floor_window_width2" value="1" range="0.1,10"/>
 	
 	<rule name="Start">
 		<split splitAxis="x">
-			<param type="relative" value="floor_horizontal_margin" name="Wall"/>
-			<param type="relative" value="floor_window_width1+floor_window_width2+floor_padding*4" name="FloorColumn_02" repeat="true"/>
-			<param type="relative" value="floor_horizontal_margin" name="Wall"/>
+			<param type="absolute" value="floor_horizontal_margin" name="Wall"/>
+			<param type="absolute" value="floor_window_width1+floor_window_width2+floor_padding*4" name="FloorColumn_02" repeat="true"/>
+			<param type="absolute" value="floor_horizontal_margin" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn_02">
@@ -27,16 +27,16 @@
 	</rule>
 	<rule name="FloorColumn2_02">
 		<split splitAxis="y">
-			<param type="relative" value="floor_bottom_margin1" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin1-floor_top_margin1" name="BorderAndWindow_02"/>
-			<param type="relative" value="floor_top_margin1" name="Wall"/>
+			<param type="floating" value="floor_bottom_margin1" name="Wall"/>
+			<param type="floating" value="floor_window_width1" name="BorderAndWindow_02"/>
+			<param type="floating" value="floor_top_margin1" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn3_02">
 		<split splitAxis="y">
-			<param type="relative" value="floor_bottom_margin2" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin2-floor_top_margin2" name="BorderAndWindow2_02"/>
-			<param type="relative" value="floor_top_margin2" name="Wall"/>
+			<param type="floating" value="floor_bottom_margin2" name="Wall"/>
+			<param type="floating" value="floor_window_width2" name="BorderAndWindow2_02"/>
+			<param type="floating" value="floor_top_margin2" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="BorderAndWindow_02">

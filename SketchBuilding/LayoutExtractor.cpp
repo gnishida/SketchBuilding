@@ -59,12 +59,6 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 	}
 	y_coordinates = y_coordinates_revised;
 
-	////////////////////// DEBUG ///////////////////////
-	for (auto y_coord : y_coordinates) {
-		std::cout << y_coord << std::endl;
-	}
-	////////////////////// DEBUG ///////////////////////
-
 	// compute the intervals
 	std::vector<float> intervals;
 	float avg_intervals = 0.0f;
@@ -91,6 +85,9 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 	}
 	avg_intervals = total_intervals / (intervals.size() - num_ledges);
 
+	// scale
+	float scale = (top_y - bottom_y) / (top_y_screen - bottom_y_screen);
+
 	std::vector<float> ret;
 
 	if (num_ledges == 0) {
@@ -99,7 +96,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 		float floor_height = (top_y_screen - bottom_y_screen) / num_floors;
 
 		// return the actual height of the floors
-		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(floor_height * scale);
 		return std::make_pair(0, ret);
 	}
 	else if (num_ledges == 1) {
@@ -112,9 +109,9 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 
 		//float scale = (top_y - bottom_y) / (ground_height + ledge_height + floor_height * num_floors);
 
-		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
-		ret.push_back(ground_height / (top_y_screen - bottom_y_screen));
-		ret.push_back(ledge_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(floor_height * scale);
+		ret.push_back(ground_height * scale);
+		ret.push_back(ledge_height * scale);
 		return std::make_pair(1, ret);
 	} else if (num_ledges > 1) {
 		// {AB}* pattern (B is a ledge)
@@ -123,8 +120,8 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 		float floor_height = (top_y_screen - bottom_y_screen) / num_floors / (intervals[0] + intervals[1]) * intervals[0];
 		float ledge_height = (top_y_screen - bottom_y_screen) / num_floors / (intervals[0] + intervals[1]) * intervals[1];
 
-		ret.push_back(floor_height / (top_y_screen - bottom_y_screen));
-		ret.push_back(ledge_height / (top_y_screen - bottom_y_screen));
+		ret.push_back(floor_height * scale);
+		ret.push_back(ledge_height * scale);
 		return std::make_pair(2, ret);
 	}
 	else {
@@ -235,11 +232,11 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 			margin = (bboxes[0].minPt.x - left_screen) * 0.5f;
 		}
 
-		ret.push_back(bottom_margin / (top_screen - bottom_screen));
-		ret.push_back(margin / (right_screen - left_screen));
-		ret.push_back(padding / (right_screen - left_screen));
-		ret.push_back(top_margin / (top_screen - bottom_screen));
-		ret.push_back(window_width / (right_screen - left_screen));
+		ret.push_back(bottom_margin * vertical_scale);
+		ret.push_back(margin * horizontal_scale);
+		ret.push_back(padding * horizontal_scale);
+		ret.push_back(top_margin * vertical_scale);
+		ret.push_back(window_width * vertical_scale);
 		return std::make_pair(0, ret);
 	}
 	else {
@@ -253,14 +250,14 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		float padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
 		float margin = bboxes[0].minPt.x - left_screen - padding;
 
-		ret.push_back(bottom_margin1 / (top_screen - bottom_screen));
-		ret.push_back(bottom_margin2 / (top_screen - bottom_screen));
-		ret.push_back(margin / (right_screen - left_screen));
-		ret.push_back(padding / (right_screen - left_screen));
-		ret.push_back(top_margin1 / (top_screen - bottom_screen));
-		ret.push_back(top_margin2 / (top_screen - bottom_screen));
-		ret.push_back(window_width1 / (right_screen - left_screen));
-		ret.push_back(window_width2 / (right_screen - left_screen));
+		ret.push_back(bottom_margin1 * vertical_scale);
+		ret.push_back(bottom_margin2 * vertical_scale);
+		ret.push_back(margin * horizontal_scale);
+		ret.push_back(padding * horizontal_scale);
+		ret.push_back(top_margin1 * vertical_scale);
+		ret.push_back(top_margin2 * vertical_scale);
+		ret.push_back(window_width1 * horizontal_scale);
+		ret.push_back(window_width2 * horizontal_scale);
 		return std::make_pair(1, ret);
 	}
 }

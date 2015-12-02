@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <grammar type="floor" version="1.0" author="Gen Nishida">
-	<attr name="floor_bottom_margin" value="0.3" range="0.01,1"/>
-	<attr name="floor_horizontal_margin" value="0.1" range="0.01,1"/>
-	<attr name="floor_padding" value="0.03" range="0.01,1"/>
-	<attr name="floor_top_margin" value="0.2" range="0.01,1"/>
-	<attr name="floor_window_width" value="0.2" range="0.01,1"/>
+	<attr name="floor_bottom_margin" value="0.5" range="0.01,3"/>
+	<attr name="floor_horizontal_margin" value="1" range="0.01,5"/>
+	<attr name="floor_padding" value="1" range="0.01,5"/>
+	<attr name="floor_top_margin" value="0.5" range="0.01,3"/>
+	<attr name="floor_window_width" value="1" range="0.1,10"/>
 	
 	<rule name="Start">
 		<split splitAxis="x">
-			<param type="relative" value="floor_horizontal_margin" name="Wall"/>
-			<param type="relative" value="floor_window_width+floor_padding*2" name="FloorColumn_01" repeat="true"/>
-			<param type="relative" value="floor_horizontal_margin" name="Wall"/>
+			<param type="absolute" value="floor_horizontal_margin" name="Wall"/>
+			<param type="absolute" value="floor_window_width+floor_padding*2" name="FloorColumn_01" repeat="true"/>
+			<param type="absolute" value="floor_horizontal_margin" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn_01">
@@ -22,9 +22,9 @@
 	</rule>
 	<rule name="FloorColumn2_01">
 		<split splitAxis="y">
-			<param type="relative" value="floor_bottom_margin" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin-floor_top_margin" name="BorderAndWindow_01"/>
-			<param type="relative" value="floor_top_margin" name="Wall"/>
+			<param type="absolute" value="floor_bottom_margin" name="Wall"/>
+			<param type="floating" value="1" name="BorderAndWindow_01"/>
+			<param type="absolute" value="floor_top_margin" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="BorderAndWindow_01">

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar type="facade" version="1.0" author="Gen Nishida">
-	<attr name="floor_height" value="0.3" range="0.01,1"/>
+	<attr name="floor_height" value="3" range="0.5,10"/>
 	
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
@@ -8,7 +8,7 @@
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
 		<split splitAxis="y">
-			<param type="relative" value="floor_height" name="BorderAndFloor" repeat="true"/>
+			<param type="absolute" value="floor_height" name="BorderAndFloor" repeat="true"/>
 		</split>
 	</rule>
 	<rule name="BorderAndFloor">
