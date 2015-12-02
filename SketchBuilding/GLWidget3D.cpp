@@ -108,8 +108,6 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 void GLWidget3D::clearSketch() {
 	sketch.fill(qRgba(255, 255, 255, 255));
 	strokes.clear();
-
-	update();
 }
 
 void GLWidget3D::clearGeometry() {
@@ -149,7 +147,7 @@ void GLWidget3D::loadCGA(char* filename) {
 
 		std::vector<float> params(10);
 		for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
-		so.setGrammar("Start", grammar, params);
+		so.setGrammar("Start", grammar, params, true);
 		//so.setGrammar(grammar, params);
 
 		cga::CGA system;
@@ -354,7 +352,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	//for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
 
 	// optimize the parameter values by MCMC
-	mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
+	//mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
 	/*
 	for (int i = 0; i < params.size(); ++i) {
 		std::cout << params[i] << ",";
@@ -398,14 +396,24 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	std::cout << current_z << std::endl;
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	scene.alignObjects();
+	scene.alignObjectsForWillisTower();
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
 	
+
+	// HACK
+	if (params[0] < 0) params[0] = 0;
+	if (params[0] > 1) params[0] = 1;
+	params[0] = (int)(params[0] * 10 + 0.5) * 0.1f;
+
+	std::cout << "Height: " << params[0] << std::endl;
+
+
 	// set parameter values
-	scene.currentObject().setGrammar("Start", grammars["building"][grammar_id], params);
+	scene.currentObject().setGrammar("Start", grammars["building"][grammar_id], params, true);
 	
 	// set height
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
@@ -447,7 +455,7 @@ void GLWidget3D::predictFacade(int grammar_id, const std::vector<float>& params)
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][grammar_id], params);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][grammar_id], params, false);
 	scene.generateGeometry(&renderManager, "facade");
 
 	update();
@@ -460,7 +468,7 @@ void GLWidget3D::predictFloor(int grammar_id, const std::vector<float>& params) 
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][grammar_id], params);
+	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][grammar_id], params, false);
 	scene.generateGeometry(&renderManager, "floor");
 
 	update();

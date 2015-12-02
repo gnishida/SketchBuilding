@@ -50,13 +50,16 @@ std::vector<std::pair<float, float> > CGA::getParamRanges(const Grammar& grammar
 * Each value is normalized to [0, 1], so it has to be populated based on the range.
 * If the parameter value is out of [0, 1], it is forced to be between [0, 1].
 */
-void CGA::setParamValues(Grammar& grammar, const std::vector<float>& params) {
+void CGA::setParamValues(Grammar& grammar, const std::vector<float>& params, bool normalized) {
 	int count = 0;
 	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it, ++count) {
-		if (it->second.hasRange) {
+		if (normalized && it->second.hasRange) {
 			float param = std::min(1.0f, std::max(0.0f, params[count]));
 
 			grammar.attrs[it->first].value = boost::lexical_cast<std::string>((it->second.range_end - it->second.range_start) * param + it->second.range_start);
+		}
+		else {
+			grammar.attrs[it->first].value = boost::lexical_cast<std::string>(params[count]);
 		}
 	}
 }

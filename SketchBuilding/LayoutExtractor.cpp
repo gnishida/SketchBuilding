@@ -67,28 +67,35 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 
 	// compute the intervals
 	std::vector<float> intervals;
-	for (int i = 0; i < y_coordinates.size() - 1; ++i) {
+	float avg_intervals = 0.0f;
+	for (int i = 0; i < y_coordinates.size() - 2; ++i) {
 		intervals.push_back(y_coordinates[i + 1] - y_coordinates[i]);
+		avg_intervals += y_coordinates[i + 1] - y_coordinates[i];
+	}
+	if (avg_intervals > 0) {
+		avg_intervals /= intervals.size();
+	} else {
+		avg_intervals = top_y_screen - bottom_y_screen;
 	}
 
-	// count the num of ledges
+	// count the num of ledges and recompute the average interval
 	int num_ledges = 0;
+	float total_intervals = 0;
 	for (int i = 0; i < intervals.size(); ++i) {
-		if (intervals[i] <= 15) num_ledges++;
+		if (intervals[i] < avg_intervals * 0.7f) {
+			num_ledges++;
+		}
+		else {
+			total_intervals += intervals[i];
+		}
 	}
+	avg_intervals = total_intervals / (intervals.size() - num_ledges);
 
 	std::vector<float> ret;
 
 	if (num_ledges == 0) {
 		// A* pattern (i.e., same height for every floor)
-		float total = 0.0f;
-		for (int i = 0; i < intervals.size() - 1; ++i) {
-			total += intervals[i];
-		}
-		
-		// compute #floors
-		float avg_height = total / (intervals.size() - 1);
-		int num_floors = (top_y_screen - bottom_y_screen) / avg_height + 0.5f;
+		int num_floors = (top_y_screen - bottom_y_screen) / avg_intervals + 0.5f;
 		float floor_height = (top_y_screen - bottom_y_screen) / num_floors;
 
 		// return the actual height of the floors
@@ -100,10 +107,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 		float ground_height = intervals[0];
 		float ledge_height = intervals[1];
 
-		int num_floors = 2;
-		if (intervals.size() >= 3) {
-			num_floors = (top_y_screen - bottom_y_screen - ground_height - ledge_height) / intervals[2] + 0.5f;
-		}
+		int num_floors = (top_y_screen - bottom_y_screen - ground_height - ledge_height) / avg_intervals + 0.5f;
 		float floor_height = (top_y_screen - bottom_y_screen - ground_height - ledge_height) / num_floors;
 
 		//float scale = (top_y - bottom_y) / (ground_height + ledge_height + floor_height * num_floors);
@@ -202,7 +206,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 
 	std::vector<float> ret;
 
-	if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < 0.3f) {
+	if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.12) {
 		// A* pattern (i.e., every window has the same width)
 		float total_width = 0.0f;
 		for (int i = 0; i < widths.size(); ++i) {
@@ -224,7 +228,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		float margin;
 		if (bboxes.size() >= 2) {
 			padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
-			margin = (bboxes[0].minPt.x - left_screen) / padding;
+			margin = bboxes[0].minPt.x - left_screen - padding;
 		}
 		else {
 			padding = (bboxes[0].minPt.x - left_screen) * 0.5f;
@@ -247,7 +251,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		float bottom_margin2 = bboxes[1].minPt.y - bottom_screen;
 		float top_margin2 = top_screen - bboxes[1].maxPt.y;
 		float padding = (bboxes[1].minPt.x - bboxes[0].maxPt.x) * 0.5f;
-		float margin = (bboxes[0].minPt.x - left_screen) / padding;
+		float margin = bboxes[0].minPt.x - left_screen - padding;
 
 		ret.push_back(bottom_margin1 / (top_screen - bottom_screen));
 		ret.push_back(bottom_margin2 / (top_screen - bottom_screen));

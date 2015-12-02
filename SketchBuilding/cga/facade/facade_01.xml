@@ -8,7 +8,13 @@
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
 		<split splitAxis="y">
-			<param type="relative" value="floor_height" name="Floor" repeat="true"/>
+			<param type="relative" value="floor_height" name="BorderAndFloor" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="BorderAndFloor">
+		<split splitAxis="y">
+			<param type="absolute" value="0.08" name="Border"/>
+			<param type="floating" value="1" name="Floor"/>
 		</split>
 	</rule>
 </grammar>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<grammar type="facade" version="1.0" author="Gen Nishida">
+	<rule name="Border">
+		<color s="#202020"/>
+	</rule>
+</grammar>
+

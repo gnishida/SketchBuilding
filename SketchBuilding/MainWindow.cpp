@@ -87,6 +87,10 @@ void MainWindow::onNew() {
 
 void MainWindow::onClearSketch() {
 	glWidget->clearSketch();
+
+	if (glWidget->stage == "building") {
+		glWidget->scene.clearCurrentObject();
+	}
 }
 
 void MainWindow::onOpenCGA() {

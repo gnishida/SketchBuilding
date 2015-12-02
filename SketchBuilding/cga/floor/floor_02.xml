@@ -18,26 +18,32 @@
 	</rule>
 	<rule name="FloorColumn_02">
 		<split splitAxis="x">
-			<param type="relative" value="floor_padding" name="Wall"/>
-			<param type="relative" value="floor_window_width1" name="FloorColumn2_02"/>
-			<param type="relative" value="floor_padding*2" name="Wall"/>
-			<param type="relative" value="floor_window_width2" name="FloorColumn3_02"/>
-			<param type="relative" value="floor_padding" name="Wall"/>
+			<param type="floating" value="floor_padding" name="Wall"/>
+			<param type="floating" value="floor_window_width1" name="FloorColumn2_02"/>
+			<param type="floating" value="floor_padding*2" name="Wall"/>
+			<param type="floating" value="floor_window_width2" name="FloorColumn3_02"/>
+			<param type="floating" value="floor_padding" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn2_02">
 		<split splitAxis="y">
 			<param type="relative" value="floor_bottom_margin1" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin1-floor_top_margin1" name="Window_02"/>
+			<param type="relative" value="1-floor_bottom_margin1-floor_top_margin1" name="BorderAndWindow_02"/>
 			<param type="relative" value="floor_top_margin1" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn3_02">
 		<split splitAxis="y">
 			<param type="relative" value="floor_bottom_margin2" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin2-floor_top_margin2" name="Window2_02"/>
+			<param type="relative" value="1-floor_bottom_margin2-floor_top_margin2" name="BorderAndWindow2_02"/>
 			<param type="relative" value="floor_top_margin2" name="Wall"/>
 		</split>
+	</rule>
+	<rule name="BorderAndWindow_02">
+		<offset offsetDistance="-0.08" inside="Window_02" border="Border"/>
+	</rule>
+	<rule name="BorderAndWindow2_02">
+		<offset offsetDistance="-0.08" inside="Window2_02" border="Border"/>
 	</rule>
 </grammar>
 

@@ -26,7 +26,7 @@ public:
 	void setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth);
 	void setHeight(float height);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar);
-	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params);
+	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params, bool normalized);
 
 	void generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage);
 	void updateGeometry(RenderManager* renderManager, const std::string& stage);
@@ -44,8 +44,10 @@ public:
 	Scene();
 
 	void clear();
+	void clearCurrentObject();
 	void newObject();
 	void alignObjects();
+	void alignObjectsForWillisTower();
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
 	bool selectFace(const glm::vec3& p, const glm::vec3& v, const std::string& stage, const glm::vec3& normal = glm::vec3(1, 1, 1));

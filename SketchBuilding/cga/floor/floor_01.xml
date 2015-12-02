@@ -23,9 +23,12 @@
 	<rule name="FloorColumn2_01">
 		<split splitAxis="y">
 			<param type="relative" value="floor_bottom_margin" name="Wall"/>
-			<param type="relative" value="1-floor_bottom_margin-floor_top_margin" name="Window_01"/>
+			<param type="relative" value="1-floor_bottom_margin-floor_top_margin" name="BorderAndWindow_01"/>
 			<param type="relative" value="floor_top_margin" name="Wall"/>
 		</split>
+	</rule>
+	<rule name="BorderAndWindow_01">
+		<offset offsetDistance="-0.08" inside="Window_01" border="Border"/>
 	</rule>
 </grammar>
 

@@ -1,14 +1,16 @@
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "RenderManager.h"
 #include "Rectangle.h"
 #include <iostream>
 #include "GrammarParser.h"
+#include <boost/lexical_cast.hpp>
 
 namespace sc {
 
 SceneObject::SceneObject() : offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {
 	// set the default grammar for Window, Ledge, and Wall
 	try {
+		cga::parseGrammar("cga/default_border.xml", grammars["Border"]);
 		cga::parseGrammar("cga/default_window.xml", grammars["Window"]);
 		cga::parseGrammar("cga/default_ledge.xml", grammars["Ledge"]);
 		cga::parseGrammar("cga/default_wall.xml", grammars["Wall"]);
@@ -38,6 +40,9 @@ void SceneObject::setFootprint(float offset_x, float offset_y, float offset_z, f
 
 void SceneObject::setHeight(float height) {
 	this->height = height;
+
+	// HACK: 高さパラメータを設定する
+	grammars["building"].attrs["height"].value = boost::lexical_cast<std::string>(height);
 }
 
 void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar) {
@@ -54,9 +59,9 @@ void SceneObject::setGrammar(const std::string& name, const cga::Grammar& gramma
 	}
 }
 
-void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params) {
+void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params, bool normalized) {
 	grammars[name] = grammar;
-	cga::CGA::setParamValues(grammars[name], params);
+	cga::CGA::setParamValues(grammars[name], params, normalized);
 
 	// rewrite the axiom to the name
 	for (auto it = grammars[name].rules.begin(); it != grammars[name].rules.end(); ++it) {
@@ -147,8 +152,12 @@ Scene::Scene() {
 
 void Scene::clear() {
 	_objects.clear();
-	_objects.push_back(SceneObject());
-	_currentObject = 0;
+	newObject();
+}
+
+void Scene::clearCurrentObject() {
+	_objects.erase(_objects.begin() + _currentObject);
+	newObject();
 }
 
 void Scene::newObject() {
@@ -185,6 +194,59 @@ void Scene::alignObjects() {
 		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y) < 2.0f) {
 			_objects[_currentObject].object_depth = _objects[i].offset_y - _objects[_currentObject].offset_y;
 		}
+	}
+}
+
+void Scene::alignObjectsForWillisTower() {
+	// 最下層
+	if (_currentObject == 0) {
+		float wh = (_objects[_currentObject].object_width + _objects[_currentObject].object_depth) * 0.5f;
+		_objects[_currentObject].object_width = wh;
+		_objects[_currentObject].object_depth = wh;
+	}
+	
+	// １つ目の層
+	if (_currentObject == 1) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x;
+		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
+	}
+	else if (_currentObject == 2) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x;
+		_objects[_currentObject].offset_y = _objects[0].offset_y;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
+	}
+	else if (_currentObject == 3) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x + _objects[0].object_width / 2;
+		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
+		_objects[_currentObject].setHeight(_objects[1].height);
+	}
+	else if (_currentObject == 4) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x + _objects[0].object_width / 2;
+		_objects[_currentObject].offset_y = _objects[0].offset_y;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
+		_objects[_currentObject].setHeight(_objects[1].height);
+	}
+
+	// 2つめの層
+	if (_currentObject == 5) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x;
+		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
+	}
+
+	// 3つめの層
+	if (_currentObject == 6) {
+		_objects[_currentObject].offset_x = _objects[0].offset_x;
+		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
+		_objects[_currentObject].object_width = _objects[0].object_width / 2;
+		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
 	}
 }
 

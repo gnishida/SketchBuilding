@@ -135,7 +135,7 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 
 	// generate geometry
 	faces.clear();
-	cga::CGA::setParamValues(grammar, params2);
+	cga::CGA::setParamValues(grammar, params2, true);
 	system.derive(grammar, true);
 	system.generateGeometry(faces);
 	for (int i = 0; i < faces.size(); ++i) {
