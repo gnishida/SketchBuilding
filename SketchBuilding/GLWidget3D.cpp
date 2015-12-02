@@ -33,7 +33,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 	// 光源位置をセット
 	// ShadowMappingは平行光源を使っている。この位置から原点方向を平行光源の方向とする。
-	light_dir = glm::normalize(glm::vec3(-4, -5, -8));
+	//light_dir = glm::normalize(glm::vec3(-4, -5, -8));
+	light_dir = glm::normalize(glm::vec3(-1, -3, -2));
 
 	// シャドウマップ用のmodel/view/projection行列を作成
 	glm::mat4 light_pMatrix = glm::ortho<float>(-100, 100, -100, 100, 0.1, 200);
@@ -927,8 +928,13 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 
 	// QPainterで描画
 	QPainter painter(this);
-	painter.setOpacity(0.5);
-	painter.drawImage(0, 0, sketch);
+	//painter.setOpacity(0.5);
+	//painter.drawImage(0, 0, sketch);
+	for (auto stroke : strokes) {
+		for (int i = 0; i < stroke.size() - 1; ++i) {
+			painter.drawLine(stroke[i].x, height() - stroke[i].y, stroke[i + 1].x, height() - stroke[i + 1].y);
+		}
+	}
 	painter.end();
 
 	glEnable(GL_DEPTH_TEST);

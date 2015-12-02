@@ -203,7 +203,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 
 	std::vector<float> ret;
 
-	if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.12) {
+	if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.3) {
 		// A* pattern (i.e., every window has the same width)
 		float total_width = 0.0f;
 		for (int i = 0; i < widths.size(); ++i) {
