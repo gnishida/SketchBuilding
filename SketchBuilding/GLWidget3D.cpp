@@ -126,7 +126,7 @@ void GLWidget3D::clearGeometry() {
 */
 void GLWidget3D::drawScene(int drawMode) {
 	if (drawMode == 0) {
-		if (mode == MODE_CAMERA) {
+		if (stage == "final") {
 			glUniform1i(glGetUniformLocation(renderManager.program, "useShadow"), 1);
 		}
 		else {
@@ -916,11 +916,6 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT) { // select a face
 		if (selectFace(glm::vec2(e->x(), e->y()))) {
-			// HACK: 選択した面のポインタは、geometryを再作成すると無効になるので、コピーしておく
-			/*if (scene.selectedFace() != NULL) {
-				selectedFace = *(scene.selectedFace());
-			}*/
-
 			scene.updateGeometry(&renderManager, stage);
 
 			// When a face is selected, the user should start drawing.

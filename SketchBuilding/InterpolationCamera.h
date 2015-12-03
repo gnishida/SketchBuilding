@@ -14,6 +14,6 @@ public:
 	InterpolationCamera(const Camera& camera_start, const Camera& camera_end);
 
 	bool forward();
-	Camera currentCamera() {
+	Camera currentCamera();
 };
 
