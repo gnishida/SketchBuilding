@@ -43,7 +43,7 @@
 		<offset offsetDistance="-0.08" inside="Window_02" border="Border"/>
 	</rule>
 	<rule name="BorderAndWindow2_02">
-		<offset offsetDistance="-0.08" inside="Window2_02" border="Border"/>
+		<offset offsetDistance="-0.03" inside="Window2_02" border="Border"/>
 	</rule>
 </grammar>
 

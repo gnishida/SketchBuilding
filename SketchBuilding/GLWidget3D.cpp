@@ -174,13 +174,15 @@ void GLWidget3D::selectOption(int option_index) {
 	} else if (stage == "roof") {
 		predictRoof(option_index);
 	} else if (stage == "facade") {
-		if (!scene._selectedFaceName.empty()) {
-			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][option_index]);
+		//if (!scene._selectedFaceName.empty()) {
+		if (faceSelector.selected()) {
+			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["facade"][option_index]);
 			scene.generateGeometry(&renderManager, "facade");
 		}
 	} else if (stage == "floor") {
-		if (!scene._selectedFaceName.empty()) {
-			scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][option_index]);
+		//if (!scene._selectedFaceName.empty()) {
+		if (faceSelector.selected()) {
+			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["floor"][option_index]);
 			scene.generateGeometry(&renderManager, "floor");
 		}
 	} else if (stage == "window") {
@@ -276,7 +278,7 @@ void GLWidget3D::updateRoofOptions() {
 void GLWidget3D::updateFacadeOptions() {
 	mainWin->thumbsList->clear();
 
-	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFacadePattern(width(), height(), strokes, selectedFace, camera.mvpMatrix);
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFacadePattern(width(), height(), strokes, faceSelector.selectedFace(), camera.mvpMatrix);
 
 	QPainter painter(&sketch);
 	mainWin->addListItem("1.00", grammarImages["facade"][result.first], result.first);
@@ -294,7 +296,7 @@ void GLWidget3D::updateFacadeOptions() {
 void GLWidget3D::updateFloorOptions() {
 	mainWin->thumbsList->clear();
 
-	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, selectedFace, camera.mvpMatrix);
+	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, faceSelector.selectedFace(), camera.mvpMatrix);
 
 	QPainter painter(&sketch);
 	mainWin->addListItem("1.00", grammarImages["floor"][result.first], result.first);
@@ -492,6 +494,10 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	
 	scene.generateGeometry(&renderManager, "building");
 
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
+
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
@@ -499,7 +505,8 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 }
 
 void GLWidget3D::predictRoof(int grammar_id) {
-	if (scene._selectedFaceName.empty()) {
+	//if (scene._selectedFaceName.empty()) {
+	if (!faceSelector.selected()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
@@ -509,9 +516,13 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	renderManager.removeObjects();
 
 	//////////////////////// DEBUG ////////////////////////
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["roof"][grammar_id]);
+	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["roof"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "roof");
+
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
 
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -520,33 +531,44 @@ void GLWidget3D::predictRoof(int grammar_id) {
 }
 
 void GLWidget3D::predictFacade(int grammar_id, const std::vector<float>& params) {
-	if (scene._selectedFaceName.empty()) {
+	//if (scene._selectedFaceName.empty()) {
+	if (!faceSelector.selected()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["facade"][grammar_id], params, false);
+	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["facade"][grammar_id], params, false);
 	scene.generateGeometry(&renderManager, "facade");
+
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
 
 	update();
 }
 
 void GLWidget3D::predictFloor(int grammar_id, const std::vector<float>& params) {
-	if (scene._selectedFaceName.empty()) {
+	//if (scene._selectedFaceName.empty()) {
+	if (!faceSelector.selected()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
 
 	// set grammar
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["floor"][grammar_id], params, false);
+	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["floor"][grammar_id], params, false);
 	scene.generateGeometry(&renderManager, "floor");
+
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
 
 	update();
 }
 
 void GLWidget3D::predictWindow(int grammar_id) {
-	if (scene._selectedFaceName.empty()) {
+	//if (scene._selectedFaceName.empty()) {
+	if (!faceSelector.selected()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
@@ -556,10 +578,14 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	renderManager.removeObjects();
 
 	//////////////////////// DEBUG ////////////////////////
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["window"][grammar_id]);
+	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["window"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "window");
-	
+
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
+
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
@@ -567,7 +593,8 @@ void GLWidget3D::predictWindow(int grammar_id) {
 }
 
 void GLWidget3D::predictLedge(int grammar_id) {
-	if (scene._selectedFaceName.empty()) {
+	//if (scene._selectedFaceName.empty()) {
+	if (!faceSelector.selected()) {
 		std::cout << "Warning: face is not selected." << std::endl;
 		return;
 	}
@@ -577,9 +604,13 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	renderManager.removeObjects();
 
 	//////////////////////// DEBUG ////////////////////////
-	scene.currentObject().setGrammar(scene._selectedFaceName, grammars["ledge"][grammar_id]);
+	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["ledge"][grammar_id]);
 
 	scene.generateGeometry(&renderManager, "ledge");
+
+	// select the face again
+	//faceSelector.reselectFace();
+	//scene.updateGeometry(&renderManager, stage);
 
 	time_t end = clock();
 	//std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -597,7 +628,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	if (stage == "building") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			scene.newObject();
 
 			// shift the camera such that the selected face becomes a ground plane.
@@ -623,7 +655,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		return true;
 	}
 	else if (stage == "roof") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			// make the yrot in the rage [-180,179]
 			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
 			if (camera.yrot > 180) camera.yrot -= 360;
@@ -656,7 +689,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 	}
 	else if (stage == "facade") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -682,7 +716,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 	}
 	else if (stage == "floor") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -708,7 +743,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 	}
 	else if (stage == "window") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -734,7 +770,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		}
 	}
 	else if (stage == "ledge") {
-		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -778,7 +815,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	this->stage = stage;
 	clearSketch();
 
-	scene.unselectFace();
+	faceSelector.unselect();
 
 	if (stage == "building") {
 		intCamera = InterpolationCamera(camera, camera);
@@ -862,9 +899,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	else if (mode == MODE_SELECT) { // select a face
 		if (selectFace(glm::vec2(e->x(), e->y()))) {
 			// HACK: 選択した面のポインタは、geometryを再作成すると無効になるので、コピーしておく
-			if (scene.selectedFace() != NULL) {
+			/*if (scene.selectedFace() != NULL) {
 				selectedFace = *(scene.selectedFace());
-			}
+			}*/
 
 			scene.updateGeometry(&renderManager, stage);
 

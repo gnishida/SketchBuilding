@@ -52,7 +52,7 @@ std::vector<std::pair<float, float> > CGA::getParamRanges(const Grammar& grammar
 */
 void CGA::setParamValues(Grammar& grammar, const std::vector<float>& params, bool normalized) {
 	int count = 0;
-	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end(); ++it, ++count) {
+	for (auto it = grammar.attrs.begin(); it != grammar.attrs.end() && count < params.size(); ++it, ++count) {
 		if (normalized && it->second.hasRange) {
 			float param = std::min(1.0f, std::max(0.0f, params[count]));
 
@@ -110,7 +110,7 @@ void CGA::derive(const std::map<std::string, Grammar>& grammars, bool suppressWa
 			// This shape will be used when the user select a face,on which she will work.
 			if (shape->_grammar_type != grammars.at(name).type) {
 				boost::shared_ptr<Shape> copiedShape = shape->clone(shape->_name);
-				copiedShape->translate(MODE_RELATIVE, COORD_SYSTEM_OBJECT, 0, 0, -0.03);
+				copiedShape->translate(MODE_RELATIVE, COORD_SYSTEM_OBJECT, 0, 0, -0.05);
 				copiedShape->_axiom = true;
 				shapes.push_back(copiedShape);
 			}

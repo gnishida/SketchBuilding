@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar for modes
 	QActionGroup* modeGroup = new QActionGroup(this);
-	std::string mode_names[2] = { "sketch", "select" };
-	for (int i = 0; i < 2; ++i) {
+	std::string mode_names[3] = { "sketch", "select", "eraser" };
+	for (int i = 0; i < 3; ++i) {
 		actionModes[mode_names[i]] = new QAction(QIcon(std::string("resources/" + mode_names[i] + ".png").c_str()), std::string("&" + mode_names[i]).c_str(), this);
 		actionModes[mode_names[i]]->setCheckable(true);
 		modeGroup->addAction(actionModes[mode_names[i]]);
@@ -136,6 +136,18 @@ void MainWindow::onModeChanged() {
 	}
 	else if (actionModes["select"]->isChecked()) {
 		glWidget->mode = GLWidget3D::MODE_SELECT;
+	}
+	else if (actionModes["eraser"]->isChecked()) {
+		glWidget->clearSketch();
+
+		if (glWidget->stage == "building") {
+			glWidget->scene.clearCurrentObject();
+		}
+
+		actionModes["sketch"]->setChecked(true);
+		actionModes["eraser"]->setChecked(false);
+
+		glWidget->update();
 	}
 }
 

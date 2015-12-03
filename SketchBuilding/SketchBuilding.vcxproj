@@ -220,6 +220,7 @@
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="ExtrudeOperator.cpp" />
+    <ClCompile Include="FaceSelector.cpp" />
     <ClCompile Include="LayoutExtractor.cpp" />
     <ClCompile Include="GableRoof.cpp" />
     <ClCompile Include="GeneralObject.cpp" />
@@ -372,6 +373,7 @@
     <ClInclude Include="Classifier.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="FaceSelector.h" />
     <ClInclude Include="LayoutExtractor.h" />
     <ClInclude Include="GableRoof.h" />
     <ClInclude Include="GeneralObject.h" />

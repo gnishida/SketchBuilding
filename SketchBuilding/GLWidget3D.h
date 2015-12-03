@@ -17,6 +17,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "Scene.h"
 #include <QTimer>
+//#include "InterpolationCamera.h"
+#include "FaceSelector.h"
 
 using namespace std;
 
@@ -79,12 +81,14 @@ public:
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;
 	float current_z;
-	glutils::Face selectedFace;
+	//glutils::Face selectedFace;
 
 	Camera camera;
 	glm::vec3 light_dir;
 	glm::mat4 light_mvpMatrix;
 	RenderManager renderManager;
+
+	sc::FaceSelector faceSelector;
 
 	InterpolationCamera intCamera;
 	QTimer* camera_timer;
