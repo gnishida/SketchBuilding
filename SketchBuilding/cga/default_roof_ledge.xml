@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
 	<rule name="RoofLedge">
-		<color s="#808080"/>
+		<color s="#404040"/>
 	</rule>
 </grammar>
 

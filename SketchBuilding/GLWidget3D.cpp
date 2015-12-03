@@ -126,6 +126,12 @@ void GLWidget3D::clearGeometry() {
 */
 void GLWidget3D::drawScene(int drawMode) {
 	if (drawMode == 0) {
+		if (mode == MODE_CAMERA) {
+			glUniform1i(glGetUniformLocation(renderManager.program, "useShadow"), 1);
+		}
+		else {
+			glUniform1i(glGetUniformLocation(renderManager.program, "useShadow"), 0);
+		}
 		glUniform1i(glGetUniformLocation(renderManager.program, "depthComputation"), 0);
 	}
 	else {
@@ -168,6 +174,14 @@ void GLWidget3D::loadCGA(char* filename) {
 	update();
 }
 
+void GLWidget3D::generateGeometry() {
+	scene.generateGeometry(&renderManager, stage);
+
+	if (stage == "final") {
+		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
+	}
+}
+
 void GLWidget3D::selectOption(int option_index) {
 	if (stage == "building") {
 		predictBuilding(option_index);
@@ -177,13 +191,13 @@ void GLWidget3D::selectOption(int option_index) {
 		//if (!scene._selectedFaceName.empty()) {
 		if (faceSelector.selected()) {
 			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["facade"][option_index]);
-			scene.generateGeometry(&renderManager, "facade");
+			generateGeometry();
 		}
 	} else if (stage == "floor") {
 		//if (!scene._selectedFaceName.empty()) {
 		if (faceSelector.selected()) {
 			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["floor"][option_index]);
-			scene.generateGeometry(&renderManager, "floor");
+			generateGeometry();
 		}
 	} else if (stage == "window") {
 		predictWindow(option_index);
@@ -492,7 +506,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	std::vector<std::pair<float, float> > ranges = cga::CGA::getParamRanges(grammars["building"][grammar_id]);
 	scene.currentObject().setHeight((ranges[0].second - ranges[0].first) * params[0] + ranges[0].first);
 	
-	scene.generateGeometry(&renderManager, "building");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -518,7 +532,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["roof"][grammar_id]);
 
-	scene.generateGeometry(&renderManager, "roof");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -539,7 +553,7 @@ void GLWidget3D::predictFacade(int grammar_id, const std::vector<float>& params)
 
 	// set grammar
 	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["facade"][grammar_id], params, false);
-	scene.generateGeometry(&renderManager, "facade");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -557,7 +571,7 @@ void GLWidget3D::predictFloor(int grammar_id, const std::vector<float>& params) 
 
 	// set grammar
 	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["floor"][grammar_id], params, false);
-	scene.generateGeometry(&renderManager, "floor");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -580,7 +594,7 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["window"][grammar_id]);
 
-	scene.generateGeometry(&renderManager, "window");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -606,7 +620,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	//////////////////////// DEBUG ////////////////////////
 	scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["ledge"][grammar_id]);
 
-	scene.generateGeometry(&renderManager, "ledge");
+	generateGeometry();
 
 	// select the face again
 	//faceSelector.reselectFace();
@@ -833,6 +847,8 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	} else if (stage == "floor") {
 	} else if (stage == "window") {
 	} else if (stage == "ledge") {
+	} else if (stage == "final") {
+		generateGeometry();
 	}
 
 	scene.updateGeometry(&renderManager, stage);
@@ -876,7 +892,8 @@ void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
  * This event handler is called when the mouse button is pressed.
  */
 void GLWidget3D::mousePressEvent(QMouseEvent *e) {
-	if (ctrlPressed) { // move camera
+	//if (ctrlPressed) { // move camera
+	if (mode == MODE_CAMERA) {
 		camera.mousePress(e->x(), e->y());
 	}
 	else if (mode == MODE_SELECT) {
@@ -893,7 +910,8 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
  * This event handler is called when the mouse button is released.
  */
 void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
-	if (ctrlPressed) {
+	//if (ctrlPressed) {
+	if (mode == MODE_CAMERA) {
 		// do nothing
 	}
 	else if (mode == MODE_SELECT) { // select a face
@@ -944,7 +962,8 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
  * This event handler is called when the mouse is dragged.
  */
 void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
-	if (ctrlPressed) { // moving a camera
+	//if (ctrlPressed) { // moving a camera
+	if (mode == MODE_CAMERA) {
 		if (e->buttons() & Qt::LeftButton) { // Rotate
 			camera.rotate(e->x(), e->y());
 		}

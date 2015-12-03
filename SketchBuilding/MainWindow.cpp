@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar for stages
 	QActionGroup* stageGroup = new QActionGroup(this);
-	std::string stage_names[6] = { "building", "roof", "facade", "floor", "window", "ledge" };
-	for (int i = 0; i < 6; ++i) {
+	std::string stage_names[7] = { "building", "roof", "facade", "floor", "window", "ledge", "final" };
+	for (int i = 0; i < 7; ++i) {
 		actionStages[stage_names[i]] = new QAction(QIcon(std::string("resources/" + stage_names[i] + ".png").c_str()), std::string("&" + stage_names[i]).c_str(), this);
 		actionStages[stage_names[i]]->setCheckable(true);
 		stageGroup->addAction(actionStages[stage_names[i]]);
@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar for modes
 	QActionGroup* modeGroup = new QActionGroup(this);
-	std::string mode_names[3] = { "sketch", "select", "eraser" };
-	for (int i = 0; i < 3; ++i) {
+	std::string mode_names[4] = { "sketch", "select", "eraser", "camera" };
+	for (int i = 0; i < 4; ++i) {
 		actionModes[mode_names[i]] = new QAction(QIcon(std::string("resources/" + mode_names[i] + ".png").c_str()), std::string("&" + mode_names[i]).c_str(), this);
 		actionModes[mode_names[i]]->setCheckable(true);
 		modeGroup->addAction(actionModes[mode_names[i]]);
@@ -105,29 +105,37 @@ void MainWindow::onAddBuildingMass() {
 }
 
 void MainWindow::onStageChanged() {
-	if (actionStages["building"]->isChecked()) {
-		glWidget->changeStage("building");
-	}
-	else if (actionStages["roof"]->isChecked()) {
-		glWidget->changeStage("roof");
-	}
-	else if (actionStages["facade"]->isChecked()) {
-		glWidget->changeStage("facade");
-	}
-	else if (actionStages["floor"]->isChecked()) {
-		glWidget->changeStage("floor");
-	}
-	else if (actionStages["window"]->isChecked()) {
-		glWidget->changeStage("window");
-	}
-	else if (actionStages["ledge"]->isChecked()) {
-		glWidget->changeStage("ledge");
-	}
+	if (actionStages["final"]->isChecked()) {
+		glWidget->changeStage("final");
 
-	// When the stage is changed, the user should to select a face.
-	actionModes["select"]->setChecked(true);
-	glWidget->mode = GLWidget3D::MODE_SELECT;
+		//actionModes["sketch"]->setChecked(false);
+		actionModes["camera"]->setChecked(true);
+		glWidget->mode = GLWidget3D::MODE_CAMERA;
+	}
+	else {
+		if (actionStages["building"]->isChecked()) {
+			glWidget->changeStage("building");
+		}
+		else if (actionStages["roof"]->isChecked()) {
+			glWidget->changeStage("roof");
+		}
+		else if (actionStages["facade"]->isChecked()) {
+			glWidget->changeStage("facade");
+		}
+		else if (actionStages["floor"]->isChecked()) {
+			glWidget->changeStage("floor");
+		}
+		else if (actionStages["window"]->isChecked()) {
+			glWidget->changeStage("window");
+		}
+		else if (actionStages["ledge"]->isChecked()) {
+			glWidget->changeStage("ledge");
+		}
 
+		// When the stage is changed, the user should to select a face.
+		actionModes["select"]->setChecked(true);
+		glWidget->mode = GLWidget3D::MODE_SELECT;
+	}
 }
 
 void MainWindow::onModeChanged() {
@@ -148,6 +156,9 @@ void MainWindow::onModeChanged() {
 		actionModes["eraser"]->setChecked(false);
 
 		glWidget->update();
+	}
+	else if (actionModes["camera"]->isChecked()) {
+		glWidget->mode = GLWidget3D::MODE_CAMERA;
 	}
 }
 

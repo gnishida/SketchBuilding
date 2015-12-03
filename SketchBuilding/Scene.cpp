@@ -11,16 +11,16 @@ SceneObject::SceneObject() : offset_x(0), offset_y(0), object_width(0), object_d
 	// set the default grammar for Window, Ledge, and Wall
 	try {
 		cga::parseGrammar("cga/default_border.xml", grammars["Border"]);
-		cga::parseGrammar("cga/default_window.xml", grammars["Window"]);
+		//cga::parseGrammar("cga/default_window.xml", grammars["Window"]);
 		cga::parseGrammar("cga/default_ledge.xml", grammars["Ledge"]);
-		cga::parseGrammar("cga/default_wall.xml", grammars["Wall"]);
-		cga::parseGrammar("cga/default_roof_ledge.xml", grammars["RoofLedge"]);
-		cga::parseGrammar("cga/default_roof_top.xml", grammars["RoofTop"]);
-		cga::parseGrammar("cga/default_ledge_face.xml", grammars["LedgeFace"]);
-		cga::parseGrammar("cga/default_window_sill.xml", grammars["WindowSill"]);
-		cga::parseGrammar("cga/default_window_frame.xml", grammars["WindowFrame"]);
-		cga::parseGrammar("cga/default_window_glass.xml", grammars["WindowGlass"]);
-		cga::parseGrammar("cga/default_window_shutter_frame.xml", grammars["WindowShutterFrame"]);
+		//cga::parseGrammar("cga/default_wall.xml", grammars["Wall"]);
+		//cga::parseGrammar("cga/default_roof_ledge.xml", grammars["RoofLedge"]);
+		//cga::parseGrammar("cga/default_roof_top.xml", grammars["RoofTop"]);
+		//cga::parseGrammar("cga/default_ledge_face.xml", grammars["LedgeFace"]);
+		//cga::parseGrammar("cga/default_window_sill.xml", grammars["WindowSill"]);
+		//cga::parseGrammar("cga/default_window_frame.xml", grammars["WindowFrame"]);
+		//cga::parseGrammar("cga/default_window_glass.xml", grammars["WindowGlass"]);
+		//cga::parseGrammar("cga/default_window_shutter_frame.xml", grammars["WindowShutterFrame"]);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -79,12 +79,43 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 
 	if (height == 0.0f) return;
 
+	if (stage == "final") {
+		// facadeのfloor border sizeを0にする
+		if (grammars.find("Facade") != grammars.end()) {
+			if (grammars["Facade"].attrs.find("z_floor_border_size") != grammars["Facade"].attrs.end()) {
+				grammars["Facade"].attrs["z_floor_border_size"].value = "0";
+			}
+		}
+
+		// floorのwindowのborder sizeを0にする
+		if (grammars.find("Floor") != grammars.end()) {
+			if (grammars["Floor"].attrs.find("z_window_border_size") != grammars["Floor"].attrs.end()) {
+				grammars["Floor"].attrs["z_window_border_size"].value = "0";
+			}
+		}
+
+		// apply the color/texture
+		cga::parseGrammar("cga/default_wall.xml", grammars["Wall"]);
+		cga::parseGrammar("cga/default_roof_ledge.xml", grammars["RoofLedge"]);
+		cga::parseGrammar("cga/default_roof_top.xml", grammars["RoofTop"]);
+		cga::parseGrammar("cga/default_ledge_face.xml", grammars["LedgeFace"]);
+		cga::parseGrammar("cga/default_window_sill.xml", grammars["WindowSill"]);
+		cga::parseGrammar("cga/default_window_frame.xml", grammars["WindowFrame"]);
+		cga::parseGrammar("cga/default_window_glass.xml", grammars["WindowGlass"]);
+		cga::parseGrammar("cga/default_window_shutter_frame.xml", grammars["WindowShutterFrame"]);
+	}
+
 	// footprint
 	cga::Rectangle* footprint = new cga::Rectangle("Start", "building", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
 	system->stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
 
 	//system->derive(grammar, true);
-	system->derive(grammars, true);
+	if (stage == "final") {
+		system->derive(grammars, false, true);
+	}
+	else {
+		system->derive(grammars, true, true);
+	}
 	
 	system->generateGeometry(faces);
 

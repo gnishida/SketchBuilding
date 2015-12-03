@@ -8,6 +8,7 @@
 	<attr name="floor_top_margin2" value="0.5" range="0.01,3"/>
 	<attr name="floor_window_width1" value="1" range="0.1,10"/>
 	<attr name="floor_window_width2" value="1" range="0.1,10"/>
+	<attr name="z_window_border_size" value="0.03" range="0,0.03"/>
 	
 	<rule name="Start">
 		<split splitAxis="x">
@@ -43,7 +44,7 @@
 		<offset offsetDistance="-0.08" inside="Window_02" border="Border"/>
 	</rule>
 	<rule name="BorderAndWindow2_02">
-		<offset offsetDistance="-0.03" inside="Window2_02" border="Border"/>
+		<offset offsetDistance="-z_window_border_size" inside="Window2_02" border="Border"/>
 	</rule>
 </grammar>
 

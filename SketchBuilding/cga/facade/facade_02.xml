@@ -3,6 +3,7 @@
 	<attr name="floor_height" value="3" range="0.5,10"/>
 	<attr name="ground_height" value="3" range="0.5,10"/>
 	<attr name="ledge_height" value="0.1" range="0.01,2"/>
+	<attr name="z_floor_border_size" value="0.08" range="0,0.08"/>
 	
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
@@ -17,7 +18,7 @@
 	</rule>
 	<rule name="BorderAndFloor">
 		<split splitAxis="y">
-			<param type="absolute" value="0.08" name="Border"/>
+			<param type="absolute" value="z_floor_border_size" name="Border"/>
 			<param type="floating" value="1" name="Floor"/>
 		</split>
 	</rule>

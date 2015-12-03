@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="window" version="1.0" author="Gen Nishida">
 	<rule name="WindowSill">
-		<color s="#a0a0a0"/>
+		<color s="#808080"/>
 	</rule>
 </grammar>
 
