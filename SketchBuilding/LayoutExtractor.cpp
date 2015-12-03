@@ -138,7 +138,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		bool belongToBox = false;
 
 		for (int i = 0; i < bboxes.size(); ++i) {
-			if (bboxes[i].contains(stroke[0], threshold) || bboxes[i].contains(stroke.back(), threshold)) {
+			if (bboxes[i].contains(stroke[0], 0) || bboxes[i].contains(stroke.back(), 0)) {
 				// this stroke belongs to this bounding box, so update the bounding box accordingly.
 				belongToBox = true;
 				for (auto pt : stroke) {

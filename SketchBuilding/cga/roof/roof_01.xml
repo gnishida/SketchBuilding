@@ -29,7 +29,7 @@
 		<offset offsetDistance="-overhang" inside="TopFaceOffsetTopOffsetTopInside" border="RoofLedge"/>
 	</rule>
 	<rule name="TopFaceOffsetTopOffsetTopInside">
-		<extrude height="-roof_extrude_height*0.8"/>
+		<extrude height="-roof_extrude_height*0.5"/>
 		<comp>
 			<param name="side" value="RoofLedge"/>
 			<param name="top" value="RoofTop"/>
