@@ -624,22 +624,29 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	}
 	else if (stage == "roof") {
 		if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
 			// shift the camera such that the selected face becomes a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
 			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
-			if (camera.yrot > 0 && camera.yrot < 90) {
-				intCamera.camera_end.yrot = 45.0f;
-			}
-			else if (camera.yrot > 90 && camera.yrot < 180) {
-				intCamera.camera_end.yrot = 135.0f;
-			}
-			else if (camera.yrot < -90 && camera.yrot > -180) {
-				intCamera.camera_end.yrot = -135.0f;
-			}
-			else {
+
+			// find the nearest quadrant
+			if (camera.yrot >= -90 && camera.yrot <= 0) {
 				intCamera.camera_end.yrot = -45.0f;
 			}
+			else if (camera.yrot > 0 && camera.yrot <= 90) {
+				intCamera.camera_end.yrot = 45.0f;
+			}
+			else if (camera.yrot > 90) {
+				intCamera.camera_end.yrot = 135.0f;
+			}
+			else {
+				intCamera.camera_end.yrot = -135.0f;
+			}
+
 			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
 
