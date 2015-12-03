@@ -1019,7 +1019,7 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 	//painter.setOpacity(0.5);
 	//painter.drawImage(0, 0, sketch);
 	for (auto stroke : strokes) {
-		for (int i = 0; i < stroke.size() - 1; ++i) {
+		for (int i = 0; i < (int)stroke.size() - 1; ++i) {
 			painter.drawLine(stroke[i].x, height() - stroke[i].y, stroke[i + 1].x, height() - stroke[i + 1].y);
 		}
 	}
