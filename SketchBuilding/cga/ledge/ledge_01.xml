@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <grammar type="ledge" version="1.0" author="Gen Nishida">
+	<attr name="ledge_extrude_height" value="0.2" range="0.1,0.5"/>
+	
 	<rule name="Start">
-		<extrude height="0.3"/>
+		<extrude height="scope.sy*ledge_extrude_height"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>

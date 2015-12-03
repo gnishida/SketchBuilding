@@ -85,7 +85,9 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][2] = new Regression("models/building/building_03.prototxt", "models/building/building_03.caffemodel");
 	regressions["building"][3] = new Regression("models/building/building_04.prototxt", "models/building/building_04.caffemodel");
 
+	classifiers["roof"] = new Classifier("models/roof/roof.prototxt", "models/roof/roof.caffemodel", "models/roof/mean.binaryproto");
 	classifiers["window"] = new Classifier("models/window/window.prototxt", "models/window/window.caffemodel", "models/window/mean.binaryproto");
+	classifiers["ledge"] = new Classifier("models/ledge/ledge.prototxt", "models/ledge/ledge.caffemodel", "models/ledge/mean.binaryproto");
 
 	mcmc = new MCMC(this);
 }
@@ -233,18 +235,40 @@ void GLWidget3D::updateBuildingOptions() {
 void GLWidget3D::updateRoofOptions() {
 	mainWin->thumbsList->clear();
 
+	// スケッチ画像を256x256に縮小
+	QImage swapped = sketch.rgbSwapped();
+	cv::Mat img = cv::Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar*>(swapped.bits()), swapped.bytesPerLine()).clone();
+	int size = std::min(img.rows, img.cols);
+	cv::Mat img2 = img(cv::Rect((img.cols - size) / 2, (img.rows - size) / 2, size, size));
+	if (size > 512) {
+		cv::resize(img2, img2, cv::Size(512, 512));
+		cv::threshold(img2, img2, 250, 255, CV_THRESH_BINARY);
+	}
+	cv::resize(img2, img2, cv::Size(256, 256));
+	cv::threshold(img2, img, 250, 255, CV_THRESH_BINARY);
+
+	std::vector<Prediction> predictions = classifiers["roof"]->Classify(img, 10);
+
+	/*
 	std::vector<int> indexes;
 	for (int i = 0; i < grammarImages["roof"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
+	*/
 
 	QPainter painter(&sketch);
-	for (int i = 0; i < grammarImages["roof"].size(); ++i) {
-		mainWin->addListItem("???", grammarImages["roof"][indexes[i]], indexes[i]);
+	int bestIndex;
+	for (int i = 0; i < predictions.size(); ++i) {
+		Prediction p = predictions[i];
+		mainWin->addListItem(QString::number(p.second, 'f', 3), grammarImages["roof"][p.first], p.first);
+
+		if (i == 0) {
+			bestIndex = p.first;
+		}
 	}
 
-	predictRoof(0);
+	predictRoof(bestIndex);
 
 	update();
 }
@@ -329,18 +353,40 @@ void GLWidget3D::updateWindowOptions() {
 void GLWidget3D::updateLedgeOptions() {
 	mainWin->thumbsList->clear();
 
+	// スケッチ画像を256x256に縮小
+	QImage swapped = sketch.rgbSwapped();
+	cv::Mat img = cv::Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar*>(swapped.bits()), swapped.bytesPerLine()).clone();
+	int size = std::min(img.rows, img.cols);
+	cv::Mat img2 = img(cv::Rect((img.cols - size) / 2, (img.rows - size) / 2, size, size));
+	if (size > 512) {
+		cv::resize(img2, img2, cv::Size(512, 512));
+		cv::threshold(img2, img2, 250, 255, CV_THRESH_BINARY);
+	}
+	cv::resize(img2, img2, cv::Size(256, 256));
+	cv::threshold(img2, img, 250, 255, CV_THRESH_BINARY);
+
+	std::vector<Prediction> predictions = classifiers["ledge"]->Classify(img, 10);
+
+	/*
 	std::vector<int> indexes;
 	for (int i = 0; i < grammarImages["ledge"].size(); ++i) {
 		indexes.push_back(i);
 	}
 	std::random_shuffle(indexes.begin(), indexes.end());
+	*/
 
 	QPainter painter(&sketch);
-	for (int i = 0; i < grammarImages["ledge"].size(); ++i) {
-		mainWin->addListItem("???", grammarImages["ledge"][indexes[i]], indexes[i]);
+	int bestIndex;
+	for (int i = 0; i < predictions.size(); ++i) {
+		Prediction p = predictions[i];
+		mainWin->addListItem(QString::number(p.second, 'f', 3), grammarImages["ledge"][p.first], p.first);
+
+		if (i == 0) {
+			bestIndex = p.first;
+		}
 	}
 
-	predictLedge(0);
+	predictLedge(bestIndex);
 
 	update();
 }
@@ -582,7 +628,18 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera = InterpolationCamera(camera, camera);
 			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
-			intCamera.camera_end.yrot = -45.0f;
+			if (camera.yrot > 0 && camera.yrot < 90) {
+				intCamera.camera_end.yrot = 45.0f;
+			}
+			else if (camera.yrot > 90 && camera.yrot < 180) {
+				intCamera.camera_end.yrot = 135.0f;
+			}
+			else if (camera.yrot < -90 && camera.yrot > -180) {
+				intCamera.camera_end.yrot = -135.0f;
+			}
+			else {
+				intCamera.camera_end.yrot = -45.0f;
+			}
 			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
 

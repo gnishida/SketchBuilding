@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
+	<attr name="overhang" value="0.3" range="0.01,1"/>
+	<attr name="roof_extrude_height" value="1" range="0.01,2"/>
+	
 	<rule name="Start">
-		<offset offsetDistance="0.3" inside="TopFaceOffset"/>
+		<offset offsetDistance="overhang*0.8" inside="TopFaceOffset"/>
 	</rule>
 	<rule name="TopFaceOffset">
-		<extrude height="0.4"/>
+		<extrude height="roof_extrude_height*0.2"/>
 		<comp>
 			<param name="side" value="RoofLedge"/>
 			<param name="top" value="TopFaceOffsetTop"/>
@@ -12,10 +15,10 @@
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTop">
-		<offset offsetDistance="0.2" inside="TopFaceOffsetTopOffset"/>
+		<offset offsetDistance="overhang*0.2" inside="TopFaceOffsetTopOffset"/>
 	</rule>
 	<rule name="TopFaceOffsetTopOffset">
-		<extrude height="0.8"/>
+		<extrude height="roof_extrude_height*0.8"/>
 		<comp>
 			<param name="side" value="RoofLedge"/>
 			<param name="top" value="TopFaceOffsetTopOffsetTop"/>
@@ -23,10 +26,10 @@
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTopOffsetTop">
-		<offset offsetDistance="-0.8" inside="TopFaceOffsetTopOffsetTopInside" border="RoofLedge"/>
+		<offset offsetDistance="-overhang" inside="TopFaceOffsetTopOffsetTopInside" border="RoofLedge"/>
 	</rule>
 	<rule name="TopFaceOffsetTopOffsetTopInside">
-		<extrude height="-0.4"/>
+		<extrude height="-roof_extrude_height*0.8"/>
 		<comp>
 			<param name="side" value="RoofLedge"/>
 			<param name="top" value="RoofTop"/>

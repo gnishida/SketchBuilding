@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
+	<attr name="overhang" value="0.3" range="0.01,1"/>
+	<attr name="roof_slope" value="30" range="10,60"/>
+	
 	<rule name="Start">
-		<offset offsetDistance="0.3" inside="TopFaceOffset"/>
+		<offset offsetDistance="overhang" inside="TopFaceOffset"/>
 	</rule>
 	<rule name="TopFaceOffset">
 		<extrude height="0.2"/>
@@ -12,7 +15,10 @@
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTop">
-		<roofGable angle="30"/>
+		<offset offsetDistance="-overhang*0.2" inside="TopFaceOffsetTopInside"/>
+	</rule>
+	<rule name="TopFaceOffsetTopInside">
+		<roofGable angle="roof_slope"/>
 		<comp>
 			<param name="side" value="Wall"/>
 			<param name="top" value="RoofTop"/>

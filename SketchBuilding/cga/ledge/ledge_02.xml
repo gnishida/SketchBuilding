@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <grammar type="ledge" version="1.0" author="Gen Nishida">
+	<attr name="ledge_extrude_height1" value="0.2" range="0.1,0.5"/>
+	<attr name="ledge_extrude_height_ratio" value="1.5" range="1.4,4"/>
+	
 	<rule name="Start">
 		<split splitAxis="y">
 			<param type="relative" value="0.5" name="LedgeLayer1"/>
@@ -7,14 +10,14 @@
 		</split>
 	</rule>
 	<rule name="LedgeLayer1">
-		<extrude height="0.2"/>
+		<extrude height="scope.sy*ledge_extrude_height1"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>
 		</comp>
 	</rule>
 	<rule name="LedgeLayer2">
-		<extrude height="0.4"/>
+		<extrude height="scope.sy*ledge_extrude_height1*ledge_extrude_height_ratio"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>
