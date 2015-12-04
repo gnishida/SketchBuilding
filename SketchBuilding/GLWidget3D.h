@@ -93,6 +93,7 @@ public:
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(const std::string& stage);
 	void camera_update();
+	glm::vec3 computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot);
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 

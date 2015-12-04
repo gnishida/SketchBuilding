@@ -439,7 +439,9 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	//for (int i = 0; i < params.size(); ++i) params[i] = 0.5f;
 
 	// optimize the parameter values by MCMC
-	//mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
+	if (strokes.size() > 2) {
+		mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
+	}
 	/*
 	for (int i = 0; i < params.size(); ++i) {
 		std::cout << params[i] << ",";
@@ -482,8 +484,13 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	std::cout << current_z << std::endl;
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
-	scene.alignObjects();
-	scene.alignObjectsForWillisTower();
+	if (faceSelector.selected()) {
+		scene.alignObjects(faceSelector.selectedFace());
+	}
+	else {
+		scene.alignObjects();
+	}
+	//scene.alignObjectsForWillisTower();
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
@@ -648,10 +655,16 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 
 			// shift the camera such that the selected face becomes a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
-			intCamera.camera_end.pos = glm::vec3(0, scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
+			intCamera.camera_end.pos = computeDownwardedCameraPos(scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, intCamera.camera_end.xrot);
+			/*
+			float downward = scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT;
+			intCamera.camera_end.pos = glm::vec3(0,
+				downward * cosf(30.0f / 180.0f* M_PI),
+				CAMERA_DEFAULT_DEPTH + downward * sinf(intCamera.camera_end.xrot / 180.0f* M_PI));
+				*/
 			current_z = scene.selectedFace()->vertices[0].position.y;
 
 			scene.selectedFace()->select();
@@ -661,10 +674,10 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 
 			// shift the camera such that the ground plane becomes really a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
-			intCamera.camera_end.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
+			intCamera.camera_end.pos = computeDownwardedCameraPos(CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, intCamera.camera_end.xrot);
 			current_z = 0;
 		}
 
@@ -878,6 +891,12 @@ void GLWidget3D::camera_update() {
 	update();
 }
 
+glm::vec3 GLWidget3D::computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot) {
+	return glm::vec3(0,
+		downward * cosf(camera_xrot / 180.0f * M_PI),
+		downward * sinf(camera_xrot / 180.0f * M_PI) + distToCamera);
+}
+
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
 
@@ -1008,10 +1027,11 @@ void GLWidget3D::initializeGL() {
 
 	mode = MODE_SKETCH;
 	
-	camera.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
 	camera.xrot = 30.0f;
 	camera.yrot = -45.0f;
 	camera.zrot = 0.0f;
+	//camera.pos = glm::vec3(0, CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH);
+	camera.pos = computeDownwardedCameraPos(CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, camera.xrot);
 	current_z = 0.0f;
 	scene.updateGeometry(&renderManager, "building");
 

@@ -197,35 +197,81 @@ void Scene::newObject() {
 }
 
 void Scene::alignObjects() {
+	float threshold = 4.0f;
+
 	for (int i = 0; i < _objects.size(); ++i) {
 		if (i == _currentObject) continue;
 
-		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x) < 2.0f) {
+		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x) < threshold) {
+			float diff = _objects[i].offset_x - _objects[_currentObject].offset_x;
 			_objects[_currentObject].offset_x = _objects[i].offset_x;
+			_objects[_currentObject].object_width -= diff;
 		}
-		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y) < 2.0f) {
-			_objects[_currentObject].offset_y = _objects[i].offset_y;
-		}
-		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < 2.0f) {
-			_objects[_currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
-		}
-		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < 2.0f) {
-			_objects[_currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
+		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < threshold) {
+			float diff = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
+			_objects[_currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+			_objects[_currentObject].object_width -= diff;
 		}
 
-		if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < 2.0f) {
-			_objects[_currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y) < threshold) {
+			float diff = _objects[i].offset_y - _objects[_currentObject].offset_y;
+			_objects[_currentObject].offset_y = _objects[i].offset_y;
+			_objects[_currentObject].object_depth -= diff;
 		}
-		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < 2.0f) {
+		if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
+			float diff = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
 			_objects[_currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
+			_objects[_currentObject].object_depth -= diff;
 		}
-		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x) < 2.0f) {
+
+
+		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < threshold) {
+			_objects[_currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
+		}
+		if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x) < threshold) {
 			_objects[_currentObject].object_width = _objects[i].offset_x - _objects[_currentObject].offset_x;
 		}
-		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y) < 2.0f) {
+
+		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
+			_objects[_currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
+		}
+		if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y) < threshold) {
 			_objects[_currentObject].object_depth = _objects[i].offset_y - _objects[_currentObject].offset_y;
 		}
 	}
+}
+
+void Scene::alignObjects(const glutils::Face& baseFace) {
+	if (_objects[_currentObject].offset_x < baseFace.bbox.minPt.x) {
+		float diff = baseFace.bbox.minPt.x - _objects[_currentObject].offset_x;
+		_objects[_currentObject].offset_x = baseFace.bbox.minPt.x;
+		_objects[_currentObject].object_width -= diff;
+	}
+	if (_objects[_currentObject].offset_x > baseFace.bbox.maxPt.x) {
+		_objects[_currentObject].offset_x = baseFace.bbox.maxPt.x - 1.0f;
+		_objects[_currentObject].object_width = 1.0f;
+	}
+
+	if (_objects[_currentObject].offset_y < -baseFace.bbox.maxPt.z) {
+		float diff = -baseFace.bbox.maxPt.z - _objects[_currentObject].offset_y;
+		_objects[_currentObject].offset_y = -baseFace.bbox.maxPt.z;
+		_objects[_currentObject].object_depth -= diff;
+	}
+	if (_objects[_currentObject].offset_y > -baseFace.bbox.minPt.z) {
+		_objects[_currentObject].offset_y = -baseFace.bbox.minPt.z - 1.0f;
+		_objects[_currentObject].object_depth = 1.0f;
+	}
+
+	if (_objects[_currentObject].offset_x + _objects[_currentObject].object_width > baseFace.bbox.maxPt.x) {
+		_objects[_currentObject].object_width = baseFace.bbox.maxPt.x - _objects[_currentObject].offset_x;
+	}
+
+	if (_objects[_currentObject].offset_y + _objects[_currentObject].object_depth > -baseFace.bbox.minPt.z) {
+		_objects[_currentObject].object_depth = -baseFace.bbox.minPt.z - _objects[_currentObject].offset_y;
+	}
+
+
+	alignObjects();
 }
 
 void Scene::alignObjectsForWillisTower() {

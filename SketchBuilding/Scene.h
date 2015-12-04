@@ -47,6 +47,7 @@ public:
 	void clearCurrentObject();
 	void newObject();
 	void alignObjects();
+	void alignObjects(const glutils::Face& baseFace);
 	void alignObjectsForWillisTower();
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 	boost::shared_ptr<glutils::Face> selectedFace() { return _selectedFace; }
