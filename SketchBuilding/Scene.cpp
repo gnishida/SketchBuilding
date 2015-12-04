@@ -335,7 +335,7 @@ bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const std::string
 	}
 
 	if (_selectedFace) {
-		_selectedFace->select();
+		//_selectedFace->select();
 		_selectedFaceName = _selectedFace->name;
 		return true;
 	}

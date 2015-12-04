@@ -653,6 +653,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
+
+			scene.selectedFace()->select();
 		}
 		else {
 			scene.newObject();
@@ -697,6 +699,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
 
+			scene.selectedFace()->select();
+
 			return true;
 		} else {
 			return false;
@@ -722,6 +726,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+
+			scene.selectedFace()->select();
 
 			return true;
 		}
@@ -750,6 +756,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
 
+			scene.selectedFace()->select();
+
 			return true;
 		}
 		else {
@@ -777,6 +785,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
 
+			scene.selectedFace()->select();
+
 			return true;
 		}
 		else {
@@ -803,6 +813,8 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+
+			scene.selectedFace()->select();
 
 			return true;
 		}

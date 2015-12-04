@@ -164,36 +164,39 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 	float left_screen = std::numeric_limits<float>::max();
 	float right_screen = 0.0f;
 
-	float bottom = 0.0f;
-	float top = 0.0f;
-	float left = 0.0f;
-	float right = 0.0f;
+	float floor_height = 0.0f;
+	float floor_width = 0.0f;
 
 	for (int i = 0; i < face.vertices.size(); ++i) {
 		glm::vec4 projectedPt = mvpMatrix * glm::vec4(face.vertices[i].position, 1);
 		float x = (projectedPt.x / projectedPt.w + 1.0) * 0.5 * width;
 		if (x < left_screen) {
 			left_screen = x;
-			left = face.vertices[i].position.x;
 		}
 		if (x > right_screen) {
 			right_screen = x;
-			right = face.vertices[i].position.x;
 		}
 
 		float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height;
 		if (y < bottom_screen) {
 			bottom_screen = y;
-			bottom = face.vertices[i].position.y;
 		}
 		if (y > top_screen) {
 			top_screen = y;
-			top = face.vertices[i].position.y;
+		}
+
+		int next = (i + 1) % face.vertices.size();
+		glm::vec3 v = face.vertices[next].position - face.vertices[i].position;
+		if (fabs(glm::dot(glm::normalize(v), glm::vec3(0, 1, 0))) < 0.1f) {
+			floor_width = glm::length(v);
+		}
+		if (fabs(glm::dot(glm::normalize(v), glm::vec3(0, 1, 0))) > 0.99f) {
+			floor_height = glm::length(v);
 		}
 	}
 
-	float horizontal_scale = (right - left) / (right_screen - left_screen);
-	float vertical_scale = (top - bottom) / (top_screen - bottom_screen);
+	float horizontal_scale = floor_width / (right_screen - left_screen);
+	float vertical_scale = floor_height / (top_screen - bottom_screen);
 
 	// widths
 	std::vector<float> widths;
