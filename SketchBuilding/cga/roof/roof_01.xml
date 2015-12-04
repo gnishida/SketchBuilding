@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
-	<attr name="overhang" value="0.3" range="0.01,1"/>
+	<attr name="overhang" value="0" range="0,1"/>
 	<attr name="roof_extrude_height" value="1" range="0.01,2"/>
 	
 	<rule name="Start">
