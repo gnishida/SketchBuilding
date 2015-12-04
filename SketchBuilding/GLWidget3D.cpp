@@ -77,17 +77,17 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
-	classifiers["building"] = new Classifier("models/building/building.prototxt", "models/building/building.caffemodel", "models/building/mean.binaryproto");
+	classifiers["building"] = new Classifier("../models/building/building.prototxt", "../models/building/building.caffemodel", "../models/building/mean.binaryproto");
 
 	regressions["building"].resize(4);
-	regressions["building"][0] = new Regression("models/building/building_01.prototxt", "models/building/building_01.caffemodel");
-	regressions["building"][1] = new Regression("models/building/building_02.prototxt", "models/building/building_02.caffemodel");
-	regressions["building"][2] = new Regression("models/building/building_03.prototxt", "models/building/building_03.caffemodel");
-	regressions["building"][3] = new Regression("models/building/building_04.prototxt", "models/building/building_04.caffemodel");
+	regressions["building"][0] = new Regression("../models/building/building_01.prototxt", "../models/building/building_01.caffemodel");
+	regressions["building"][1] = new Regression("../models/building/building_02.prototxt", "../models/building/building_02.caffemodel");
+	regressions["building"][2] = new Regression("../models/building/building_03.prototxt", "../models/building/building_03.caffemodel");
+	regressions["building"][3] = new Regression("../models/building/building_04.prototxt", "../models/building/building_04.caffemodel");
 
-	classifiers["roof"] = new Classifier("models/roof/roof.prototxt", "models/roof/roof.caffemodel", "models/roof/mean.binaryproto");
-	classifiers["window"] = new Classifier("models/window/window.prototxt", "models/window/window.caffemodel", "models/window/mean.binaryproto");
-	classifiers["ledge"] = new Classifier("models/ledge/ledge.prototxt", "models/ledge/ledge.caffemodel", "models/ledge/mean.binaryproto");
+	classifiers["roof"] = new Classifier("../models/roof/roof.prototxt", "../models/roof/roof.caffemodel", "../models/roof/mean.binaryproto");
+	classifiers["window"] = new Classifier("../models/window/window.prototxt", "../models/window/window.caffemodel", "../models/window/mean.binaryproto");
+	classifiers["ledge"] = new Classifier("../models/ledge/ledge.prototxt", "../models/ledge/ledge.caffemodel", "../models/ledge/mean.binaryproto");
 
 	mcmc = new MCMC(this);
 }
@@ -422,8 +422,9 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	cv::cvtColor(mat, grayMat, CV_BGR2GRAY);
 
 	// resize the sketch
-	cv::Mat resizedGrayMat;
-	cv::resize(grayMat, resizedGrayMat, cv::Size(256, 256));
+	int size = std::min(grayMat.cols, grayMat.rows);
+	cv::Mat resizedGrayMat = grayMat(cv::Rect((grayMat.cols - size) * 0.5, (grayMat.rows - size) * 0.5, size, size));
+	cv::resize(resizedGrayMat, resizedGrayMat, cv::Size(256, 256));
 	cv::threshold(resizedGrayMat, resizedGrayMat, 250, 255, CV_THRESH_BINARY);
 	cv::resize(resizedGrayMat, resizedGrayMat, cv::Size(128, 128));
 	cv::threshold(resizedGrayMat, resizedGrayMat, 250, 255, CV_THRESH_BINARY);
@@ -440,7 +441,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	// optimize the parameter values by MCMC
 	if (strokes.size() > 2) {
-		mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 20, current_z, params);
+		mcmc->optimize(grammars["building"][grammar_id], grayMat, 10.0f, 25, current_z, params);
 	}
 	/*
 	for (int i = 0; i < params.size(); ++i) {
@@ -653,11 +654,21 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(0, 1, 0))) {
 			scene.newObject();
 
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
 			// shift the camera such that the selected face becomes a ground plane.
 			intCamera = InterpolationCamera(camera, camera);
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
 			intCamera.camera_end.pos = computeDownwardedCameraPos(scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, intCamera.camera_end.xrot);
 			/*
 			float downward = scene.selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT;
@@ -677,6 +688,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 30.0f;
 			intCamera.camera_end.yrot = -45.0f;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 180.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 180.0f;
+			}
 			intCamera.camera_end.pos = computeDownwardedCameraPos(CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, intCamera.camera_end.xrot);
 			current_z = 0;
 		}
@@ -708,6 +725,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			else {
 				intCamera.camera_end.yrot = -135.0f;
 			}
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
 
 			intCamera.camera_end.zrot = 0.0f;
 			current_z = scene.selectedFace()->vertices[0].position.y;
@@ -722,6 +745,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "facade") {
 		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+			// make the yrot in the rage [-180,179]
+			std::cout << "Yrot: " << camera.yrot << std::endl;
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+			std::cout << "Yrot: " << camera.yrot << std::endl;
+
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -739,6 +768,13 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
+			std::cout << "target yrot: " << intCamera.camera_end.yrot << std::endl;
 
 			scene.selectedFace()->select();
 
@@ -751,6 +787,10 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "floor") {
 		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -768,6 +808,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
 
 			scene.selectedFace()->select();
 
@@ -780,6 +826,10 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "window") {
 		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -797,6 +847,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
 
 			scene.selectedFace()->select();
 
@@ -809,6 +865,10 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	else if (stage == "ledge") {
 		if (faceSelector.selectFace(&scene, cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
 		//if (scene.selectFace(cameraPos, view_dir, stage, glm::vec3(1, 0, 1))) {
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
 			// turn the camera such that the selected face becomes parallel to the image plane.
 			intCamera = InterpolationCamera(camera, camera);
 
@@ -826,6 +886,12 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 			intCamera.camera_end.xrot = 0.0f;
 			intCamera.camera_end.yrot = -rot_y / M_PI * 180;
 			intCamera.camera_end.zrot = 0.0f;
+			if (intCamera.camera_end.yrot - camera.yrot > 180.0f) {
+				intCamera.camera_end.yrot -= 360.0f;
+			}
+			else if (camera.yrot - intCamera.camera_end.yrot > 180.0f) {
+				intCamera.camera_end.yrot += 360.0f;
+			}
 
 			scene.selectedFace()->select();
 

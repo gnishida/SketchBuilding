@@ -84,6 +84,8 @@ caffelib/
 # models
 models/
 
+bin/
+
 # TFS 2012 Local Workspace
 $tf/
 
