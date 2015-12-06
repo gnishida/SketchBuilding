@@ -11,7 +11,7 @@ public:
 
 public:
 	InterpolationCamera();
-	InterpolationCamera(const Camera& camera_start, const Camera& camera_end);
+	InterpolationCamera(const Camera& camera_start, float target_xrot, float target_yrot, float target_zrot, const glm::vec3& target_pos);
 
 	bool forward();
 	Camera currentCamera();

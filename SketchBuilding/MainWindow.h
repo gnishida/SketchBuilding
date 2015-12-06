@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow {
 public:
 	Ui::MainWindowClass ui;
 	GLWidget3D* glWidget;
-	QListWidget *thumbsList;
+	QListWidget* thumbsList;
 	std::map<std::string, QAction*> actionStages;
 	std::map<std::string, QAction*> actionModes;
 

@@ -4,7 +4,19 @@
 InterpolationCamera::InterpolationCamera() {
 }
 
-InterpolationCamera::InterpolationCamera(const Camera& camera_start, const Camera& camera_end) : camera_start(camera_start), camera_end(camera_end), t(0) {
+InterpolationCamera::InterpolationCamera(const Camera& camera_start, float target_xrot, float target_yrot, float target_zrot, const glm::vec3& target_pos) : camera_start(camera_start), t(0) {
+	camera_end = camera_start;
+	camera_end.xrot = target_xrot;
+	camera_end.yrot = target_yrot;
+	camera_end.zrot = target_zrot;
+	camera_end.pos = target_pos;
+
+	if (camera_end.yrot - camera_start.yrot > 180.0f) {
+		camera_end.yrot -= 360.0f;
+	}
+	else if (camera_start.yrot - camera_end.yrot > 180.0f) {
+		camera_end.yrot += 360.0f;
+	}
 }
 
 bool InterpolationCamera::forward() {
