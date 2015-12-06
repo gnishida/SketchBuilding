@@ -177,7 +177,7 @@ void GLWidget3D::loadCGA(char* filename) {
 void GLWidget3D::generateGeometry() {
 	scene.generateGeometry(&renderManager, stage);
 
-	if (stage == "final") {
+	if (stage == "final" || stage == "peek_final") {
 		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 	}
 }
@@ -865,11 +865,9 @@ void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
  * This event handler is called when the mouse button is pressed.
  */
 void GLWidget3D::mousePressEvent(QMouseEvent *e) {
-	// Since the user starts dragging the mouse, the system stops tracking the mouse.
-	//setMouseTracking(false);
+	dragging = true;
 
-	//if (ctrlPressed) { // move camera
-	if (mode == MODE_CAMERA) {
+	if (mode == MODE_CAMERA) { // move camera
 		camera.mousePress(e->x(), e->y());
 	}
 	else if (mode == MODE_SELECT) {
@@ -877,7 +875,6 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 	}
 	else { // start drawing a stroke
 		lastPos = e->pos();
-		dragging = true;
 		strokes.resize(strokes.size() + 1);
 	}
 }
@@ -886,7 +883,8 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
  * This event handler is called when the mouse button is released.
  */
 void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
-	//if (ctrlPressed) {
+	dragging = false;
+
 	if (mode == MODE_CAMERA) {
 		// do nothing
 	}
@@ -906,8 +904,6 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		}
 	}
 	else {
-		dragging = false;
-
 		if (stage == "building") {
 			updateBuildingOptions();
 		}
@@ -933,29 +929,51 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
  * This event handler is called when the mouse is dragged.
  */
 void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
-	if (e->y() > height() - 40) {
-		std::cout << "OK" << std::endl;
-	}
-	else if (mode == MODE_CAMERA) {
-		if (e->buttons() & Qt::LeftButton) { // Rotate
-			camera.rotate(e->x(), e->y());
+	if (dragging) {
+		if (mode == MODE_CAMERA) {
+			if (e->buttons() & Qt::LeftButton) { // Rotate
+				camera.rotate(e->x(), e->y());
+			}
+			else if (e->buttons() & Qt::MidButton) { // Move
+				camera.move(e->x(), e->y());
+			}
+			else if (e->buttons() & Qt::RightButton) { // Zoom
+				camera.zoom(e->x(), e->y());
+			}
+			clearSketch();
 		}
-		else if (e->buttons() & Qt::MidButton) { // Move
-			camera.move(e->x(), e->y());
+		else if (mode == MODE_SELECT) {
+			// do nothing
 		}
-		else if (e->buttons() & Qt::RightButton) { // Zoom
-			camera.zoom(e->x(), e->y());
+		else { // keep drawing a stroke
+			drawLineTo(e->pos());
 		}
-		clearSketch();
-	}
-	else if (mode == MODE_SELECT) {
-		// do nothing
-	}
-	else { // keep drawing a stroke
-		drawLineTo(e->pos());
-	}
 
-	update();
+		update();
+	}
+	else {
+		if (e->y() > height() - BOTTOM_AREA_HEIGHT) {
+			if (stage != "peek_final") {
+				preStage = stage;
+				stage = "peek_final";
+
+				// generate final geometry
+				generateGeometry();
+
+				update();
+			}
+		}
+		else {
+			if (stage == "peek_final") {
+				stage = preStage;
+
+				// generate geometry
+				generateGeometry();
+
+				update();
+			}
+		}
+	}
 }
 
 /**
@@ -984,7 +1002,7 @@ void GLWidget3D::initializeGL() {
 	//changeStage("building");
 	stage = "building";
 
-	//setMouseTracking(true);
+	setMouseTracking(true);
 }
 
 /**

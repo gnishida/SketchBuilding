@@ -15,7 +15,9 @@
 	</rule>
 	<rule name="LedgeAndFloor">
 		<split splitAxis="y">
+			<param type="absolute" value="z_floor_border_size" name="Border"/>
 			<param type="floating" value="ledge_height" name="Ledge"/>
+			<param type="absolute" value="z_floor_border_size" name="Border"/>
 			<param type="floating" value="floor_height" name="Floor"/>
 		</split>
 	</rule>

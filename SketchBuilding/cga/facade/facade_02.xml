@@ -12,6 +12,7 @@
 		</setupProjection>
 		<split splitAxis="y">
 			<param type="absolute" value="ground_height" name="Floor"/>
+			<param type="absolute" value="z_floor_border_size" name="Border"/>
 			<param type="absolute" value="ledge_height" name="Ledge"/>
 			<param type="absolute" value="floor_height" name="BorderAndFloor" repeat="true"/>
 		</split>

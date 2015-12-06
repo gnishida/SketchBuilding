@@ -32,8 +32,9 @@ public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
 	static enum { MODE_SKETCH = 0, MODE_SELECT, MODE_CAMERA };
 	
+	const int BOTTOM_AREA_HEIGHT = 40;
 	const float CAMERA_DEFAULT_HEIGHT = 5.0f;
-	const float CAMERA_DEFAULT_DEPTH = 80.0f;// 50.0f;
+	const float CAMERA_DEFAULT_DEPTH = 80.0f;
 	
 	MainWindow* mainWin;
 	QImage sketch;
@@ -43,6 +44,7 @@ public:
 	bool ctrlPressed;
 		
 	std::string stage;
+	std::string preStage;
 	int mode;
 	int demo_mode;
 	std::map<std::string, std::vector<Regression*> > regressions;

@@ -2,7 +2,7 @@
 <grammar type="floor" version="1.0" author="Gen Nishida">
 	<attr name="floor_bottom_margin" value="0.5" range="0.01,3"/>
 	<attr name="floor_horizontal_margin" value="1" range="0.01,5"/>
-	<attr name="floor_padding" value="1" range="0.01,5"/>
+	<attr name="floor_padding" value="0.5" range="0.01,5"/>
 	<attr name="floor_top_margin" value="0.5" range="0.01,3"/>
 	<attr name="floor_window_width" value="1" range="0.1,10"/>
 	<attr name="z_window_border_size" value="0.03" range="0,0.03"/>
