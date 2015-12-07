@@ -36,6 +36,7 @@ public:
     QAction *actionAddBuildingMass;
     QAction *actionFixGeometry;
     QAction *actionClearSketch;
+    QAction *actionSaveGeometry;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -71,6 +72,8 @@ public:
         actionFixGeometry->setObjectName(QStringLiteral("actionFixGeometry"));
         actionClearSketch = new QAction(MainWindowClass);
         actionClearSketch->setObjectName(QStringLiteral("actionClearSketch"));
+        actionSaveGeometry = new QAction(MainWindowClass);
+        actionSaveGeometry->setObjectName(QStringLiteral("actionSaveGeometry"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -97,6 +100,7 @@ public:
         menuFile->addAction(actionNew);
         menuFile->addAction(actionClearSketch);
         menuFile->addAction(actionOpenCGA);
+        menuFile->addAction(actionSaveGeometry);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
         menuTool->addAction(actionPredict);
@@ -125,6 +129,8 @@ public:
         actionFixGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+F", 0));
         actionClearSketch->setText(QApplication::translate("MainWindowClass", "Clear Sketch", 0));
         actionClearSketch->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
+        actionSaveGeometry->setText(QApplication::translate("MainWindowClass", "Save Geometry", 0));
+        actionSaveGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuTool->setTitle(QApplication::translate("MainWindowClass", "Command", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Shape", 0));

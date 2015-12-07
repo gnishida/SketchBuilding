@@ -29,6 +29,7 @@ public slots:
 	void onNew();
 	void onClearSketch();
 	void onOpenCGA();
+	void onSaveGeometry();
 	void onAddBuildingMass();
 	void onStageChanged();
 	void onModeChanged();

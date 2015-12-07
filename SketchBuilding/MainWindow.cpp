@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
 	connect(ui.actionClearSketch, SIGNAL(triggered()), this, SLOT(onClearSketch()));
 	connect(ui.actionOpenCGA, SIGNAL(triggered()), this, SLOT(onOpenCGA()));
+	connect(ui.actionSaveGeometry, SIGNAL(triggered()), this, SLOT(onSaveGeometry()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
 
@@ -98,6 +99,13 @@ void MainWindow::onOpenCGA() {
 	if (filename.isEmpty()) return;
 
 	glWidget->loadCGA(filename.toUtf8().data());
+}
+
+void MainWindow::onSaveGeometry() {
+	QString filename = QFileDialog::getSaveFileName(this, tr("Save OBJ file..."), "", tr("OBJ Files (*.obj)"));
+	if (filename.isEmpty()) return;
+
+	glWidget->scene.saveGeometry(filename.toUtf8().data());
 }
 
 void MainWindow::onAddBuildingMass() {

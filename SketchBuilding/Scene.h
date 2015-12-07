@@ -42,8 +42,6 @@ namespace sc {
 		int _currentObject;
 		boost::shared_ptr<glutils::Face> _selectedFace;
 		std::string _selectedFaceName;
-		//int _selectedBuilding;
-		//int _selectedBuildingControlPoint;
 
 		BuildingSelector buildingSelector;
 
@@ -54,6 +52,7 @@ namespace sc {
 		void clearCurrentObject();
 		void newObject();
 		void alignObjects();
+		void alignObjects(int currentObject);
 		void alignObjects(const glutils::Face& baseFace);
 		void alignObjectsForWillisTower();
 		SceneObject& currentObject() { return _objects[_currentObject]; }
@@ -63,6 +62,8 @@ namespace sc {
 
 		void generateGeometry(RenderManager* renderManager, const std::string& stage);
 		void updateGeometry(RenderManager* renderManager, const std::string& stage);
+
+		void saveGeometry(const std::string& filename);
 	};
 
 }

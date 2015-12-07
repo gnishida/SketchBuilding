@@ -801,7 +801,7 @@ bool GLWidget3D::selectBuilding(const glm::vec2& mouse_pos) {
 	// view direction
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
-	if (scene.buildingSelector.selectBuilding(&scene, cameraPos, view_dir, stage)) {
+	if (scene.buildingSelector.selectBuilding(&scene, cameraPos, view_dir)) {
 		return true;
 	}
 	else {
@@ -985,7 +985,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT_BUILDING) { // select a building
 		if (scene.buildingSelector.isBuildingControlPointSelected()) {
+			scene.buildingSelector.alignObjects(&scene);
 			scene.buildingSelector.unselectBuildingControlPoint();
+			generateGeometry();
 		}
 		else {
 			if (selectBuilding(glm::vec2(e->x(), e->y()))) {

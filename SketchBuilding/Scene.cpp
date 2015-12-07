@@ -234,46 +234,50 @@ namespace sc {
 	}
 
 	void Scene::alignObjects() {
+		alignObjects(_currentObject);
+	}
+
+	void Scene::alignObjects(int currentObject) {
 		float threshold = 3.5f;
 
 		for (int i = 0; i < _objects.size(); ++i) {
-			if (i == _currentObject) continue;
+			if (i == currentObject) continue;
 
-			if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x) < threshold) {
-				float diff = _objects[i].offset_x - _objects[_currentObject].offset_x;
-				_objects[_currentObject].offset_x = _objects[i].offset_x;
-				_objects[_currentObject].object_width -= diff;
+			if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x) < threshold) {
+				float diff = _objects[i].offset_x - _objects[currentObject].offset_x;
+				_objects[currentObject].offset_x = _objects[i].offset_x;
+				_objects[currentObject].object_width -= diff;
 			}
-			if (fabs(_objects[_currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < threshold) {
-				float diff = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
-				_objects[_currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
-				_objects[_currentObject].object_width -= diff;
-			}
-
-			if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y) < threshold) {
-				float diff = _objects[i].offset_y - _objects[_currentObject].offset_y;
-				_objects[_currentObject].offset_y = _objects[i].offset_y;
-				_objects[_currentObject].object_depth -= diff;
-			}
-			if (fabs(_objects[_currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
-				float diff = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
-				_objects[_currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
-				_objects[_currentObject].object_depth -= diff;
+			if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < threshold) {
+				float diff = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
+				_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+				_objects[currentObject].object_width -= diff;
 			}
 
+			if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y) < threshold) {
+				float diff = _objects[i].offset_y - _objects[currentObject].offset_y;
+				_objects[currentObject].offset_y = _objects[i].offset_y;
+				_objects[currentObject].object_depth -= diff;
+			}
+			if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
+				float diff = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
+				_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
+				_objects[currentObject].object_depth -= diff;
+			}
 
-			if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < threshold) {
-				_objects[_currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[_currentObject].offset_x;
+
+			if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < threshold) {
+				_objects[currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
 			}
-			if (fabs(_objects[_currentObject].offset_x + _objects[_currentObject].object_width - _objects[i].offset_x) < threshold) {
-				_objects[_currentObject].object_width = _objects[i].offset_x - _objects[_currentObject].offset_x;
+			if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x) < threshold) {
+				_objects[currentObject].object_width = _objects[i].offset_x - _objects[currentObject].offset_x;
 			}
 
-			if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
-				_objects[_currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[_currentObject].offset_y;
+			if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
+				_objects[currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
 			}
-			if (fabs(_objects[_currentObject].offset_y + _objects[_currentObject].object_depth - _objects[i].offset_y) < threshold) {
-				_objects[_currentObject].object_depth = _objects[i].offset_y - _objects[_currentObject].offset_y;
+			if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y) < threshold) {
+				_objects[currentObject].object_depth = _objects[i].offset_y - _objects[currentObject].offset_y;
 			}
 		}
 	}
@@ -480,6 +484,37 @@ namespace sc {
 		glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 		renderManager->addObject("grid", "", vertices);
 
+	}
+
+	void Scene::saveGeometry(const std::string& filename) {
+		FILE* fp = fopen(filename.c_str(), "w");
+
+		for (int i = 0; i < _objects.size(); ++i) {
+			for (int j = 0; j < _objects[i].faces.size(); ++j) {
+				for (int k = 0; k < _objects[i].faces[j]->vertices.size(); ++k) {
+					fprintf(fp, "v %lf %lf %lf\n", _objects[i].faces[j]->vertices[k].position.x, _objects[i].faces[j]->vertices[k].position.y, _objects[i].faces[j]->vertices[k].position.z);
+				}
+			}
+		}
+		fprintf(fp, "\n");
+
+		int vertexId = 1;
+		for (int i = 0; i < _objects.size(); ++i) {
+			for (int j = 0; j < _objects[i].faces.size(); ++j) {
+				for (int k = 0; k < _objects[i].faces[j]->vertices.size() / 3; ++k) {
+					fprintf(fp, "f ");
+					for (int l = 0; l < 3; ++l) {
+						if (l > 0) {
+							fprintf(fp, " ");
+						}
+						fprintf(fp, "%d", vertexId++);
+					}
+					fprintf(fp, "\n");
+				}
+			}
+		}
+
+		fclose(fp);
 	}
 
 }
