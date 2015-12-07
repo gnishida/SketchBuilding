@@ -60,8 +60,6 @@ public:
 	glm::mat4 light_mvpMatrix;
 	RenderManager renderManager;
 
-	sc::FaceSelector faceSelector;
-
 	InterpolationCamera intCamera;
 	QTimer* camera_timer;
 

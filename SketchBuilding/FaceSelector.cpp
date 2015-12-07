@@ -4,33 +4,79 @@
 
 namespace sc {
 
-FaceSelector::FaceSelector() {
+FaceSelector::FaceSelector(sc::Scene* scene) {
+	_scene = scene;
 	_selected = false;
-	_scene = NULL;
 }
 
 bool FaceSelector::selected() {
 	return _selected;
 }
 
-glutils::Face FaceSelector::selectedFace() {
+boost::shared_ptr<glutils::Face> FaceSelector::selectedFace() {
 	return _selectedFace;
 }
 
-bool FaceSelector::selectFace(sc::Scene* scene, const glm::vec3& cameraPos, const glm::vec3& viewDir, const std::string& stage, const glm::vec3& normal) {
-	this->_scene = scene;
-	this->_cameraPos = cameraPos;
-	this->_viewDir = viewDir;
-	this->_stage = stage;
-	this->_normal = normal;
+glutils::Face FaceSelector::selectedFaceCopy() {
+	return _selectedFaceCopy;
+}
 
-	_selected = scene->selectFace(cameraPos, viewDir, stage, normal);
-	if (_selected) {
-		_selectedFace = *(scene->selectedFace());
-		_selectedFaceName = scene->selectedFace()->name;
+bool FaceSelector::selectFace(const glm::vec3& cameraPos, const glm::vec3& viewDir, const std::string& stage, const glm::vec3& normal) {
+	glm::vec3 intPt;
+	float min_dist = (std::numeric_limits<float>::max)();
+
+	unselect();
+
+	for (int i = 0; i < _scene->_objects.size(); ++i) {
+		for (int j = 0; j < _scene->_objects[i].faces.size(); ++j) {
+			if (_scene->_objects[i].faces[j]->vertices.size() < 3) continue;
+
+			// check the face's type
+			if (stage == "building") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "roof") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "facade") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "building") continue;
+			}
+			else if (stage == "floor") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "facade") continue;
+			}
+			else if (stage == "window") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "floor") continue;
+			}
+			else if (stage == "ledge") {
+				if (_scene->_objects[i].faces[j]->grammar_type != "facade") continue;
+			}
+
+			for (int k = 0; k < _scene->_objects[i].faces[j]->vertices.size(); k += 3) {
+				if (fabs(glm::dot(_scene->_objects[i].faces[j]->vertices[0].normal, normal)) < 0.99f) continue;
+
+				if (glutils::rayTriangleIntersection(cameraPos, viewDir, _scene->_objects[i].faces[j]->vertices[k].position, _scene->_objects[i].faces[j]->vertices[k + 1].position, _scene->_objects[i].faces[j]->vertices[k + 2].position, intPt)) {
+					float dist = glm::length(intPt - cameraPos);
+
+					if (dist < min_dist) {
+						min_dist = dist;
+						_selectedFace = _scene->_objects[i].faces[j];
+						_scene->_currentObject = i;
+					}
+				}
+
+			}
+		}
+	}
+
+	if (_selectedFace) {
+		_selectedFaceCopy = *_selectedFace;
+		_selectedFaceName = _selectedFace->name;
+		_selected = true;
 		return true;
 	}
 	else {
+		_selectedFaceName = "";
+		_selected = false;
 		return false;
 	}
 }
@@ -39,23 +85,10 @@ std::string FaceSelector::selectedFaceName() {
 	return _selectedFaceName;
 }
 
-bool FaceSelector::reselectFace() {
-	if (!_selected) return false;
-
-	_selected = _scene->selectFace(_cameraPos, _viewDir, _stage, _normal);
-	if (_selected) {
-		_selectedFace = *(_scene->selectedFace());
-		_selectedFaceName = _scene->selectedFace()->name;
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 void FaceSelector::unselect() {
-	if (_selected && _scene != NULL) {
-		_scene->unselectFace();
+	if (_selected) {
+		_selectedFace->unselect();
+		_selectedFace.reset();
 	}
 
 	_selected = false;
