@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	// create tool bar for modes
 	QActionGroup* modeGroup = new QActionGroup(this);
-	std::string mode_names[4] = { "sketch", "select", "eraser", "camera" };
-	for (int i = 0; i < 4; ++i) {
+	std::string mode_names[6] = { "sketch", "select", "select_building", "copy", "eraser", "camera" };
+	for (int i = 0; i < 6; ++i) {
 		actionModes[mode_names[i]] = new QAction(QIcon(std::string("resources/" + mode_names[i] + ".png").c_str()), std::string("&" + mode_names[i]).c_str(), this);
 		actionModes[mode_names[i]]->setCheckable(true);
 		modeGroup->addAction(actionModes[mode_names[i]]);
@@ -140,25 +140,26 @@ void MainWindow::onStageChanged() {
 
 void MainWindow::onModeChanged() {
 	if (actionModes["sketch"]->isChecked()) {
-		glWidget->mode = GLWidget3D::MODE_SKETCH;
+		glWidget->changeMode(GLWidget3D::MODE_SKETCH);
 	}
 	else if (actionModes["select"]->isChecked()) {
-		glWidget->mode = GLWidget3D::MODE_SELECT;
+		glWidget->changeMode(GLWidget3D::MODE_SELECT);
+	}
+	else if (actionModes["select_building"]->isChecked()) {
+		glWidget->changeMode(GLWidget3D::MODE_SELECT_BUILDING);
+	}
+	else if (actionModes["copy"]->isChecked()) {
+		glWidget->changeMode(GLWidget3D::MODE_COPY);
+
+		actionModes["select_building"]->setChecked(true);
 	}
 	else if (actionModes["eraser"]->isChecked()) {
-		glWidget->clearSketch();
-
-		if (glWidget->stage == "building") {
-			glWidget->scene.clearCurrentObject();
-		}
+		glWidget->changeMode(GLWidget3D::MODE_ERASER);
 
 		actionModes["sketch"]->setChecked(true);
-		actionModes["eraser"]->setChecked(false);
-
-		glWidget->update();
 	}
 	else if (actionModes["camera"]->isChecked()) {
-		glWidget->mode = GLWidget3D::MODE_CAMERA;
+		glWidget->changeMode(GLWidget3D::MODE_CAMERA);
 	}
 }
 

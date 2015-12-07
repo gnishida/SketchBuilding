@@ -182,26 +182,35 @@ void GLWidget3D::generateGeometry() {
 	}
 }
 
+void GLWidget3D::updateGeometry() {
+	scene.updateGeometry(&renderManager, stage);
+}
+
 void GLWidget3D::selectOption(int option_index) {
 	if (stage == "building") {
 		predictBuilding(option_index);
-	} else if (stage == "roof") {
+	} 
+	else if (stage == "roof") {
 		predictRoof(option_index);
-	} else if (stage == "facade") {
+	} 
+	else if (stage == "facade") {
 		//if (!scene._selectedFaceName.empty()) {
 		if (faceSelector.selected()) {
 			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["facade"][option_index]);
 			generateGeometry();
 		}
-	} else if (stage == "floor") {
+	} 
+	else if (stage == "floor") {
 		//if (!scene._selectedFaceName.empty()) {
 		if (faceSelector.selected()) {
 			scene.currentObject().setGrammar(faceSelector.selectedFaceName(), grammars["floor"][option_index]);
 			generateGeometry();
 		}
-	} else if (stage == "window") {
+	} 
+	else if (stage == "window") {
 		predictWindow(option_index);
-	} else if (stage == "ledge") {
+	} 
+	else if (stage == "ledge") {
 		predictLedge(option_index);
 	}
 
@@ -783,6 +792,39 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	}
 }
 
+bool GLWidget3D::selectBuilding(const glm::vec2& mouse_pos) {
+	// camera position in the world coordinates
+	glm::vec3 cameraPos = camera.cameraPosInWorld();
+
+	clearSketch();
+
+	// view direction
+	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
+
+	if (scene.buildingSelector.selectBuilding(&scene, cameraPos, view_dir, stage)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool GLWidget3D::selectBuildingControlPoint(const glm::vec2& mouse_pos) {
+	// camera position in the world coordinates
+	glm::vec3 cameraPos = camera.cameraPosInWorld();
+
+	// view direction
+	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
+
+	// select a control point
+	if (scene.buildingSelector.selectBuildingControlPoint(&scene, cameraPos, view_dir, mouse_pos, camera.mvpMatrix, width(), height())) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void GLWidget3D::addBuildingMass() {
 	if (stage != "building") return;
 
@@ -799,6 +841,9 @@ glm::vec3 GLWidget3D::viewVector(const glm::vec2& point, const glm::mat4& mvMatr
 void GLWidget3D::changeStage(const std::string& stage) {
 	this->stage = stage;
 	clearSketch();
+
+	// the selected building should be unselected.
+	scene.buildingSelector.unselectBuilding();
 
 	faceSelector.unselect();
 
@@ -818,7 +863,34 @@ void GLWidget3D::changeStage(const std::string& stage) {
 		generateGeometry();
 	}
 
-	scene.updateGeometry(&renderManager, stage);
+	updateGeometry();
+
+	update();
+}
+
+void GLWidget3D::changeMode(int new_mode) {
+	if (new_mode == MODE_COPY) {
+		if (scene.buildingSelector.isBuildingSelected()) {
+			scene.buildingSelector.copy(&scene);
+			generateGeometry();
+		}
+	}
+	else if (new_mode == MODE_ERASER) {
+		clearSketch();
+
+		if (stage == "building") {
+			scene.clearCurrentObject();
+		}
+
+	}
+	else {
+		if (scene.buildingSelector.isBuildingSelected()) {
+			scene.buildingSelector.unselectBuilding();
+			updateGeometry();
+		}
+
+		mode = new_mode;
+	}
 
 	update();
 }
@@ -873,6 +945,14 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 	else if (mode == MODE_SELECT) {
 		// do nothing
 	}
+	else if (mode == MODE_SELECT_BUILDING) {
+		if (scene.buildingSelector.isBuildingSelected()) {
+			selectBuildingControlPoint(glm::vec2(e->x(), e->y()));
+
+			updateGeometry();
+			update();
+		}
+	}
 	else { // start drawing a stroke
 		lastPos = e->pos();
 		strokes.resize(strokes.size() + 1);
@@ -890,7 +970,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT) { // select a face
 		if (selectFace(glm::vec2(e->x(), e->y()))) {
-			scene.updateGeometry(&renderManager, stage);
+			updateGeometry();
 
 			// When a face is selected, the user should start drawing.
 			mode = MODE_SKETCH;
@@ -902,6 +982,20 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 
 			update();
 		}
+	}
+	else if (mode == MODE_SELECT_BUILDING) { // select a building
+		if (scene.buildingSelector.isBuildingControlPointSelected()) {
+			scene.buildingSelector.unselectBuildingControlPoint();
+		}
+		else {
+			if (selectBuilding(glm::vec2(e->x(), e->y()))) {
+				std::cout << "A building is selected." << std::endl;
+			}
+		}
+
+		updateGeometry();
+
+		update();
 	}
 	else {
 		if (stage == "building") {
@@ -945,6 +1039,13 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 		else if (mode == MODE_SELECT) {
 			// do nothing
 		}
+		else if (mode == MODE_SELECT_BUILDING) {
+			if (scene.buildingSelector.isBuildingControlPointSelected()) {
+				// resize the building
+				scene.buildingSelector.resize(&scene, glm::vec2(e->x(), e->y()));
+				generateGeometry();
+			}
+		}
 		else { // keep drawing a stroke
 			drawLineTo(e->pos());
 		}
@@ -982,9 +1083,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 void GLWidget3D::initializeGL() {
 	renderManager.init("../shaders/vertex.glsl", "../shaders/geometry.glsl", "../shaders/fragment.glsl", false);
 	renderManager.renderingMode = RenderManager::RENDERING_MODE_REGULAR;
-	//renderManager.renderingMode = RenderManager::RENDERING_MODE_LINE;
 
-	//glClearColor(1, 1, 1, 0.0);
 	glClearColor(0.9, 0.9, 0.9, 0.0);
 
 	sketch = QImage(this->width(), this->height(), QImage::Format_RGB888);
@@ -1075,12 +1174,12 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 
 	// draw the bottom area
 	painter.setOpacity(0.6);
-	QRect bottomArea(0, height() - 40, width(), 40);
+	QRect bottomArea(0, height() - BOTTOM_AREA_HEIGHT, width(), BOTTOM_AREA_HEIGHT);
 	painter.fillRect(bottomArea, Qt::white);
 	QFont font = painter.font();
 	font.setPointSize(font.pointSize() * 3);
 	painter.setFont(font);
-	painter.drawText(bottomArea, Qt::AlignCenter | Qt::AlignVCenter, tr("Final View"));
+	painter.drawText(bottomArea, Qt::AlignCenter | Qt::AlignVCenter, tr("Peek a final view"));
 	painter.end();
 
 	glEnable(GL_DEPTH_TEST);

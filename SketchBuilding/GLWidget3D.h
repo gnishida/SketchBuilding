@@ -30,7 +30,7 @@ class MCMC;
 class GLWidget3D : public QGLWidget {
 public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
-	static enum { MODE_SKETCH = 0, MODE_SELECT, MODE_CAMERA };
+	static enum { MODE_SKETCH = 0, MODE_SELECT, MODE_SELECT_BUILDING, MODE_COPY, MODE_ERASER, MODE_CAMERA };
 	
 	const int BOTTOM_AREA_HEIGHT = 40;
 	const float CAMERA_DEFAULT_HEIGHT = 5.0f;
@@ -54,7 +54,6 @@ public:
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;
 	float current_z;
-	//glutils::Face selectedFace;
 
 	Camera camera;
 	glm::vec3 light_dir;
@@ -74,6 +73,7 @@ public:
 	void drawScene(int drawMode);
 	void loadCGA(char* filename);
 	void generateGeometry();
+	void updateGeometry();
 	void selectOption(int option_index);
 
 	void updateBuildingOptions();
@@ -91,11 +91,14 @@ public:
 	void predictLedge(int grammar_id);
 
 	bool selectFace(const glm::vec2& mouse_pos);
+	bool selectBuilding(const glm::vec2& mouse_pos);
+	bool selectBuildingControlPoint(const glm::vec2& mouse_pos);
 	void addBuildingMass();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
 	void changeStage(const std::string& stage);
-	void camera_update();
+	void changeMode(int new_mode);
 	glm::vec3 computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot);
+	void camera_update();
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 

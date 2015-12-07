@@ -59,7 +59,7 @@ namespace sc {
 		this->height = height;
 
 		// HACK: 高さパラメータを設定する
-		grammars["building"].attrs["height"].value = boost::lexical_cast<std::string>(height);
+		grammars["Start"].attrs["height"].value = boost::lexical_cast<std::string>(height);
 	}
 
 	void SceneObject::setGrammar(const std::string& name, const cga::Grammar& grammar) {
@@ -108,7 +108,7 @@ namespace sc {
 	void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage) {
 		faces.clear();
 
-		if (height == 0.0f) return;
+		//if (height == 0.0f) return;
 
 		if (stage == "final" || stage == "peek_final") {
 			// facadeのfloor border sizeを0にする
@@ -448,6 +448,12 @@ namespace sc {
 			_objects[i].generateGeometry(&system, renderManager, stage);
 		}
 
+		// if a building is selected, add its control spheres
+		if (buildingSelector.isBuildingSelected()) {
+			buildingSelector.generateGeometry(renderManager, this);
+		}
+
+		// add a ground plane
 		std::vector<Vertex> vertices;
 		glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 		renderManager->addObject("grid", "", vertices);
@@ -464,6 +470,12 @@ namespace sc {
 			_objects[i].updateGeometry(renderManager, stage);
 		}
 
+		// if a building is selected, add its control spheres
+		if (buildingSelector.isBuildingSelected()) {
+			buildingSelector.generateGeometry(renderManager, this);
+		}
+
+		// add a ground plane
 		std::vector<Vertex> vertices;
 		glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 1, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 		renderManager->addObject("grid", "", vertices);

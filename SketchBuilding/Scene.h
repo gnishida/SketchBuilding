@@ -3,6 +3,7 @@
 #include <vector>
 #include "CGA.h"
 #include "GLUtils.h"
+#include "BuildingSelector.h"
 
 class RenderManager;
 
@@ -41,6 +42,10 @@ namespace sc {
 		int _currentObject;
 		boost::shared_ptr<glutils::Face> _selectedFace;
 		std::string _selectedFaceName;
+		//int _selectedBuilding;
+		//int _selectedBuildingControlPoint;
+
+		BuildingSelector buildingSelector;
 
 	public:
 		Scene();

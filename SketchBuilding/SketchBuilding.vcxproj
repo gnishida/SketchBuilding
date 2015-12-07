@@ -208,6 +208,7 @@
   <ItemGroup>
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BuildingSelector.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CenterOperator.cpp" />
     <ClCompile Include="CGA.cpp" />
@@ -368,6 +369,7 @@
   <ItemGroup>
     <ClInclude Include="Asset.h" />
     <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BuildingSelector.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CGA.h" />
     <ClInclude Include="Circle.h" />
