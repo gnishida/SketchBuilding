@@ -48,7 +48,14 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 
 	// inner shape
 	if (!inside.empty()) {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _grammar_type, _pivot, _modelMat, offset_points, _color, _texture)));
+		glm::vec2 diff = offset_points[0] - _points[0];
+		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(diff, 0));
+		for (int i = 0; i < offset_points.size(); ++i) {
+			offset_points[i].x -= diff.x;
+			offset_points[i].y -= diff.y;
+		}
+
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(inside, _grammar_type, _pivot, mat, offset_points, _color, _texture)));
 	}
 
 	// border shape
@@ -72,7 +79,7 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[2], 1)));
 			pts2d.push_back(glm::vec2(invMat * glm::vec4(pts[3], 1)));
 
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name, _grammar_type, _pivot, mat, pts2d, _color, _texture)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, mat, pts2d, _color, _texture)));
 		}		
 	}
 }

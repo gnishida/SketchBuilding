@@ -198,6 +198,8 @@ bool isWithinPolygon(const glm::vec2& p, const std::vector<glm::vec2>& points) {
  * Compute the offset polygon.
  */
 void offsetPolygon(const std::vector<glm::vec2>& points, float offsetDistance, std::vector<glm::vec2>& offset_points) {
+	offset_points.clear();
+
 	Polygon_2 poly;
 
 	for (int i = 0; i < points.size(); ++i) {
@@ -208,14 +210,19 @@ void offsetPolygon(const std::vector<glm::vec2>& points, float offsetDistance, s
 	if (offsetDistance >= 0) {
 		K::FT lOffset = offsetDistance;
 		offset_poly = CGAL::create_exterior_skeleton_and_offset_polygons_2(lOffset, poly);
-	} else {
-		K::FT lOffset = -offsetDistance;
-		offset_poly = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
-	}
 
-	offset_points.clear();
-	for (auto it = offset_poly[0]->vertices_begin(); it != offset_poly[0]->vertices_end(); ++it) {
-		offset_points.push_back(glm::vec2(it->x(), it->y()));
+		for (auto it = offset_poly[1]->vertices_begin(); it != offset_poly[1]->vertices_end(); ++it) {
+			offset_points.push_back(glm::vec2(it->x(), it->y()));
+		}
+		std::reverse(offset_points.begin(), offset_points.end());
+	}
+	else {
+		K::FT lOffset = -offsetDistance;
+		offset_poly = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset, poly);
+
+		for (auto it = offset_poly[0]->vertices_begin(); it != offset_poly[0]->vertices_end(); ++it) {
+			offset_points.push_back(glm::vec2(it->x(), it->y()));
+		}
 	}
 }
 

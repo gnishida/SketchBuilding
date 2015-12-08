@@ -26,6 +26,16 @@ boost::shared_ptr<Shape> Prism::clone(const std::string& name) const {
 }
 
 void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// top face
+	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
+	}
+
+	// bottom face
+	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture)));
+	}
+
 	// front face
 	if (name_map.find("front") != name_map.end() && name_map.at("front") != "NIL") {
 		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("front"), _grammar_type, _pivot, glm::rotate(_modelMat, M_PI * 0.5f, glm::vec3(1, 0, 0)), glm::length(_points[1] - _points[0]), _scope.z, _color)));
@@ -33,6 +43,11 @@ void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector
 
 	// side faces
 	if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
+		// front face
+		if (name_map.find("front") == name_map.end()) {
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, glm::rotate(_modelMat, M_PI * 0.5f, glm::vec3(1, 0, 0)), glm::length(_points[1] - _points[0]), _scope.z, _color)));
+		}
+
 		glm::mat4 mat;
 		for (int i = 1; i < _points.size(); ++i) {
 			glm::vec2 a = _points[i] - _points[i - 1];
@@ -54,17 +69,7 @@ void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector
 		}
 	}
 
-	// top face
-	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
-	}
 
-	// bottom face
-	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
-		//std::vector<glm::vec2> basePoints = _points;
-		//std::reverse(basePoints.begin(), basePoints.end());
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture)));
-	}
 }
 
 void Prism::setupProjection(float texWidth, float texHeight) {
