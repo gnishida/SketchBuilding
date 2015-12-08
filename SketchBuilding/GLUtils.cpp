@@ -560,6 +560,10 @@ void drawConcavePolygon(const std::vector<glm::vec2>& points, const glm::vec4& c
 			max_y = points[i].y;
 		}
 	}
+
+	if (polygon.is_clockwise_oriented()) {
+		polygon.reverse_orientation();
+	}
 	
 	// tesselate the concave polygon
 	Polygon_list partition_polys;
@@ -582,6 +586,10 @@ void drawConcavePolygon(const std::vector<glm::vec2>& points, const glm::vec4& c
 	Polygon_2 polygon;
 	for (int i = 0; i < points.size(); ++i) {
 		polygon.push_back(Point_2(points[i].x, points[i].y));
+	}
+
+	if (polygon.is_clockwise_oriented()) {
+		polygon.reverse_orientation();
 	}
 		
 	// tesselate the concave polygon

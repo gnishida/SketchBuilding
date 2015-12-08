@@ -2,6 +2,7 @@
 #include "CGA.h"
 #include "Circle.h"
 #include "Rectangle.h"
+#include "CylinderSide.h"
 #include "GLUtils.h"
 
 namespace cga {
@@ -39,25 +40,8 @@ void Cylinder::comp(const std::map<std::string, std::string>& name_map, std::vec
 
 	// side face
 	if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
-		int slices = 24;
-
-		for (int i = 0; i < slices; ++i) {
-			float theta1 = (float)i / slices * M_PI * 2.0f;
-			float theta2 = (float)(i + 1) / slices * M_PI * 2.0f;
-
-			glm::vec3 p0(cosf(theta1) * _scope.x * 0.5f + _scope.x * 0.5, sinf(theta1) * _scope.y * 0.5f + _scope.y * 0.5, 0.0f);
-			glm::vec3 p1(cosf(theta2) * _scope.x * 0.5f + _scope.x * 0.5, sinf(theta2) * _scope.y * 0.5f + _scope.y * 0.5, 0.0f);
-			//glm::vec3 p2(cosf(theta2) * _scope.x * 0.5f, sinf(theta2) * _scope.y * 0.5f, _scope.z);
-			//glm::vec3 p3(cosf(theta1) * _scope.x * 0.5f, sinf(theta1) * _scope.y * 0.5f, _scope.z);
-
-			// set the conversion matrix
-			float rot_z = atan2f(p1.y - p0.y, p1.x - p0.x);
-			glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, p0), rot_z, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
-			//glm::mat4 invMat = glm::inverse(convMat);
-			//glm::mat4 mat = _modelMat * convMat;
-
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("side"), _grammar_type, _pivot, mat, glm::length(p0 - p1), _scope.z, _color)));
-		}
+		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, 0, 0)), M_PI * 0.5f, glm::vec3(1, 0, 0));
+		shapes.push_back(boost::shared_ptr<Shape>(new CylinderSide(name_map.at("side"), _grammar_type, _pivot, mat, _scope.x * 0.5, _scope.z, M_PI * 2.0f, _color)));
 	}
 }
 
@@ -68,7 +52,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 	{
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, _scope.z));
-		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
 		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
@@ -76,7 +60,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 	if (_scope.z >= 0) {
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
-		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
 		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 
@@ -84,7 +68,7 @@ void Cylinder::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& 
 	{
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y * 0.5, 0));
-		glutils::drawCylinderZ(_scope.x * 0.5f, _scope.y * 0.5f, _scope.x * 0.5f, _scope.y * 0.5f, _scope.z, glm::vec4(_color, opacity), mat, vertices, 24);
+		glutils::drawCylinderZ(_scope.x * 0.5f, _scope.y * 0.5f, _scope.x * 0.5f, _scope.y * 0.5f, _scope.z, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
 		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
 }

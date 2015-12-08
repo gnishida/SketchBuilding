@@ -5,6 +5,7 @@
 #include "Prism.h"
 #include "CGA.h"
 #include "GLUtils.h"
+#include <iostream>
 
 namespace cga {
 
@@ -48,21 +49,21 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 
 	// inner shape
 	if (!inside.empty()) {
+		std::vector<glm::vec2> new_pts;
 		glm::vec2 diff = offset_points[0] - _points[0];
 		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(diff, 0));
 		for (int i = 0; i < offset_points.size(); ++i) {
-			offset_points[i].x -= diff.x;
-			offset_points[i].y -= diff.y;
+			new_pts.push_back(offset_points[i] - diff);
 		}
 
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(inside, _grammar_type, _pivot, mat, offset_points, _color, _texture)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(inside, _grammar_type, _pivot, mat, new_pts, _color, _texture)));
 	}
 
 	// border shape
 	if (!border.empty()) {
-		std::vector<glm::vec3> pts;
 		std::vector<glm::vec3> normals;
 		for (int i = 0; i < _points.size(); ++i) {
+			std::vector<glm::vec3> pts;
 			pts.push_back(glm::vec3(offset_points[i], 0));
 			pts.push_back(glm::vec3(_points[i], 0));
 			pts.push_back(glm::vec3(_points[(i+1) % _points.size()], 0));
@@ -125,16 +126,26 @@ boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, f
 void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (!_active) return;
 
-	if (!_texture.empty() && _texCoords.size() >= _points.size()) {
-		std::vector<Vertex> vertices;
-		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _texCoords, _pivot * _modelMat, vertices);
+	bool valid = true;
+	for (int i = 0; i < _points.size(); ++i) {
+		if (i == 0) continue;
+		if (glm::length(_points[i] - _points[i - 1]) == 0.0f) valid = false;
+	}
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
-	} else {
-		std::vector<Vertex> vertices;
-		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+	if (valid) {
+		if (!_texture.empty() && _texCoords.size() >= _points.size()) {
+			std::vector<Vertex> vertices;
+			glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _texCoords, _pivot * _modelMat, vertices);
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		}
+		else {
+			std::vector<Vertex> vertices;
+			glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
+
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		}
+
 	}
 }
 

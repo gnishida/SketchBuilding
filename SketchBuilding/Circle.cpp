@@ -3,6 +3,7 @@
 #include "Cylinder.h"
 #include "Polygon.h"
 #include "Pyramid.h"
+#include "Hemisphere.h"
 
 namespace cga {
 
@@ -25,6 +26,10 @@ boost::shared_ptr<Shape> Circle::clone(const std::string& name) const {
 
 boost::shared_ptr<Shape> Circle::extrude(const std::string& name, float height) {
 	return boost::shared_ptr<Shape>(new Cylinder(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
+}
+
+boost::shared_ptr<Shape> Circle::hemisphere(const std::string& name) {
+	return boost::shared_ptr<Shape>(new Hemisphere(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, _color));
 }
 
 void Circle::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {

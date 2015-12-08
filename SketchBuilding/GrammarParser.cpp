@@ -5,6 +5,7 @@
 #include "CopyOperator.h"
 #include "CornerCutOperator.h"
 #include "ExtrudeOperator.h"
+#include "HemisphereOperator.h"
 #include "InnerCircleOperator.h"
 #include "InnerSemiCircleOperator.h"
 #include "InsertOperator.h"
@@ -87,6 +88,8 @@ void parseGrammar(const char* filename, Grammar& grammar) {
 					grammar.addOperator(name, parseCornerCutOperator(operator_node));
 				} else if (operator_name == "extrude") {
 					grammar.addOperator(name, parseExtrudeOperator(operator_node));
+				} else if (operator_name == "hemisphere") {
+					grammar.addOperator(name, parseHemisphereOperator(operator_node));
 				} else if (operator_name == "innerCircle") {
 					grammar.addOperator(name, parseInnerCircleOperator(operator_node));
 				} else if (operator_name == "innerSemiCircle") {
@@ -265,6 +268,10 @@ boost::shared_ptr<Operator> parseExtrudeOperator(const QDomNode& node) {
 	std::string height = node.toElement().attribute("height").toUtf8().constData();
 
 	return boost::shared_ptr<Operator>(new ExtrudeOperator(height));
+}
+
+boost::shared_ptr<Operator> parseHemisphereOperator(const QDomNode& node) {
+	return boost::shared_ptr<Operator>(new HemisphereOperator());
 }
 
 boost::shared_ptr<Operator> parseInnerCircleOperator(const QDomNode& node) {

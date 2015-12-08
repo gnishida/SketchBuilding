@@ -15,6 +15,7 @@ boost::shared_ptr<Operator> parseCompOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseCopyOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseCornerCutOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseExtrudeOperator(const QDomNode& node);
+boost::shared_ptr<Operator> parseHemisphereOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseInnerCircleOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseInnerSemiCircleOperator(const QDomNode& node);
 boost::shared_ptr<Operator> parseInsertOperator(const QDomNode& node);

@@ -36,6 +36,7 @@ public:
 	virtual void comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes);
 	virtual boost::shared_ptr<Shape> cornerCut(const std::string& name, int type, float length);
 	virtual boost::shared_ptr<Shape> extrude(const std::string& name, float height);
+	virtual boost::shared_ptr<Shape> hemisphere(const std::string& name);
 	virtual boost::shared_ptr<Shape> innerCircle(const std::string& name);
 	virtual boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
 	boost::shared_ptr<Shape> insert(const std::string& name, const std::string& geometryPath);
