@@ -220,8 +220,11 @@
     <ClCompile Include="CornerCutOperator.cpp" />
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="CylinderSide.cpp" />
     <ClCompile Include="ExtrudeOperator.cpp" />
     <ClCompile Include="FaceSelector.cpp" />
+    <ClCompile Include="Hemisphere.cpp" />
+    <ClCompile Include="HemisphereOperator.cpp" />
     <ClCompile Include="InterpolationCamera.cpp" />
     <ClCompile Include="LayoutExtractor.cpp" />
     <ClCompile Include="GableRoof.cpp" />
@@ -376,7 +379,10 @@
     <ClInclude Include="Classifier.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="CylinderSide.h" />
     <ClInclude Include="FaceSelector.h" />
+    <ClInclude Include="Hemisphere.h" />
+    <ClInclude Include="HemisphereOperator.h" />
     <ClInclude Include="InterpolationCamera.h" />
     <ClInclude Include="LayoutExtractor.h" />
     <ClInclude Include="GableRoof.h" />
@@ -459,7 +465,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="5.5" Qt5Version_x0020_x64="5.5" MocOptions="" />
+      <UserProperties MocDir=".\GeneratedFiles\$(ConfigurationName)" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" lupdateOptions="" lupdateOnBuild="0" lreleaseOptions="" Qt5Version_x0020_Win32="5.5" Qt5Version_x0020_x64="$(DefaultQtVersion)" MocOptions="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
