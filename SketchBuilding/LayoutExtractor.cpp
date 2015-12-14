@@ -206,7 +206,16 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 
 	std::vector<float> ret;
 
-	if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.3) {
+	if (widths.size() == 1 && fabs(bboxes[0].minPt.y - bottom_screen) < 4) {
+		// Entrance
+		float entrance_width = widths[0];
+		float top_margin = top_screen - bboxes[0].maxPt.y;
+
+		ret.push_back(entrance_width * horizontal_scale);
+		ret.push_back(top_margin * vertical_scale);
+		return std::make_pair(2, ret);
+	}
+	else if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.3) {
 		// A* pattern (i.e., every window has the same width)
 		float total_width = 0.0f;
 		for (int i = 0; i < widths.size(); ++i) {

@@ -1,37 +1,24 @@
 <?xml version="1.0"?>
 <grammar type="floor" version="1.0" author="Gen Nishida">
+	<attr name="floor_entrance_width" value="0.3" range="0.1,0.7"/>
+	<attr name="floor_top_margin_ratio" value="0.2" range="0.1,0.7"/>
+	<attr name="z_window_border_size" value="0.03" range="0,0.03"/>
+	
 	<rule name="Start">
 		<split splitAxis="x">
-			<param type="floating" value="4" name="FloorColumn_03" repeat="true"/>
-			<param type="floating" value="4" name="EntranceColumn_03"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn_03">
-		<split splitAxis="x">
-			<param type="relative" value="0.22" name="Wall"/>
-			<param type="relative" value="0.56" name="FloorColumn2_03"/>
-			<param type="relative" value="0.22" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn2_03">
-		<split splitAxis="y">
-			<param type="relative" value="0.32" name="Wall"/>
-			<param type="relative" value="0.5" name="Window_03"/>
-			<param type="relative" value="0.18" name="Wall"/>
+			<param type="floating" value="0.5" name="Wall_03"/>
+			<param type="absolute" value="floor_entrance_width" name="EntranceColumn_03"/>
+			<param type="floating" value="0.5" name="Wall_03"/>
 		</split>
 	</rule>
 	<rule name="EntranceColumn_03">
-		<split splitAxis="x">
-			<param type="relative" value="0.22" name="Wall"/>
-			<param type="relative" value="0.56" name="EntranceColumn2_03"/>
-			<param type="relative" value="0.22" name="Wall"/>
+		<split splitAxis="y">
+			<param type="floating" value="1" name="BorderAndEntrance_03"/>
+			<param type="absolute" value="floor_top_margin_ratio" name="Wall_03"/>
 		</split>
 	</rule>
-	<rule name="EntranceColumn2_03">
-		<split splitAxis="y">
-			<param type="relative" value="0.82" name="Entrance_03"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
+	<rule name="BorderAndEntrance_03">
+		<offset offsetDistance="-z_window_border_size" inside="Entrance_03" border="Border"/>
 	</rule>
 </grammar>
 
