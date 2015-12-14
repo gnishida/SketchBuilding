@@ -3,5 +3,13 @@
 	<rule name="WindowGlass">
 		<texture texturePath="textures/window_glass.png"/>
 	</rule>
+	
+	<rule name="WindowGlass_06">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window.9.tif"/>
+	</rule>
 </grammar>
 

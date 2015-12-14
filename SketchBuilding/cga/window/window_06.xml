@@ -36,15 +36,15 @@
 	<rule name="WindowSillTileMainBottomMain_06">
 		<extrude height="0.1"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowSillTileMainTop_06">
 		<extrude height="0.12"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMain_06">
@@ -83,75 +83,75 @@
 	<rule name="WindowTileMainMainColumnBottom_06">
 		<extrude height="0.1"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainColumnMid1_06">
 		<extrude height="0.12"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainColumnMid2_06">
 		<extrude height="0.16"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainColumnMid3_06">
 		<extrude height="0.23"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainColumnMid4_06">
 		<extrude height="0.27"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainColumnTop_06">
 		<extrude height="0.28"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	
 	<rule name="WindowTileMainMainBottom_06">
 		<extrude height="0.05"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
 			<param name="top" value="WindowTileMainMainBottomTop_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainBottomTop_06">
 		<split splitAxis="x">
-			<param type="relative" value="0.14" name="WindowFrame"/>
+			<param type="relative" value="0.14" name="WindowFrame_06"/>
 			<param type="relative" value="0.72" name="WindowTileMainMainBottomTopMain_06"/>
-			<param type="relative" value="0.14" name="WindowFrame"/>
+			<param type="relative" value="0.14" name="WindowFrame_06"/>
 		</split>
 	</rule>
 	<rule name="WindowTileMainMainBottomTopMain_06">
 		<extrude height="-0.05"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
 			<param name="top" value="WindowTileMainMainBottomTopMainTop_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainBottomTopMainTop_06">
-		<offset offsetDistance="-0.04" inside="WindowTileMainMainBottomTopMainTopInside_06" border="WindowFrame"/>
+		<offset offsetDistance="-0.04" inside="WindowTileMainMainBottomTopMainTopInside_06" border="WindowFrame_06"/>
 	</rule>
 	<rule name="WindowTileMainMainBottomTopMainTopInside_06">
 		<extrude height="-window_main_depth_06"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowGlass"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowGlass_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainTop_06">
@@ -164,22 +164,22 @@
 	<rule name="WindowTileMainMainTopBottom_06">
 		<extrude height="0.1"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainTopMiddle_06">
 		<extrude height="0.12"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowTileMainMainTopTop_06">
 		<extrude height="0.13"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	
@@ -191,30 +191,30 @@
 	</rule>
 	<rule name="WindowRoofTileBottom_06">
 		<split splitAxis="x">
-			<param type="relative" value="0.07" name="WindowFrame"/>
+			<param type="relative" value="0.07" name="WindowFrame_06"/>
 			<param type="relative" value="0.86" name="WindowRoofTileBottomMain_06"/>
-			<param type="relative" value="0.07" name="WindowFrame"/>
+			<param type="relative" value="0.07" name="WindowFrame_06"/>
 		</split>
 	</rule>
 	<rule name="WindowRoofTileBottomMain_06">
 		<extrude height="0.4"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	<rule name="WindowRoofTileMid_06">
 		<split splitAxis="x">
-			<param type="relative" value="0.05" name="WindowFrame"/>
+			<param type="relative" value="0.05" name="WindowFrame_06"/>
 			<param type="relative" value="0.9" name="WindowRoofTileMidMain_06"/>
-			<param type="relative" value="0.05" name="WindowFrame"/>
+			<param type="relative" value="0.05" name="WindowFrame_06"/>
 		</split>
 	</rule>
 	<rule name="WindowRoofTileMidMain_06">
 		<extrude height="0.41"/>
 		<comp>
-			<param name="side" value="WindowFrame"/>
-			<param name="top" value="WindowFrame"/>
+			<param name="side" value="WindowFrame_06"/>
+			<param name="top" value="WindowFrame_06"/>
 		</comp>
 	</rule>
 	

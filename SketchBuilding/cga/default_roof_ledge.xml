@@ -3,5 +3,9 @@
 	<rule name="RoofLedge">
 		<color s="#404040"/>
 	</rule>
+	
+	<rule name="RoofLedge_05">
+		<color s="#e5d2ba"/>
+	</rule>
 </grammar>
 

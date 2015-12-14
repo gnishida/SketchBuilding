@@ -3,5 +3,9 @@
 	<rule name="WindowFrame">
 		<color s="#606060"/>
 	</rule>
+	
+	<rule name="WindowFrame_06">
+		<color s="#e5d2ba"/>
+	</rule>
 </grammar>
 

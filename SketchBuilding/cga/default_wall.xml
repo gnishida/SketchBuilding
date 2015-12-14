@@ -4,5 +4,9 @@
 		<!--<texture texturePath="textures/bricks.jpg"/>-->
 		<color s="#202020"/>
 	</rule>
+	
+	<rule name="Wall">
+		<texture texturePath="textures/wall_paris.png"/>
+	</rule>
 </grammar>
 

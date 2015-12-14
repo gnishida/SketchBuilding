@@ -10,9 +10,9 @@
 	<rule name="TopFaceOffset">
 		<extrude height="0.2"/>
 		<comp>
-			<param name="side" value="RoofLedge"/>
+			<param name="side" value="RoofLedge_05"/>
 			<param name="top" value="TopFaceOffsetTop"/>
-			<param name="bottom" value="RoofLedge"/>
+			<param name="bottom" value="RoofLedge_05"/>
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTop">
@@ -21,16 +21,16 @@
 	<rule name="TopFaceOffsetTopOffset">
 		<extrude height="0.2"/>
 		<comp>
-			<param name="side" value="RoofLedge"/>
+			<param name="side" value="RoofLedge_05"/>
 			<param name="top" value="TopFaceOffsetTopOffsetTop"/>
-			<param name="bottom" value="RoofLedge"/>
+			<param name="bottom" value="RoofLedge_05"/>
 		</comp>
 	</rule>
 	<rule name="TopFaceOffsetTopOffsetTop">
 		<taper height="roof_taper_height" top_ratio="roof_taper_top_ratio"/>
 		<comp>
-			<param name="side" value="RoofSide"/>
-			<param name="top" value="RoofTop"/>
+			<param name="side" value="RoofSide_05"/>
+			<param name="top" value="RoofTop_05"/>
 		</comp>
 	</rule>
 </grammar>

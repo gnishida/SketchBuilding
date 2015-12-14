@@ -40,8 +40,8 @@
 	<rule name="LedgeBottomColumnBottomMain">
 		<extrude height="ledge_column_extrusion*0.833"/>
 		<comp>
-			<param name="side" value="LedgeFace"/>
-			<param name="top" value="LedgeFace"/>
+			<param name="side" value="LedgeFace_03"/>
+			<param name="top" value="LedgeFace_03"/>
 		</comp>
 	</rule>
 	<rule name="LedgeBottomColumnTop">
@@ -54,8 +54,8 @@
 	<rule name="LedgeBottomColumnTopMain">
 		<extrude height="ledge_column_extrusion"/>
 		<comp>
-			<param name="side" value="LedgeFace"/>
-			<param name="top" value="LedgeFace"/>
+			<param name="side" value="LedgeFace_03"/>
+			<param name="top" value="LedgeFace_03"/>
 		</comp>
 	</rule>
 	<rule name="LedgeTopHalf">
@@ -73,8 +73,8 @@
 		</size>
 		<extrude height="ledge_extrusion*0.846"/>
 		<comp>
-			<param name="side" value="LedgeFace"/>
-			<param name="top" value="LedgeFace"/>
+			<param name="side" value="LedgeFace_03"/>
+			<param name="top" value="LedgeFace_03"/>
 		</comp>
 	</rule>
 	<rule name="LedgeTopMiddle">
@@ -85,8 +85,8 @@
 		</size>
 		<extrude height="ledge_extrusion*0.923"/>
 		<comp>
-			<param name="side" value="LedgeFace"/>
-			<param name="top" value="LedgeFace"/>
+			<param name="side" value="LedgeFace_03"/>
+			<param name="top" value="LedgeFace_03"/>
 		</comp>
 	</rule>
 	<rule name="LedgeTopTop">
@@ -97,8 +97,8 @@
 		</size>
 		<extrude height="ledge_extrusion"/>
 		<comp>
-			<param name="side" value="LedgeFace"/>
-			<param name="top" value="LedgeFace"/>
+			<param name="side" value="LedgeFace_03"/>
+			<param name="top" value="LedgeFace_03"/>
 		</comp>
 	</rule>
 </grammar>

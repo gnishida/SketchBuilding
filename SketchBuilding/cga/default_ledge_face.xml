@@ -3,5 +3,9 @@
 	<rule name="LedgeFace">
 		<color s="#a0a0a0"/>
 	</rule>
+	
+	<rule name="LedgeFace_03">
+		<color s="#e5d2ba"/>
+	</rule>
 </grammar>
 
