@@ -1,46 +1,40 @@
 <?xml version="1.0"?>
 <grammar type="floor" version="1.0" author="Gen Nishida">
+	<attr name="floor_column_width" value="0.4" range="0.2,1"/>
+	<attr name="floor_column_interval" value="2" range="1,6"/>
+	<attr name="column_additional_height" value="0.4" range="0,1"/>
+
 	<rule name="Start">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="3"/>
+			<param name="texHeight" type="absolute" value="3"/>
+		</setupProjection>
 		<split splitAxis="x">
-			<param type="floating" value="6" name="FloorColumn_04" repeat="true"/>
-			<param type="floating" value="4" name="EntranceColumn_04"/>
+			<param type="floating" value="floor_column_width+floor_column_interval" name="FloorColumnAndWall_04" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="FloorColumnAndWall_04">
+		<split splitAxis="x">
+			<param type="floating" value="0.4" name="FloorColumn_04"/>
+			<param type="floating" value="2" name="Wall_04"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn_04">
-		<split splitAxis="x">
-			<param type="relative" value="0.16" name="Wall"/>
-			<param type="relative" value="0.16" name="FloorColumn2_04"/>
-			<param type="relative" value="0.16" name="Wall"/>
-			<param type="relative" value="0.36" name="FloorColumn3_04"/>
-			<param type="relative" value="0.16" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn2_04">
-		<split splitAxis="y">
-			<param type="relative" value="0.32" name="Wall"/>
-			<param type="relative" value="0.5" name="Window_04"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="FloorColumn3_04">
-		<split splitAxis="y">
-			<param type="relative" value="0.32" name="Wall"/>
-			<param type="relative" value="0.5" name="Window2_04"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="EntranceColumn_04">
-		<split splitAxis="x">
-			<param type="relative" value="0.22" name="Wall"/>
-			<param type="relative" value="0.56" name="EntranceColumn2_04"/>
-			<param type="relative" value="0.22" name="Wall"/>
-		</split>
-	</rule>
-	<rule name="EntranceColumn2_04">
-		<split splitAxis="y">
-			<param type="relative" value="0.82" name="Entrance_04"/>
-			<param type="relative" value="0.18" name="Wall"/>
-		</split>
+		<size>
+			<param name="xSize" type="absolute" value="1"/>
+			<param name="ySize" type="absolute" value="scope.sy+column_additional_height"/>
+			<param name="zSize" type="absolute" value="1"/>
+		</size>
+		<translate mode="rel" coordSystem="object">
+			<param name="x" type="absolute" value="0"/>
+			<param name="y" type="absolute" value="0"/>
+			<param name="z" type="absolute" value="-0.1"/>
+		</translate>
+		<extrude height="0.3"/>
+		<comp>
+			<param name="side" value="Wall_04"/>
+			<param name="top" value="Wall_04"/>
+		</comp>
 	</rule>
 </grammar>
 
