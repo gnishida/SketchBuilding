@@ -450,7 +450,7 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	renderManager->removeObjects();
 
 	// Since the geometry will be updated, the pointer to a face will not be valid any more.
-	faceSelector->unselect();
+	//faceSelector->unselect();
 
 	for (int i = 0; i < _objects.size(); ++i) {
 		_objects[i].generateGeometry(&system, renderManager, stage);
