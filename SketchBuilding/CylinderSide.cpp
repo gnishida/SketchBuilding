@@ -14,28 +14,30 @@
 
 namespace cga {
 
-CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius, float height, float angle, const glm::vec3& color) {
+	CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color) {
 	this->_active = true;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
-	this->_radius = radius;
+	this->_radius_x = radius_x;
+	this->_radius_y = radius_y;
 	this->_angle = angle;
-	this->_scope = glm::vec3(radius * angle, height, 0);
+	this->_scope = glm::vec3(radius_x * angle, height, 0);
 	this->_color = color;
 	this->_textureEnabled = false;
 }
 
-CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2) {
+	CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2) {
 	this->_active = true;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
 	this->_modelMat = modelMat;
-	this->_radius = radius;
+	this->_radius_x = radius_x;
+	this->_radius_y = radius_y;
 	this->_angle = angle;
-	this->_scope = glm::vec3(radius * angle, height, 0);
+	this->_scope = glm::vec3(radius_x * angle, height, 0);
 	this->_color = color;
 
 	_texCoords.resize(4);
@@ -53,7 +55,7 @@ boost::shared_ptr<Shape> CylinderSide::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> CylinderSide::extrude(const std::string& name, float height) {
-	glm::vec3 p2(_radius * sinf(_angle), 0, _radius * cosf(_angle) - _radius);
+	glm::vec3 p2(_radius_x * sinf(_angle), 0, _radius_y * cosf(_angle) - _radius_y);
 	float new_sx = glm::length(p2 - glm::vec3(0, 0, 0));
 
 	glm::mat4 mat = glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0));
@@ -91,13 +93,13 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 	for (int i = 0; i < sizes.size(); ++i) {
 		if (splitAxis == DIRECTION_X) {
 			if (names[i] != "NIL") {
-				glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_radius * sinf(rot_y), 0, _radius * cosf(rot_y) - _radius)), rot_y, glm::vec3(0, 1, 0));
+				glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_radius_x * sinf(rot_y), 0, _radius_y * cosf(rot_y) - _radius_y)), rot_y, glm::vec3(0, 1, 0));
 				if (_texCoords.size() > 0) {
-					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius, _scope.y, sizes[i] / _radius, _color, _texture,
+					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, _scope.y, sizes[i] / _radius_x, _color, _texture,
 						_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * offset / _scope.x, _texCoords[0].y,
 						_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (offset + sizes[i]) / _scope.x, _texCoords[2].y)));
 				} else {
-					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius, _scope.y, sizes[i] / _radius, _color)));
+					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, _scope.y, sizes[i] / _radius_x, _color)));
 				}
 			}
 			rot_y += (sizes[i] / _scope.x) * _angle;
@@ -120,10 +122,10 @@ void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face>
 		float theta1 = (float)i / slices * _angle;
 		float theta2 = (float)(i + 1) / slices * _angle;
 
-		glm::vec3 p1(_radius * sinf(theta1), 0, _radius * cosf(theta1) - _radius);
-		glm::vec3 p2(_radius * sinf(theta2), 0, _radius * cosf(theta2) - _radius);
-		glm::vec3 p3(_radius * sinf(theta2), _scope.y, _radius * cosf(theta2) - _radius);
-		glm::vec3 p4(_radius * sinf(theta1), _scope.y, _radius * cosf(theta1) - _radius);
+		glm::vec3 p1(_radius_x * sinf(theta1), 0, _radius_y * cosf(theta1) - _radius_y);
+		glm::vec3 p2(_radius_x * sinf(theta2), 0, _radius_y * cosf(theta2) - _radius_y);
+		glm::vec3 p3(_radius_x * sinf(theta2), _scope.y, _radius_y * cosf(theta2) - _radius_y);
+		glm::vec3 p4(_radius_x * sinf(theta1), _scope.y, _radius_y * cosf(theta1) - _radius_y);
 
 		p1 = glm::vec3(_pivot * _modelMat * glm::vec4(p1, 1));
 		p2 = glm::vec3(_pivot * _modelMat * glm::vec4(p2, 1));

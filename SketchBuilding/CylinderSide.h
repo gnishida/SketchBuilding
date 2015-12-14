@@ -12,13 +12,14 @@ namespace cga {
 
 class CylinderSide : public Shape {
 private:
-	float _radius;
+	float _radius_x;
+	float _radius_y;
 	float _angle;
 
 public:
 	CylinderSide() {}
-	CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius, float height, float angle, const glm::vec3& color);
-	CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2);
+	CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color);
+	CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
 	void setupProjection(int axesSelector, float texWidth, float texHeight);

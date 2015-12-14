@@ -41,7 +41,7 @@ void Cylinder::comp(const std::map<std::string, std::string>& name_map, std::vec
 	// side face
 	if (name_map.find("side") != name_map.end() && name_map.at("side") != "NIL") {
 		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, 0, 0)), M_PI * 0.5f, glm::vec3(1, 0, 0));
-		shapes.push_back(boost::shared_ptr<Shape>(new CylinderSide(name_map.at("side"), _grammar_type, _pivot, mat, _scope.x * 0.5, _scope.z, M_PI * 2.0f, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new CylinderSide(name_map.at("side"), _grammar_type, _pivot, mat, _scope.x * 0.5, _scope.y * 0.5, _scope.z, M_PI * 2.0f, _color)));
 	}
 }
 
