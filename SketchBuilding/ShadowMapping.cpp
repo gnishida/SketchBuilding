@@ -1,6 +1,7 @@
 ﻿#include "ShadowMapping.h"
 #include "GLWidget3D.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 #ifndef M_PI
 #define M_PI	3.1415926535
@@ -21,6 +22,8 @@ void ShadowMapping::init(int programId, int width, int height) {
 	this->programId = programId;
 	this->width = width;
 	this->height = height;
+
+	glUseProgram(programId);
 			
 	// FBO作成
 	glGenFramebuffers(1, &fboDepth);
@@ -50,9 +53,6 @@ void ShadowMapping::init(int programId, int width, int height) {
 
 	glActiveTexture(GL_TEXTURE0);
 		
-	// シェーダに、GL_TEXTURE6がシャドウマッピング用のデプスバッファであることを伝える
-	glUniform1i(glGetUniformLocation(programId, "shadowMap"), 6);
-
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
 
@@ -66,6 +66,8 @@ void ShadowMapping::update(GLWidget3D* glWidget3D, const glm::vec3& light_dir, c
 	int origWidth = glWidget3D->width();
 	int origHeigh = glWidget3D->height();
 				
+	glUseProgram(programId);
+
 	// レンダリング結果をFBOに保存するようにする
 	// この結果、デプスバッファはtextureDepthに保存される。
     glBindFramebuffer(GL_FRAMEBUFFER, fboDepth);
@@ -81,16 +83,18 @@ void ShadowMapping::update(GLWidget3D* glWidget3D, const glm::vec3& light_dir, c
 	glUniformMatrix4fv(glGetUniformLocation(programId, "light_mvpMatrix"), 1, GL_FALSE, &light_mvpMatrix[0][0]);
 
 	// 光の方向を設定
-	glUniform3f(glGetUniformLocation(programId, "lightDir"), light_dir.x, light_dir.y, light_dir.z);
+	//glUniform3f(glGetUniformLocation(programId, "lightDir"), light_dir.x, light_dir.y, light_dir.z);
 
 	// 色バッファには描画しない
 	glDrawBuffer(GL_NONE);
 
 	// デプスバッファをクリア
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
 	//RENDER
-	glWidget3D->drawScene(1);
+	glWidget3D->drawScene();
 	
 	// この時点で、textureDepthにデプス情報が格納されている
 	

@@ -366,7 +366,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		}
 	}
 
-	renderManager->addObject("controler", "", vertices);
+	renderManager->addObject("controler", "", vertices, false);
 }
 
 }

@@ -68,7 +68,7 @@ public:
 	void drawLineTo(const QPoint &endPoint);
 	void clearSketch();
 	void clearGeometry();
-	void drawScene(int drawMode);
+	void drawScene();
 	void loadCGA(char* filename);
 	void generateGeometry();
 	void updateGeometry();

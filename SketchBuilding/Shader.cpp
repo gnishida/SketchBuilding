@@ -8,6 +8,14 @@
 
 using namespace std;
 
+Shader::Shader() {
+
+}
+
+Shader::~Shader() {
+	cleanShaders();
+}
+
 /**
  * 指定されたvertex shader、fragment shaderを読み込んでコンパイルし、
  * プログラムにリンクする。
@@ -17,18 +25,28 @@ using namespace std;
  * @return					program id
  */
 uint Shader::createProgram(const string& vertex_file, const string& fragment_file) {
+	return createProgram(vertex_file, fragment_file, std::vector<QString>());
+}
+
+uint Shader::createProgram(const string& vertex_file, const string& fragment_file, const std::vector<QString>& fragDataNamesP1) {
 	std::string source;
 	loadTextFile(vertex_file, source);
-	vertex_shader = compileShader(source, GL_VERTEX_SHADER);
+	GLuint vertex_shader = compileShader(source, GL_VERTEX_SHADER);
 
 	loadTextFile(fragment_file, source);
-	fragment_shader = compileShader(source,GL_FRAGMENT_SHADER);
+	GLuint fragment_shader = compileShader(source, GL_FRAGMENT_SHADER);
 
 	// create program
-	program = glCreateProgram();
+	GLuint program = glCreateProgram();
 	glAttachShader(program, vertex_shader);
 	glAttachShader(program, fragment_shader);
-	glBindFragDataLocation(program, 0, "outputF");
+	if (fragDataNamesP1.size() == 0) {
+		glBindFragDataLocation(program, 0, "outputF");
+	} else {
+		for (int i = 0; i < fragDataNamesP1.size(); ++i) {
+			glBindFragDataLocation(program, i, fragDataNamesP1[i].toUtf8().constData());
+		}
+	}
 	glLinkProgram(program);
 	
 	GLint status;
@@ -46,47 +64,25 @@ uint Shader::createProgram(const string& vertex_file, const string& fragment_fil
 		glDeleteProgram(program);
 		throw runtime_error(ss.str());
 	}
+	
+	programs.push_back(program);
+	vertex_shaders.push_back(vertex_shader);
+	fragment_shaders.push_back(fragment_shader);
 
 	return program;
 }
 
-uint Shader::createProgram(const string& vertex_file, const string& geometry_file, const string& fragment_file) {
-	std::string source;
-	loadTextFile(vertex_file, source);
-	vertex_shader = compileShader(source, GL_VERTEX_SHADER);
-
-	loadTextFile(geometry_file, source);
-	geometry_shader = compileShader(source, GL_GEOMETRY_SHADER);
-
-	loadTextFile(fragment_file, source);
-	fragment_shader = compileShader(source,GL_FRAGMENT_SHADER);
-
-	// create program
-	program = glCreateProgram();
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, geometry_shader);
-	glAttachShader(program, fragment_shader);
-	glBindFragDataLocation(program, 0, "outputF");
-	glLinkProgram(program);
-	
-	GLint status;
-	glGetProgramiv(program, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE) {
-		GLint logLength;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-		char* logText = new char[logLength];
-		glGetProgramInfoLog(program, logLength, NULL, logText);
-
-		stringstream ss;
-		ss << "Error linking program:" << endl << logText << endl;
-		cout << "Error linking program:" << endl << logText << endl;
-		delete [] logText;
-
-		glDeleteProgram(program);
-		throw runtime_error(ss.str());
+void Shader::cleanShaders() {
+	for (int pN = 0; pN<programs.size(); pN++){
+		glDetachShader(programs[pN], vertex_shaders[pN]);
+		glDetachShader(programs[pN], fragment_shaders[pN]);
+		glDeleteShader(vertex_shaders[pN]);
+		glDeleteShader(fragment_shaders[pN]);
+		glDeleteProgram(programs[pN]);
 	}
-
-	return program;
+	programs.clear();
+	vertex_shaders.clear();
+	fragment_shaders.clear();
 }
 
 /**
@@ -170,3 +166,4 @@ GLuint Shader::compileShader(const string& source, GLuint mode) {
 
 	return shader;
 }
+

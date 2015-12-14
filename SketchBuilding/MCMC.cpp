@@ -118,7 +118,7 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 
 	glWidget->renderManager.removeObjects();
 	glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_LINE;
-	glUseProgram(glWidget->renderManager.program);
+	glUseProgram(glWidget->renderManager.programs["pass1"]);
 
 	// set camera
 	/*
@@ -159,22 +159,101 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 	glWidget->renderManager.addFaces(faces);
 
 	// render
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
+	{
+		glUseProgram(glWidget->renderManager.programs["pass1"]);
 
-	glUniform1i(glGetUniformLocation(glWidget->renderManager.program, "seed"), rand() % 100);
+		glBindFramebuffer(GL_FRAMEBUFFER, glWidget->renderManager.fragDataFB);
+		glClearColor(0.95, 0.95, 0.95, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Model view projection行列をシェーダに渡す
-	glUniformMatrix4fv(glGetUniformLocation(glWidget->renderManager.program, "mvpMatrix"), 1, GL_FALSE, &glWidget->camera.mvpMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(glWidget->renderManager.program, "mvMatrix"), 1, GL_FALSE, &glWidget->camera.mvMatrix[0][0]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[0], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[1], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[2], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[3], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, glWidget->renderManager.fragDepthTex, 0);
 
-	// pass the light direction to the shader
-	//glUniform1fv(glGetUniformLocation(renderManager.program, "lightDir"), 3, &light_dir[0]);
-	//glUniform3f(glGetUniformLocation(renderManager->program, "lightDir"), light_dir.x, light_dir.y, light_dir.z);
+		// Set the list of draw buffers.
+		GLenum DrawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(4, DrawBuffers); // "3" is the size of DrawBuffers
+		// Always check that our framebuffer is ok
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			printf("+ERROR: GL_FRAMEBUFFER_COMPLETE false\n");
+			exit(0);
+		}
+
+		glUniformMatrix4fv(glGetUniformLocation(glWidget->renderManager.programs["pass1"], "mvpMatrix"), 1, false, &glWidget->camera.mvpMatrix[0][0]);
+		glUniform3f(glGetUniformLocation(glWidget->renderManager.programs["pass1"], "lightDir"), glWidget->light_dir.x, glWidget->light_dir.y, glWidget->light_dir.z);
+		glUniformMatrix4fv(glGetUniformLocation(glWidget->renderManager.programs["pass1"], "light_mvpMatrix"), 1, false, &glWidget->light_mvpMatrix[0][0]);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["pass1"], "shadowMap"), 6);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.shadow.textureDepth);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glWidget->drawScene();
+	}
+
+	{
+		glUseProgram(glWidget->renderManager.programs["line"]);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+
+		glUniform2f(glGetUniformLocation(glWidget->renderManager.programs["line"], "pixelSize"), 1.0f / glWidget->width(), 1.0f / glWidget->height());
+		glUniformMatrix4fv(glGetUniformLocation(glWidget->renderManager.programs["line"], "pMatrix"), 1, false, &glWidget->camera.pMatrix[0][0]);
+		if (glWidget->renderManager.renderingMode == RenderManager::RENDERING_MODE_LINE) {
+			glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "useHatching"), 0);
+		}
+		else {
+			glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "useHatching"), 1);
+		}
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "tex0"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[0]);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "tex1"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[1]);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "tex2"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[2]);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "tex3"), 4);
+		glActiveTexture(GL_TEXTURE4);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.fragDataTex[3]);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "depthTex"), 8);
+		glActiveTexture(GL_TEXTURE8);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, glWidget->renderManager.fragDepthTex);
+
+		glUniform1i(glGetUniformLocation(glWidget->renderManager.programs["line"], "hatchingTexture"), 5);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_3D, glWidget->renderManager.hatchingTextures);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		glBindVertexArray(glWidget->renderManager.secondPassVAO);
+
+		glDrawArrays(GL_QUADS, 0, 4);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LEQUAL);
+	}
 
 	// obtain the image from the frame buffer
-	glWidget->drawScene(0);
 	return glWidget->grabFrameBuffer();
 }
 

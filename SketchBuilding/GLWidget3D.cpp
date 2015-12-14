@@ -124,19 +124,11 @@ void GLWidget3D::clearGeometry() {
 /**
 * Draw the scene.
 */
-void GLWidget3D::drawScene(int drawMode) {
-	if (drawMode == 0) {
-		if (stage == "final") {
-			glUniform1i(glGetUniformLocation(renderManager.program, "useShadow"), 1);
-		}
-		else {
-			glUniform1i(glGetUniformLocation(renderManager.program, "useShadow"), 0);
-		}
-		glUniform1i(glGetUniformLocation(renderManager.program, "depthComputation"), 0);
-	}
-	else {
-		glUniform1i(glGetUniformLocation(renderManager.program, "depthComputation"), 1);
-	}
+void GLWidget3D::drawScene() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(true);
 
 	renderManager.renderAll();
 }
@@ -457,7 +449,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	std::cout << std::endl;
 	*/
 
-	renderManager.renderingMode = RenderManager::RENDERING_MODE_REGULAR;
+	//renderManager.renderingMode = RenderManager::RENDERING_MODE_REGULAR;
 
 	
 	//////////////////////// DEBUG ////////////////////////
@@ -1082,11 +1074,51 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
  * This function is called once before the first call to paintGL() or resizeGL().
  */
 void GLWidget3D::initializeGL() {
-	renderManager.init("../shaders/vertex.glsl", "../shaders/geometry.glsl", "../shaders/fragment.glsl", false);
-	renderManager.renderingMode = RenderManager::RENDERING_MODE_REGULAR;
+	// init glew
+	GLenum err = glewInit();
+	if (err != GLEW_OK) {
+		std::cout << "Error: " << glewGetErrorString(err) << std::endl;
+	}
 
-	glClearColor(0.9, 0.9, 0.9, 0.0);
+	if (glewIsSupported("GL_VERSION_4_2"))
+		printf("Ready for OpenGL 4.2\n");
+	else {
+		printf("OpenGL 4.2 not supported\n");
+		exit(1);
+	}
+	const GLubyte* text = glGetString(GL_VERSION);
+	printf("VERSION: %s\n", text);
 
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glEnable(GL_TEXTURE_2D);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	glTexGenf(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+	glTexGenf(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+	glDisable(GL_TEXTURE_2D);
+
+	glEnable(GL_TEXTURE_3D);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glDisable(GL_TEXTURE_3D);
+
+	glEnable(GL_TEXTURE_2D_ARRAY);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glDisable(GL_TEXTURE_2D_ARRAY);
+
+	////////////////////////////////
+	renderManager.init("", "", "", true, 8192);
+	renderManager.resize(this->width(), this->height());
+
+	glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "tex0"), 0);//tex0: 0
+
+
+
+	
 	sketch = QImage(this->width(), this->height(), QImage::Format_RGB888);
 	sketch.fill(qRgba(255, 255, 255, 255));
 
@@ -1098,6 +1130,7 @@ void GLWidget3D::initializeGL() {
 	camera.pos = computeDownwardedCameraPos(CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, camera.xrot);
 	current_z = 0.0f;
 	scene.updateGeometry(&renderManager, "building");
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 
 	//changeStage("building");
 	stage = "building";
@@ -1109,17 +1142,14 @@ void GLWidget3D::initializeGL() {
  * This function is called whenever the widget has been resized.
  */
 void GLWidget3D::resizeGL(int width, int height) {
-	height = height?height:1;
+	height = height ? height : 1;
 
-	glViewport(0, 0, (GLint)width, (GLint)height );
+	glViewport(0, 0, (GLint)width, (GLint)height);
 	camera.updatePMatrix(width, height);
 	renderManager.resize(width, height);
 
 	QImage newImage(width, height, QImage::Format_RGB888);
 	newImage.fill(qRgba(255, 255, 255, 255));
-	QPainter painter(&newImage);
-
-	painter.drawImage(0, 0, sketch);
 	sketch = newImage;
 }
 
@@ -1127,29 +1157,230 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 	// OpenGLで描画
 	makeCurrent();
 
-	glUseProgram(renderManager.program);
-
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// PASS 1: Render to texture
+	glUseProgram(renderManager.programs["pass1"]);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, renderManager.fragDataFB);
+	glClearColor(0.95, 0.95, 0.95, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderManager.fragDataTex[0], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, renderManager.fragDataTex[1], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, renderManager.fragDataTex[2], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, renderManager.fragDataTex[3], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, renderManager.fragDepthTex, 0);
+
+	// Set the list of draw buffers.
+	GLenum DrawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, DrawBuffers); // "3" is the size of DrawBuffers
+	// Always check that our framebuffer is ok
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		printf("+ERROR: GL_FRAMEBUFFER_COMPLETE false\n");
+		exit(0);
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(renderManager.programs["pass1"], "mvpMatrix"), 1, false, &camera.mvpMatrix[0][0]);
+	glUniform3f(glGetUniformLocation(renderManager.programs["pass1"], "lightDir"), light_dir.x, light_dir.y, light_dir.z);
+	glUniformMatrix4fv(glGetUniformLocation(renderManager.programs["pass1"], "light_mvpMatrix"), 1, false, &light_mvpMatrix[0][0]);
+
+	glUniform1i(glGetUniformLocation(renderManager.programs["pass1"], "shadowMap"), 6);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, renderManager.shadow.textureDepth);
+
 	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
+	glDepthFunc(GL_LEQUAL);
+	drawScene();
 
-	// for transparacy
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// PASS 2: Create AO
+	if (renderManager.renderingMode == RenderManager::RENDERING_MODE_SSAO) {
+		glUseProgram(renderManager.programs["ssao"]);
+		glBindFramebuffer(GL_FRAMEBUFFER, renderManager.fragDataFB_AO);
 
-	// Model view projection行列をシェーダに渡す
-	glUniformMatrix4fv(glGetUniformLocation(renderManager.program, "mvpMatrix"), 1, GL_FALSE, &camera.mvpMatrix[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(renderManager.program, "mvMatrix"), 1, GL_FALSE, &camera.mvMatrix[0][0]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderManager.fragAOTex, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, renderManager.fragDepthTex_AO, 0);
+		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
 
-	// pass the light direction to the shader
-	//glUniform1fv(glGetUniformLocation(renderManager.program, "lightDir"), 3, &light_dir[0]);
-	glUniform3f(glGetUniformLocation(renderManager.program, "lightDir"), light_dir.x, light_dir.y, light_dir.z);
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	drawScene(0);
+		// Always check that our framebuffer is ok
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			printf("++ERROR: GL_FRAMEBUFFER_COMPLETE false\n");
+			exit(0);
+		}
 
+		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+
+		glUniform2f(glGetUniformLocation(renderManager.programs["ssao"], "pixelSize"), 2.0f / this->width(), 2.0f / this->height());
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "tex0"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[0]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "tex1"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[1]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "tex2"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[2]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "depthTex"), 8);
+		glActiveTexture(GL_TEXTURE8);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDepthTex);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "noiseTex"), 7);
+		glActiveTexture(GL_TEXTURE7);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragNoiseTex);
+
+		{
+			glUniformMatrix4fv(glGetUniformLocation(renderManager.programs["ssao"], "mvpMatrix"), 1, false, &camera.mvpMatrix[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(renderManager.programs["ssao"], "pMatrix"), 1, false, &camera.pMatrix[0][0]);
+		}
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "uKernelSize"), renderManager.uKernelSize);
+		glUniform3fv(glGetUniformLocation(renderManager.programs["ssao"], "uKernelOffsets"), renderManager.uKernelOffsets.size(), (const GLfloat*)renderManager.uKernelOffsets.data());
+
+		glUniform1f(glGetUniformLocation(renderManager.programs["ssao"], "uPower"), renderManager.uPower);
+		glUniform1f(glGetUniformLocation(renderManager.programs["ssao"], "uRadius"), renderManager.uRadius);
+
+		glBindVertexArray(renderManager.secondPassVAO);
+
+		glDrawArrays(GL_QUADS, 0, 4);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LEQUAL);
+	}
+	else if (renderManager.renderingMode == RenderManager::RENDERING_MODE_LINE || renderManager.renderingMode == RenderManager::RENDERING_MODE_HATCHING) {
+		glUseProgram(renderManager.programs["line"]);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+
+		glUniform2f(glGetUniformLocation(renderManager.programs["line"], "pixelSize"), 1.0f / this->width(), 1.0f / this->height());
+		glUniformMatrix4fv(glGetUniformLocation(renderManager.programs["line"], "pMatrix"), 1, false, &camera.pMatrix[0][0]);
+		if (renderManager.renderingMode == RenderManager::RENDERING_MODE_LINE) {
+			glUniform1i(glGetUniformLocation(renderManager.programs["line"], "useHatching"), 0);
+		}
+		else {
+			glUniform1i(glGetUniformLocation(renderManager.programs["line"], "useHatching"), 1);
+		}
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "tex0"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[0]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "tex1"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[1]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "tex2"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[2]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "tex3"), 4);
+		glActiveTexture(GL_TEXTURE4);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[3]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "depthTex"), 8);
+		glActiveTexture(GL_TEXTURE8);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDepthTex);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["line"], "hatchingTexture"), 5);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_3D, renderManager.hatchingTextures);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		glBindVertexArray(renderManager.secondPassVAO);
+
+		glDrawArrays(GL_QUADS, 0, 4);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LEQUAL);
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Blur
+
+	if (renderManager.renderingMode != RenderManager::RENDERING_MODE_LINE && renderManager.renderingMode != RenderManager::RENDERING_MODE_HATCHING) {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		qglClearColor(QColor(0xFF, 0xFF, 0xFF));
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_ALWAYS);
+
+		glUseProgram(renderManager.programs["blur"]);
+		glUniform2f(glGetUniformLocation(renderManager.programs["blur"], "pixelSize"), 2.0f / this->width(), 2.0f / this->height());
+		//printf("pixelSize loc %d\n", glGetUniformLocation(vboRenderManager.programs["blur"], "pixelSize"));
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "tex0"), 1);//COLOR
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[0]);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "tex1"), 2);//NORMAL
+		glActiveTexture(GL_TEXTURE2);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[1]);
+
+		/*glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "tex2"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDataTex[2]);*/
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "depthTex"), 8);
+		glActiveTexture(GL_TEXTURE8);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragDepthTex);
+
+		glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "tex3"), 4);//AO
+		glActiveTexture(GL_TEXTURE4);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, renderManager.fragAOTex);
+
+		if (renderManager.renderingMode == RenderManager::RENDERING_MODE_SSAO) {
+			glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "ssao_used"), 1); // ssao used
+		}
+		else {
+			glUniform1i(glGetUniformLocation(renderManager.programs["blur"], "ssao_used"), 0); // no ssao
+		}
+
+		glBindVertexArray(renderManager.secondPassVAO);
+
+		glDrawArrays(GL_QUADS, 0, 4);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LEQUAL);
+
+	}
+
+	// REMOVE
+	glActiveTexture(GL_TEXTURE0);
+
+
+	//printf("<<\n");
+	//VBOUtil::disaplay_memory_usage();
 
 
 
@@ -1167,6 +1398,8 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 	QPainter painter(this);
 	//painter.setOpacity(0.5);
 	//painter.drawImage(0, 0, sketch);
+	QPen pen(Qt::blue, 3);
+	painter.setPen(pen);
 	for (auto stroke : strokes) {
 		for (int i = 0; i < (int)stroke.size() - 1; ++i) {
 			painter.drawLine(stroke[i].x, height() - stroke[i].y, stroke[i + 1].x, height() - stroke[i + 1].y);

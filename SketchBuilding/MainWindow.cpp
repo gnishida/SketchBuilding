@@ -7,10 +7,15 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	ui.setupUi(this);
 
-	QActionGroup* shapeGroup = new QActionGroup(this);
-	shapeGroup->addAction(ui.actionCuboid);
-	shapeGroup->addAction(ui.actionLShape);
-	ui.actionCuboid->setChecked(true);
+	QActionGroup* renderingModeGroup = new QActionGroup(this);
+	renderingModeGroup->addAction(ui.actionViewBasicRendering);
+	renderingModeGroup->addAction(ui.actionViewSSAO);
+	renderingModeGroup->addAction(ui.actionViewLineRendering);
+	renderingModeGroup->addAction(ui.actionViewHatching);
+	renderingModeGroup->addAction(ui.actionViewSketchyRendering);
+
+	ui.actionViewShadow->setChecked(true);
+	ui.actionViewBasicRendering->setChecked(true);
 
 	// add menu handlers
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
@@ -19,6 +24,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionSaveGeometry, SIGNAL(triggered()), this, SLOT(onSaveGeometry()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
+
+	connect(ui.actionViewShadow, SIGNAL(triggered()), this, SLOT(onViewShadow()));
+	connect(ui.actionViewBasicRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionViewSSAO, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionViewLineRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionViewHatching, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionViewSketchyRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 
 	// create tool bar for stages
 	QActionGroup* stageGroup = new QActionGroup(this);
@@ -110,6 +122,30 @@ void MainWindow::onSaveGeometry() {
 
 void MainWindow::onAddBuildingMass() {
 	glWidget->addBuildingMass();
+}
+
+void MainWindow::onViewShadow() {
+	glWidget->renderManager.useShadow = ui.actionViewShadow->isChecked();
+	glWidget->update();
+}
+
+void MainWindow::onViewRendering() {
+	if (ui.actionViewBasicRendering->isChecked()) {
+		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_BASIC;
+	}
+	else if (ui.actionViewSSAO->isChecked()) {
+		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_SSAO;
+	}
+	else if (ui.actionViewLineRendering->isChecked()) {
+		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_LINE;
+	}
+	else if (ui.actionViewHatching->isChecked()) {
+		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_HATCHING;
+	}
+	else {
+		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_SKETCHY;
+	}
+	glWidget->update();
 }
 
 void MainWindow::onStageChanged() {

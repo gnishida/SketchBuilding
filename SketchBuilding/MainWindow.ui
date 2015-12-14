@@ -34,22 +34,27 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuTool">
-    <property name="title">
-     <string>Command</string>
-    </property>
-    <addaction name="actionPredict"/>
-    <addaction name="actionFixGeometry"/>
-   </widget>
    <widget class="QMenu" name="menuShape">
     <property name="title">
      <string>Shape</string>
     </property>
     <addaction name="actionAddBuildingMass"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionViewShadow"/>
+    <addaction name="separator"/>
+    <addaction name="actionViewBasicRendering"/>
+    <addaction name="actionViewSSAO"/>
+    <addaction name="actionViewLineRendering"/>
+    <addaction name="actionViewHatching"/>
+    <addaction name="actionViewSketchyRendering"/>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuTool"/>
    <addaction name="menuShape"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -134,6 +139,54 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionViewShadow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shadow</string>
+   </property>
+  </action>
+  <action name="actionViewBasicRendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Basic Rendering</string>
+   </property>
+  </action>
+  <action name="actionViewSSAO">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>SSAO</string>
+   </property>
+  </action>
+  <action name="actionViewLineRendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Line Rendering</string>
+   </property>
+  </action>
+  <action name="actionViewHatching">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hatching</string>
+   </property>
+  </action>
+  <action name="actionViewSketchyRendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sketchy Rendering</string>
    </property>
   </action>
  </widget>

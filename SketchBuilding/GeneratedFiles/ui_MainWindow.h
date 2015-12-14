@@ -37,11 +37,17 @@ public:
     QAction *actionFixGeometry;
     QAction *actionClearSketch;
     QAction *actionSaveGeometry;
+    QAction *actionViewShadow;
+    QAction *actionViewBasicRendering;
+    QAction *actionViewSSAO;
+    QAction *actionViewLineRendering;
+    QAction *actionViewHatching;
+    QAction *actionViewSketchyRendering;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
-    QMenu *menuTool;
     QMenu *menuShape;
+    QMenu *menuView;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -74,6 +80,24 @@ public:
         actionClearSketch->setObjectName(QStringLiteral("actionClearSketch"));
         actionSaveGeometry = new QAction(MainWindowClass);
         actionSaveGeometry->setObjectName(QStringLiteral("actionSaveGeometry"));
+        actionViewShadow = new QAction(MainWindowClass);
+        actionViewShadow->setObjectName(QStringLiteral("actionViewShadow"));
+        actionViewShadow->setCheckable(true);
+        actionViewBasicRendering = new QAction(MainWindowClass);
+        actionViewBasicRendering->setObjectName(QStringLiteral("actionViewBasicRendering"));
+        actionViewBasicRendering->setCheckable(true);
+        actionViewSSAO = new QAction(MainWindowClass);
+        actionViewSSAO->setObjectName(QStringLiteral("actionViewSSAO"));
+        actionViewSSAO->setCheckable(true);
+        actionViewLineRendering = new QAction(MainWindowClass);
+        actionViewLineRendering->setObjectName(QStringLiteral("actionViewLineRendering"));
+        actionViewLineRendering->setCheckable(true);
+        actionViewHatching = new QAction(MainWindowClass);
+        actionViewHatching->setObjectName(QStringLiteral("actionViewHatching"));
+        actionViewHatching->setCheckable(true);
+        actionViewSketchyRendering = new QAction(MainWindowClass);
+        actionViewSketchyRendering->setObjectName(QStringLiteral("actionViewSketchyRendering"));
+        actionViewSketchyRendering->setCheckable(true);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -82,10 +106,10 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1057, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
-        menuTool = new QMenu(menuBar);
-        menuTool->setObjectName(QStringLiteral("menuTool"));
         menuShape = new QMenu(menuBar);
         menuShape->setObjectName(QStringLiteral("menuShape"));
+        menuView = new QMenu(menuBar);
+        menuView->setObjectName(QStringLiteral("menuView"));
         MainWindowClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindowClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -95,17 +119,22 @@ public:
         MainWindowClass->setStatusBar(statusBar);
 
         menuBar->addAction(menuFile->menuAction());
-        menuBar->addAction(menuTool->menuAction());
         menuBar->addAction(menuShape->menuAction());
+        menuBar->addAction(menuView->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionClearSketch);
         menuFile->addAction(actionOpenCGA);
         menuFile->addAction(actionSaveGeometry);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
-        menuTool->addAction(actionPredict);
-        menuTool->addAction(actionFixGeometry);
         menuShape->addAction(actionAddBuildingMass);
+        menuView->addAction(actionViewShadow);
+        menuView->addSeparator();
+        menuView->addAction(actionViewBasicRendering);
+        menuView->addAction(actionViewSSAO);
+        menuView->addAction(actionViewLineRendering);
+        menuView->addAction(actionViewHatching);
+        menuView->addAction(actionViewSketchyRendering);
 
         retranslateUi(MainWindowClass);
 
@@ -131,9 +160,15 @@ public:
         actionClearSketch->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
         actionSaveGeometry->setText(QApplication::translate("MainWindowClass", "Save Geometry", 0));
         actionSaveGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));
+        actionViewShadow->setText(QApplication::translate("MainWindowClass", "Shadow", 0));
+        actionViewBasicRendering->setText(QApplication::translate("MainWindowClass", "Basic Rendering", 0));
+        actionViewSSAO->setText(QApplication::translate("MainWindowClass", "SSAO", 0));
+        actionViewLineRendering->setText(QApplication::translate("MainWindowClass", "Line Rendering", 0));
+        actionViewHatching->setText(QApplication::translate("MainWindowClass", "Hatching", 0));
+        actionViewSketchyRendering->setText(QApplication::translate("MainWindowClass", "Sketchy Rendering", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
-        menuTool->setTitle(QApplication::translate("MainWindowClass", "Command", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Shape", 0));
+        menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
     } // retranslateUi
 
 };
