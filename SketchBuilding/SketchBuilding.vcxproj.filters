@@ -205,14 +205,14 @@
     <ClCompile Include="BuildingSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hemisphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HemisphereOperator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CylinderSide.cpp">
       <Filter>Source Files\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Hemisphere.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="HemisphereOperator.cpp">
+      <Filter>Source Files\rule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -462,14 +462,14 @@
     <ClInclude Include="BuildingSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hemisphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HemisphereOperator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CylinderSide.h">
       <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Hemisphere.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="HemisphereOperator.h">
+      <Filter>Source Files\rule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

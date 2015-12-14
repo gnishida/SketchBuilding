@@ -5,7 +5,7 @@
 			<param name="texWidth" type="absolute" value="5"/>
 			<param name="texHeight" type="absolute" value="5"/>
 		</setupProjection>
-		<copy name="Wall"/>
+		<copy name="Wall_04"/>
 	</rule>
 </grammar>
 

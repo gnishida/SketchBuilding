@@ -6,7 +6,7 @@
 	</rule>
 	-->
 	
-	<rule name="Wall">
+	<rule name="Wall_04">
 		<texture texturePath="textures/bricks.jpg"/>
 	</rule>
 	
