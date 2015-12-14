@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<grammar type="roof" version="1.0" author="Gen Nishida">
+	<attr name="overhang" value="0.4" range="0.01,1"/>
+	<attr name="roof_taper_height" value="3" range="2,6"/>
+	<attr name="roof_taper_top_ratio" value="0.8" range="0.5,0.85"/>
+	
+	<rule name="Start">
+		<offset offsetDistance="overhang*0.5" inside="TopFaceOffset"/>
+	</rule>
+	<rule name="TopFaceOffset">
+		<extrude height="0.2"/>
+		<comp>
+			<param name="side" value="RoofLedge"/>
+			<param name="top" value="TopFaceOffsetTop"/>
+			<param name="bottom" value="RoofLedge"/>
+		</comp>
+	</rule>
+	<rule name="TopFaceOffsetTop">
+		<offset offsetDistance="overhang*0.5" inside="TopFaceOffsetTopOffset"/>
+	</rule>
+	<rule name="TopFaceOffsetTopOffset">
+		<extrude height="0.2"/>
+		<comp>
+			<param name="side" value="RoofLedge"/>
+			<param name="top" value="TopFaceOffsetTopOffsetTop"/>
+			<param name="bottom" value="RoofLedge"/>
+		</comp>
+	</rule>
+	<rule name="TopFaceOffsetTopOffsetTop">
+		<taper height="roof_taper_height" top_ratio="roof_taper_top_ratio"/>
+		<comp>
+			<param name="side" value="RoofSide"/>
+			<param name="top" value="RoofTop"/>
+		</comp>
+	</rule>
+</grammar>

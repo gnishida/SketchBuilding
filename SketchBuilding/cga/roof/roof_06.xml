@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<grammar type="roof" version="1.0" author="Gen Nishida">
+	<attr name="inset" value="0.4" range="0.01,1"/>
+	<attr name="roof_panel_extrusion_height" value="0.1" range="0.02,0.2"/>
+	<attr name="roof_top_extrusion_height" value="0.38" range="0.1,0.5"/>
+
+	<rule name="Start">
+		<offset offsetDistance="-inset" inside="RoofInside" border="RoofWall"/>
+	</rule>
+	<rule name="RoofInside">
+		<hemisphere/>
+		<copy name="RoofWall"/>
+		<comp>
+			<param name="side" value="RoofPanel"/>
+			<param name="top" value="RoofTopFace"/>
+		</comp>
+	</rule>
+	<rule name="RoofPanel">
+		<offset offsetDistance="-0.07" inside="RoofPanelMain"/>
+	</rule>
+	<rule name="RoofPanelMain">
+		<extrude height="roof_panel_extrusion_height"/>
+		<comp>
+			<param name="side" value="RoofWall"/>
+			<param name="top" value="RoofWall"/>
+		</comp>
+	</rule>
+	<rule name="RoofTopFace">
+		<extrude height="roof_top_extrusion_height*0.263"/>
+		<comp>
+			<param name="side" value="RoofWall"/>
+			<param name="top" value="RoofTopFaceTop"/>
+		</comp>
+	</rule>
+	<rule name="RoofTopFaceTop">
+		<offset offsetDistance="-0.6" inside="RoofTopFaceTopInside" border="RoofWall"/>
+	</rule>
+	<rule name="RoofTopFaceTopInside">
+		<extrude height="roof_top_extrusion_height*0.21"/>
+		<comp>
+			<param name="side" value="RoofWall"/>
+			<param name="top" value="RoofTopFaceTopInsideTop"/>
+		</comp>
+	</rule>
+	<rule name="RoofTopFaceTopInsideTop">
+		<offset offsetDistance="-0.2" inside="RoofTopFaceTopInsideTopInside" border="RoofWall"/>
+	</rule>
+	<rule name="RoofTopFaceTopInsideTopInside">
+		<extrude height="roof_top_extrusion_height*0.526"/>
+		<comp>
+			<param name="side" value="RoofWall"/>
+			<param name="top" value="RoofWall"/>
+		</comp>
+	</rule>
+</grammar>

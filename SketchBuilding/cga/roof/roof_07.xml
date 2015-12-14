@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<grammar type="roof" version="1.0" author="Gen Nishida">
+	<attr name="overhang" value="0.2" range="0.01,1"/>
+	
+	<rule name="Start">
+		<offset offsetDistance="overhang" inside="RoofOffset" border="RoofWall"/>
+	</rule>
+	<rule name="RoofOffset">
+		<extrude height="0.2"/>
+		<comp>
+			<param name="side" value="RoofWall"/>
+			<param name="top" value="RoofOffsetTop"/>
+		</comp>
+	</rule>
+	<rule name="RoofOffsetTop">
+		<offset offsetDistance="-overhang" inside="RoofOffsetTopOffset" border="RoofWall"/>
+	</rule>
+	<rule name="RoofOffsetTopOffset">
+		<hemisphere/>
+		<copy name="RoofWall"/>
+	</rule>
+</grammar>

@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<grammar type="ledge" version="1.0" author="Gen Nishida">
+	<attr name="ledge_bottom_half_ratio" value="0.5" range="0.3,0.7"/>
+	<attr name="ledge_column_interval" value="0.35" range="0.2,0.7"/>
+	<attr name="ledge_extrusion" value="0.26" range="0.22,0.3"/>
+	<attr name="ledge_column_extrusion" value="0.18" range="0.15,0.2"/>
+	
+	<!-- ledge -->
+	<rule name="Start">
+		<split splitAxis="y">
+			<param type="relative" value="ledge_bottom_half_ratio" name="LedgeBottomHalf"/>
+			<param type="relative" value="1-ledge_bottom_half_ratio" name="LedgeTopHalf"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomHalf">
+		<split splitAxis="x">
+			<param type="absolute" value="ledge_column_interval" name="Wall"/>
+			<param type="absolute" value="ledge_column_interval*2" name="LedgeBottomColumnAndInterval" repeat="true"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomColumnAndInterval">
+		<split splitAxis="x">
+			<param type="relative" value="0.5" name="LedgeBottomColumn"/>
+			<param type="relative" value="0.5" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomColumn">
+		<split splitAxis="y">
+			<param type="relative" value="0.5" name="LedgeBottomColumnBottom"/>
+			<param type="relative" value="0.5" name="LedgeBottomColumnTop"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomColumnBottom">
+		<split splitAxis="x">
+			<param type="relative" value="0.2" name="Wall"/>
+			<param type="relative" value="0.6" name="LedgeBottomColumnBottomMain"/>
+			<param type="relative" value="0.2" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomColumnBottomMain">
+		<extrude height="ledge_column_extrusion*0.833"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+	<rule name="LedgeBottomColumnTop">
+		<split splitAxis="x">
+			<param type="relative" value="0.1" name="Wall"/>
+			<param type="relative" value="0.8" name="LedgeBottomColumnTopMain"/>
+			<param type="relative" value="0.1" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="LedgeBottomColumnTopMain">
+		<extrude height="ledge_column_extrusion"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+	<rule name="LedgeTopHalf">
+		<split splitAxis="y">
+			<param type="relative" value="0.4" name="LedgeTopBottom"/>
+			<param type="relative" value="0.4" name="LedgeTopMiddle"/>
+			<param type="relative" value="0.2" name="LedgeTopTop"/>
+		</split>
+	</rule>
+	<rule name="LedgeTopBottom">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+0.44"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<extrude height="ledge_extrusion*0.846"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+	<rule name="LedgeTopMiddle">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+0.48"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<extrude height="ledge_extrusion*0.923"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+	<rule name="LedgeTopTop">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+0.52"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
+		<extrude height="ledge_extrusion"/>
+		<comp>
+			<param name="side" value="LedgeFace"/>
+			<param name="top" value="LedgeFace"/>
+		</comp>
+	</rule>
+</grammar>

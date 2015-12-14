@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<grammar type="window" version="1.0" author="Gen Nishida">
+	<attr name="window_top_ratio" value="0.23" range="0.2,0.3"/>
+
+	<rule name="Start">
+		<extrude height="-0.1"/>
+		<comp>
+			<param name="side" value="Wall"/>
+			<param name="top" value="WindowTop"/>
+		</comp>
+	</rule>
+	<rule name="WindowTop">
+		<offset offsetDistance="-0.05" inside="WindowTopInside" border="Wall"/>
+	</rule>
+	<rule name="WindowTopInside">
+		<split splitAxis="y">
+			<param type="relative" value="1-window_top_ratio" name="WindowTopInsideMain"/>
+			<param type="relative" value="window_top_ratio" name="Wall"/>
+		</split>
+	</rule>
+	<rule name="WindowTopInsideMain">
+		<extrude height="-0.1"/>
+		<comp>
+			<param name="side" value="Wall"/>
+			<param name="top" value="WindowGlass"/>
+		</comp>
+	</rule>
+</grammar>
