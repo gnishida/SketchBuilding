@@ -12,7 +12,7 @@
 		<copy name="RoofWall_06"/>
 		<comp>
 			<param name="side" value="RoofPanel_06"/>
-			<param name="top" value="RoofTopFace"_06/>
+			<param name="top" value="RoofTopFace_06"/>
 		</comp>
 	</rule>
 	<rule name="RoofPanel_06">
