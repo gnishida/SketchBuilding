@@ -3,20 +3,20 @@
 	<attr name="overhang" value="0.2" range="0.01,1"/>
 	
 	<rule name="Start">
-		<offset offsetDistance="overhang" inside="RoofOffset" border="RoofWall"/>
+		<offset offsetDistance="overhang" inside="RoofOffset_07" border="RoofWall_07"/>
 	</rule>
-	<rule name="RoofOffset">
+	<rule name="RoofOffset_07">
 		<extrude height="0.2"/>
 		<comp>
-			<param name="side" value="RoofWall"/>
-			<param name="top" value="RoofOffsetTop"/>
+			<param name="side" value="RoofWall_07"/>
+			<param name="top" value="RoofOffsetTop_07"/>
 		</comp>
 	</rule>
-	<rule name="RoofOffsetTop">
-		<offset offsetDistance="-overhang" inside="RoofOffsetTopOffset" border="RoofWall"/>
+	<rule name="RoofOffsetTop_07">
+		<offset offsetDistance="-overhang" inside="RoofOffsetTopOffset_07" border="RoofWall_07"/>
 	</rule>
-	<rule name="RoofOffsetTopOffset">
+	<rule name="RoofOffsetTopOffset_07">
 		<hemisphere/>
-		<copy name="RoofWall"/>
+		<copy name="RoofWall_07"/>
 	</rule>
 </grammar>

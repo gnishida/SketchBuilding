@@ -5,51 +5,51 @@
 	<attr name="roof_top_extrusion_height" value="0.38" range="0.1,0.5"/>
 
 	<rule name="Start">
-		<offset offsetDistance="-inset" inside="RoofInside" border="RoofWall"/>
+		<offset offsetDistance="-inset" inside="RoofInside_06" border="RoofWall_06"/>
 	</rule>
-	<rule name="RoofInside">
+	<rule name="RoofInside_06">
 		<hemisphere/>
-		<copy name="RoofWall"/>
+		<copy name="RoofWall_06"/>
 		<comp>
-			<param name="side" value="RoofPanel"/>
-			<param name="top" value="RoofTopFace"/>
+			<param name="side" value="RoofPanel_06"/>
+			<param name="top" value="RoofTopFace"_06/>
 		</comp>
 	</rule>
-	<rule name="RoofPanel">
-		<offset offsetDistance="-0.07" inside="RoofPanelMain"/>
+	<rule name="RoofPanel_06">
+		<offset offsetDistance="-0.07" inside="RoofPanelMain_06"/>
 	</rule>
-	<rule name="RoofPanelMain">
+	<rule name="RoofPanelMain_06">
 		<extrude height="roof_panel_extrusion_height"/>
 		<comp>
-			<param name="side" value="RoofWall"/>
-			<param name="top" value="RoofWall"/>
+			<param name="side" value="RoofWall_06"/>
+			<param name="top" value="RoofWall_06"/>
 		</comp>
 	</rule>
-	<rule name="RoofTopFace">
+	<rule name="RoofTopFace_06">
 		<extrude height="roof_top_extrusion_height*0.263"/>
 		<comp>
-			<param name="side" value="RoofWall"/>
-			<param name="top" value="RoofTopFaceTop"/>
+			<param name="side" value="RoofWall_06"/>
+			<param name="top" value="RoofTopFaceTop_06"/>
 		</comp>
 	</rule>
-	<rule name="RoofTopFaceTop">
-		<offset offsetDistance="-0.6" inside="RoofTopFaceTopInside" border="RoofWall"/>
+	<rule name="RoofTopFaceTop_06">
+		<offset offsetDistance="-0.6" inside="RoofTopFaceTopInside_06" border="RoofWall_06"/>
 	</rule>
-	<rule name="RoofTopFaceTopInside">
+	<rule name="RoofTopFaceTopInside_06">
 		<extrude height="roof_top_extrusion_height*0.21"/>
 		<comp>
-			<param name="side" value="RoofWall"/>
-			<param name="top" value="RoofTopFaceTopInsideTop"/>
+			<param name="side" value="RoofWall_06"/>
+			<param name="top" value="RoofTopFaceTopInsideTop_06"/>
 		</comp>
 	</rule>
-	<rule name="RoofTopFaceTopInsideTop">
-		<offset offsetDistance="-0.2" inside="RoofTopFaceTopInsideTopInside" border="RoofWall"/>
+	<rule name="RoofTopFaceTopInsideTop_06">
+		<offset offsetDistance="-0.2" inside="RoofTopFaceTopInsideTopInside_06" border="RoofWall_06"/>
 	</rule>
-	<rule name="RoofTopFaceTopInsideTopInside">
+	<rule name="RoofTopFaceTopInsideTopInside_06">
 		<extrude height="roof_top_extrusion_height*0.526"/>
 		<comp>
-			<param name="side" value="RoofWall"/>
-			<param name="top" value="RoofWall"/>
+			<param name="side" value="RoofWall_06"/>
+			<param name="top" value="RoofWall_06"/>
 		</comp>
 	</rule>
 </grammar>

@@ -7,5 +7,13 @@
 	<rule name="RoofLedge_05">
 		<color s="#e5d2ba"/>
 	</rule>
+	
+	<rule name="RoofWall_06">
+		<color s="#7f1f13"/>
+	</rule>
+	
+	<rule name="RoofWall_07">
+		<color s="#7f1f13"/>
+	</rule>
 </grammar>
 

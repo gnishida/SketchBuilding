@@ -6,23 +6,23 @@
 		<extrude height="-0.1"/>
 		<comp>
 			<param name="side" value="Wall"/>
-			<param name="top" value="WindowTop"/>
+			<param name="top" value="WindowTop_08"/>
 		</comp>
 	</rule>
-	<rule name="WindowTop">
-		<offset offsetDistance="-0.05" inside="WindowTopInside" border="Wall"/>
+	<rule name="WindowTop_08">
+		<offset offsetDistance="-0.05" inside="WindowTopInside_08" border="Wall"/>
 	</rule>
-	<rule name="WindowTopInside">
+	<rule name="WindowTopInside_08">
 		<split splitAxis="y">
-			<param type="relative" value="1-window_top_ratio" name="WindowTopInsideMain"/>
+			<param type="relative" value="1-window_top_ratio" name="WindowTopInsideMain_08"/>
 			<param type="relative" value="window_top_ratio" name="Wall"/>
 		</split>
 	</rule>
-	<rule name="WindowTopInsideMain">
+	<rule name="WindowTopInsideMain_08">
 		<extrude height="-0.1"/>
 		<comp>
 			<param name="side" value="Wall"/>
-			<param name="top" value="WindowGlass"/>
+			<param name="top" value="WindowGlass_08"/>
 		</comp>
 	</rule>
 </grammar>
