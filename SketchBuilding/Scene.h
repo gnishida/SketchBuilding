@@ -12,6 +12,8 @@ namespace sc {
 
 class SceneObject {
 public:
+	Scene* scene;
+
 	float offset_x;
 	float offset_y;
 	float offset_z;
@@ -20,17 +22,15 @@ public:
 	float height;
 	
 	std::map<std::string, cga::Grammar> grammars;
-	std::map<std::string, cga::Grammar> default_grammars;
 	std::vector<boost::shared_ptr<glutils::Face> > faces;
 
 public:
-	SceneObject();
-	SceneObject(float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
+	SceneObject(Scene* scene);
+	SceneObject(Scene* scene, float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
 	void setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth);
 	void setHeight(float height);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params, bool normalized);
-	void setDefaultGrammar(const std::string& name, const cga::Grammar& grammar);
 
 	void generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage);
 	void updateGeometry(RenderManager* renderManager, const std::string& stage);
@@ -44,6 +44,9 @@ public:
 
 	FaceSelector* faceSelector;
 	BuildingSelector* buildingSelector;
+
+	std::string default_grammar_file;
+	std::map<std::string, cga::Grammar> default_grammars;
 
 public:
 	Scene();
@@ -61,6 +64,9 @@ public:
 	void updateGeometry(RenderManager* renderManager, const std::string& stage);
 
 	void saveGeometry(const std::string& filename);
+
+	void loadDefaultGrammar(const std::string& filename);
+	void setDefaultGrammar(const std::string& name, const cga::Grammar& grammar);
 };
 
 }

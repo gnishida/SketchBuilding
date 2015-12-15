@@ -7,37 +7,11 @@
 
 namespace sc {
 
-SceneObject::SceneObject() : offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {
+SceneObject::SceneObject(Scene* scene) : scene(scene), offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {
 	// set the default grammar for Window, Ledge, and Wall
 	try {
 		cga::parseGrammar("cga/default_border.xml", grammars["Border"]);
 		//cga::parseGrammar("cga/default_ledge.xml", grammars["Ledge"]);
-
-		// load default grammars
-		cga::parseGrammar("cga/default_wall.xml", default_grammars["Wall"]);
-		cga::parseGrammar("cga/default_roof_ledge.xml", default_grammars["RoofLedge"]);
-		cga::parseGrammar("cga/default_roof_top.xml", default_grammars["RoofTop"]);
-		cga::parseGrammar("cga/default_ledge_face.xml", default_grammars["LedgeFace"]);
-		cga::parseGrammar("cga/default_window_sill.xml", default_grammars["WindowSill"]);
-		cga::parseGrammar("cga/default_window_frame.xml", default_grammars["WindowFrame"]);
-		cga::parseGrammar("cga/default_window_glass.xml", default_grammars["WindowGlass"]);
-		cga::parseGrammar("cga/default_window_shutter_frame.xml", default_grammars["WindowShutterFrame"]);
-
-		cga::Grammar defaultRoofGrammar;
-		cga::parseGrammar("cga/roof/roof_01.xml", defaultRoofGrammar);
-		setDefaultGrammar("Roof", defaultRoofGrammar);
-		cga::Grammar defaultFacadeGrammar;
-		cga::parseGrammar("cga/facade/facade_01.xml", defaultFacadeGrammar);
-		setDefaultGrammar("Facade", defaultFacadeGrammar);
-		cga::Grammar defaultFloorGrammar;
-		cga::parseGrammar("cga/floor/floor_01.xml", defaultFloorGrammar);
-		setDefaultGrammar("Floor", defaultFloorGrammar);
-		cga::Grammar defaultWindowGrammar;
-		cga::parseGrammar("cga/window/window_01.xml", defaultWindowGrammar);
-		setDefaultGrammar("Window_01", defaultWindowGrammar);
-		cga::Grammar defaultLedgeGrammar;
-		cga::parseGrammar("cga/ledge/ledge_01.xml", defaultLedgeGrammar);
-		setDefaultGrammar("Ledge", defaultLedgeGrammar);
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -91,20 +65,6 @@ void SceneObject::setGrammar(const std::string& name, const cga::Grammar& gramma
 	}
 }
 
-void SceneObject::setDefaultGrammar(const std::string& name, const cga::Grammar& grammar) {
-	default_grammars[name] = grammar;
-
-	// rewrite the axiom to the name
-	for (auto it = default_grammars[name].rules.begin(); it != default_grammars[name].rules.end(); ++it) {
-		if (it->first == "Start") {
-			cga::Rule rule = it->second;
-			default_grammars[name].rules.erase(it->first);
-			default_grammars[name].rules[name] = rule;
-			break;
-		}
-	}
-}
-
 void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage) {
 	faces.clear();
 
@@ -147,10 +107,10 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 
 	//system->derive(grammar, true);
 	if (stage == "final" || stage == "peek_final") {
-		system->derive(grammars, default_grammars, true, true);
+		system->derive(grammars, scene->default_grammars, true, true);
 	}
 	else {
-		system->derive(grammars, default_grammars, false, true);
+		system->derive(grammars, scene->default_grammars, false, true);
 	}
 	
 	system->generateGeometry(faces);
@@ -213,7 +173,7 @@ void SceneObject::updateGeometry(RenderManager* renderManager, const std::string
 
 Scene::Scene() {
 	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
-	_objects.resize(1);
+	_objects.push_back(SceneObject(this));
 	_currentObject = 0;
 
 	faceSelector = new FaceSelector(this);
@@ -231,7 +191,7 @@ void Scene::clearCurrentObject() {
 }
 
 void Scene::newObject() {
-	_objects.push_back(SceneObject());
+	_objects.push_back(SceneObject(this));
 	_currentObject = _objects.size() - 1;
 }
 
@@ -519,6 +479,44 @@ void Scene::saveGeometry(const std::string& filename) {
 	}
 
 	fclose(fp);
+}
+
+void Scene::loadDefaultGrammar(const std::string& filename) {
+	this->default_grammar_file = filename;
+
+	cga::parseGrammar(filename.c_str(), default_grammars["Default"]);
+
+
+	cga::Grammar defaultRoofGrammar;
+	cga::parseGrammar("cga/roof/roof_01.xml", defaultRoofGrammar);
+	setDefaultGrammar("Roof", defaultRoofGrammar);
+	cga::Grammar defaultFacadeGrammar;
+	cga::parseGrammar("cga/facade/facade_01.xml", defaultFacadeGrammar);
+	setDefaultGrammar("Facade", defaultFacadeGrammar);
+	cga::Grammar defaultFloorGrammar;
+	cga::parseGrammar("cga/floor/floor_01.xml", defaultFloorGrammar);
+	setDefaultGrammar("Floor", defaultFloorGrammar);
+	cga::Grammar defaultWindowGrammar;
+	cga::parseGrammar("cga/window/window_01.xml", defaultWindowGrammar);
+	setDefaultGrammar("Window_01", defaultWindowGrammar);
+	cga::Grammar defaultLedgeGrammar;
+	cga::parseGrammar("cga/ledge/ledge_01.xml", defaultLedgeGrammar);
+	setDefaultGrammar("Ledge", defaultLedgeGrammar);
+
+}
+
+void Scene::setDefaultGrammar(const std::string& name, const cga::Grammar& grammar) {
+	default_grammars[name] = grammar;
+
+	// rewrite the axiom to the name
+	for (auto it = default_grammars[name].rules.begin(); it != default_grammars[name].rules.end(); ++it) {
+		if (it->first == "Start") {
+			cga::Rule rule = it->second;
+			default_grammars[name].rules.erase(it->first);
+			default_grammars[name].rules[name] = rule;
+			break;
+		}
+	}
 }
 
 }

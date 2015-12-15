@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include "LeftWindowItemWidget.h"
 #include <QIcon>
+#include "SettingDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	ui.setupUi(this);
@@ -24,13 +25,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionSaveGeometry, SIGNAL(triggered()), this, SLOT(onSaveGeometry()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
-
 	connect(ui.actionViewShadow, SIGNAL(triggered()), this, SLOT(onViewShadow()));
 	connect(ui.actionViewBasicRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSSAO, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewLineRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewHatching, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSketchyRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionSetting, SIGNAL(triggered()), this, SLOT(onSetting()));
 
 	// create tool bar for stages
 	QActionGroup* stageGroup = new QActionGroup(this);
@@ -146,6 +147,15 @@ void MainWindow::onViewRendering() {
 		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_SKETCHY;
 	}
 	glWidget->update();
+}
+
+void MainWindow::onSetting() {
+	SettingDialog dlg(this);
+	dlg.ui.lineEditMaterial->setText(glWidget->scene.default_grammar_file.c_str());
+
+	if (dlg.exec() == QDialog::Accepted) {
+		glWidget->scene.loadDefaultGrammar(dlg.ui.lineEditMaterial->text().toUtf8().constData());
+	}
 }
 
 void MainWindow::onStageChanged() {

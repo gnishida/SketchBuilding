@@ -214,6 +214,15 @@
     <ClCompile Include="HemisphereOperator.cpp">
       <Filter>Source Files\rule</Filter>
     </ClCompile>
+    <ClCompile Include="SettingDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SettingDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SettingDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -273,6 +282,12 @@
     </CustomBuild>
     <CustomBuild Include="LeftWindowItemWidget.h">
       <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SettingDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SettingDialog.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -470,6 +485,9 @@
     </ClInclude>
     <ClInclude Include="HemisphereOperator.h">
       <Filter>Source Files\rule</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_SettingDialog.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

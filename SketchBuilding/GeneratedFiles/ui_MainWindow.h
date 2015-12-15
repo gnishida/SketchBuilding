@@ -43,11 +43,13 @@ public:
     QAction *actionViewLineRendering;
     QAction *actionViewHatching;
     QAction *actionViewSketchyRendering;
+    QAction *actionSetting;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuShape;
     QMenu *menuView;
+    QMenu *menuOptions;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -98,6 +100,8 @@ public:
         actionViewSketchyRendering = new QAction(MainWindowClass);
         actionViewSketchyRendering->setObjectName(QStringLiteral("actionViewSketchyRendering"));
         actionViewSketchyRendering->setCheckable(true);
+        actionSetting = new QAction(MainWindowClass);
+        actionSetting->setObjectName(QStringLiteral("actionSetting"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -110,6 +114,8 @@ public:
         menuShape->setObjectName(QStringLiteral("menuShape"));
         menuView = new QMenu(menuBar);
         menuView->setObjectName(QStringLiteral("menuView"));
+        menuOptions = new QMenu(menuBar);
+        menuOptions->setObjectName(QStringLiteral("menuOptions"));
         MainWindowClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindowClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -121,6 +127,7 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuShape->menuAction());
         menuBar->addAction(menuView->menuAction());
+        menuBar->addAction(menuOptions->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionClearSketch);
         menuFile->addAction(actionOpenCGA);
@@ -135,6 +142,7 @@ public:
         menuView->addAction(actionViewLineRendering);
         menuView->addAction(actionViewHatching);
         menuView->addAction(actionViewSketchyRendering);
+        menuOptions->addAction(actionSetting);
 
         retranslateUi(MainWindowClass);
 
@@ -166,9 +174,11 @@ public:
         actionViewLineRendering->setText(QApplication::translate("MainWindowClass", "Line Rendering", 0));
         actionViewHatching->setText(QApplication::translate("MainWindowClass", "Hatching", 0));
         actionViewSketchyRendering->setText(QApplication::translate("MainWindowClass", "Sketchy Rendering", 0));
+        actionSetting->setText(QApplication::translate("MainWindowClass", "Setting", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Shape", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
+        menuOptions->setTitle(QApplication::translate("MainWindowClass", "Options", 0));
     } // retranslateUi
 
 };

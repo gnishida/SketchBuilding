@@ -145,7 +145,7 @@ void GLWidget3D::loadCGA(char* filename) {
 		cga::parseGrammar(filename, grammar);
 		cga::CGA::randomParamValues(grammar);
 
-		sc::SceneObject so;
+		sc::SceneObject so(&scene);
 		so.setFootprint(0, 0, 0, 16, 12);
 
 		std::vector<float> params(10);

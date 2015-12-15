@@ -33,6 +33,7 @@ public slots:
 	void onAddBuildingMass();
 	void onViewShadow();
 	void onViewRendering();
+	void onSetting();
 	void onStageChanged();
 	void onModeChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);

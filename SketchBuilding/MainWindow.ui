@@ -52,9 +52,16 @@
     <addaction name="actionViewHatching"/>
     <addaction name="actionViewSketchyRendering"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionSetting"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuShape"/>
    <addaction name="menuView"/>
+   <addaction name="menuOptions"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -187,6 +194,11 @@
    </property>
    <property name="text">
     <string>Sketchy Rendering</string>
+   </property>
+  </action>
+  <action name="actionSetting">
+   <property name="text">
+    <string>Setting</string>
    </property>
   </action>
  </widget>
