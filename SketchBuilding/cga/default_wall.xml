@@ -10,6 +10,10 @@
 		<texture texturePath="textures/bricks.jpg"/>
 	</rule>
 	
+	<rule name="Wall_05">
+		<texture texturePath="textures/wall_paris.png"/>
+	</rule>
+	
 	<rule name="Wall">
 		<texture texturePath="textures/wall_paris.png"/>
 	</rule>

@@ -74,16 +74,29 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 
 	// count the num of ledges and recompute the average interval
 	int num_ledges = 0;
+	int num_ledges_consective = 0;
+	int floor_consective_count = 0;
+	bool ledge_consecutive = true;
 	float total_intervals = 0;
 	for (int i = 0; i < intervals.size(); ++i) {
 		if (intervals[i] < avg_intervals * 0.7f) {
 			num_ledges++;
+			if (ledge_consecutive) {
+				num_ledges_consective++;
+				floor_consective_count = 0;
+			}
 		}
 		else {
 			total_intervals += intervals[i];
+			floor_consective_count++;
+			if (floor_consective_count >= 2) {
+				ledge_consecutive = false;
+			}
 		}
 	}
 	avg_intervals = total_intervals / (intervals.size() - num_ledges);
+
+
 
 	// scale
 	float scale = (top_y - bottom_y) / (top_y_screen - bottom_y_screen);
@@ -113,8 +126,29 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFacadePattern(int wi
 		ret.push_back(ground_height * scale);
 		ret.push_back(ledge_height * scale);
 		return std::make_pair(1, ret);
-	} else if (num_ledges > 1) {
-		// {AB}* pattern (B is a ledge)
+	}
+	else if (num_ledges > 1 && num_ledges_consective == 1) {
+		// ALB{AL}* pattern (L is a ledge)
+		float ground_base = std::max(0.0f, intervals[0] - intervals[2]);
+
+		float ledge_height;
+		if (intervals.size() >= 5) {
+			ledge_height = (intervals[1] + intervals[4]) * 0.5f;
+		}
+		else {
+			ledge_height = intervals[1];
+		}
+
+		int num_floors = (top_y_screen - bottom_y_screen - ground_base + ledge_height * 2) / (ledge_height + intervals[2]);
+		float floor_height = (top_y_screen - bottom_y_screen - ground_base + ledge_height * 2) / num_floors - ledge_height;
+		
+		ret.push_back(floor_height * scale);
+		ret.push_back(ground_base * scale);
+		ret.push_back(ledge_height * scale);
+		return std::make_pair(4, ret);
+	}
+	else if (num_ledges > 1) {
+		// {AL}* pattern (L is a ledge)
 		int num_floors = (top_y_screen - bottom_y_screen) / (intervals[0] + intervals[1]) + 0.5f;
 
 		float floor_height = (top_y_screen - bottom_y_screen) / num_floors / (intervals[0] + intervals[1]) * intervals[0];
