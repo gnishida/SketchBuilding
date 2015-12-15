@@ -90,22 +90,37 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 	float rot_y = 0.0f;
 	float offset = 0.0f;
 
-	for (int i = 0; i < sizes.size(); ++i) {
-		if (splitAxis == DIRECTION_X) {
+	if (splitAxis == DIRECTION_X) {
+		for (int i = 0; i < sizes.size(); ++i) {
 			if (names[i] != "NIL") {
 				glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_radius_x * sinf(rot_y), 0, _radius_y * cosf(rot_y) - _radius_y)), rot_y, glm::vec3(0, 1, 0));
 				if (_texCoords.size() > 0) {
 					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, _scope.y, sizes[i] / _radius_x, _color, _texture,
 						_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * offset / _scope.x, _texCoords[0].y,
 						_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (offset + sizes[i]) / _scope.x, _texCoords[2].y)));
-				} else {
+				}
+				else {
 					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, _scope.y, sizes[i] / _radius_x, _color)));
 				}
 			}
 			rot_y += (sizes[i] / _scope.x) * _angle;
 			offset += sizes[i];
-		} else {
-			// not supported
+		}
+	} else if (splitAxis == DIRECTION_Y) {
+		float offset = 0.0f;
+
+		for (int i = 0; i < sizes.size(); ++i) {
+			if (names[i] != "NIL") {
+				glm::mat4 mat = glm::translate(_modelMat, glm::vec3(0, offset, 0));
+
+				if (_texCoords.size() > 0) {
+					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, sizes[i], _angle, _color, _texture, _texCoords[0].x, _texCoords[0].y, _texCoords[1].x, (_texCoords[2].y - _texCoords[1].y) / _scope.y * (offset + sizes[i]))));
+				}
+				else {
+					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, sizes[i], _angle, _color)));
+				}
+			}
+			offset += sizes[i];
 		}
 	}
 }
