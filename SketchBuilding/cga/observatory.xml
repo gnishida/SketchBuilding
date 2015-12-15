@@ -34,6 +34,9 @@
 	<rule name="Wall_04">
 		<texture texturePath="textures/bricks.jpg"/>
 	</rule>
+	<rule name="WallColumn">
+		<color s="#f0f0f0"/>
+	</rule>
 	
 	<!-- ledge -->
 	<rule name="LedgeFace">

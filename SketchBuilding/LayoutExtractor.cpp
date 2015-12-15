@@ -232,6 +232,8 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 	// for circular face
 	std::map<float, float> bottom_screens;
 	std::map<float, float> top_screens;
+	float min_x = std::numeric_limits<float>::max();
+	float max_x = -std::numeric_limits<float>::max();
 	for (int i = 0; i < face.vertices.size() / 3; ++i) {
 		float left_in_face = std::numeric_limits<float>::max();
 		float right_in_face = 0;
@@ -255,10 +257,23 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 			if (y > top_in_face) {
 				top_in_face = y;
 			}
+
+			if (face.vertices[i * 3 + j].position.x < min_x) {
+				min_x = face.vertices[i * 3 + j].position.x;
+			}
+			if (face.vertices[i * 3 + j].position.x > max_x) {
+				max_x = face.vertices[i * 3 + j].position.x;
+			}
 		}
 
 		bottom_screens[(left_in_face + right_in_face) * 0.5] = bottom_in_face;
 		top_screens[(left_in_face + right_in_face) * 0.5] = top_in_face;
+	}
+
+	// compute the width of the floor for a circular face
+	// this is not a good way, but it is okay for now.
+	if (bottom_screens.size() > 5) {
+		floor_width = max_x - min_x;
 	}
 
 	float horizontal_scale = floor_width / (right_screen - left_screen);
