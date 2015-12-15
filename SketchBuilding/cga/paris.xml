@@ -39,6 +39,9 @@
 	<rule name="Wall_05">
 		<texture texturePath="textures/wall_paris.png"/>
 	</rule>
+	<rule name="WallColumn">
+		<color s="#e5d2ba"/>
+	</rule>
 	
 	<!-- ledge -->
 	<rule name="LedgeFace">

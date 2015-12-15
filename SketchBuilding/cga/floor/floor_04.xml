@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <grammar type="floor" version="1.0" author="Gen Nishida">
-	<attr name="floor_column_width" value="0.4" range="0.2,1"/>
-	<attr name="floor_column_interval" value="2" range="1,6"/>
 	<attr name="column_additional_height" value="0.4" range="0,1"/>
+	<attr name="floor_column_interval" value="2" range="1,6"/>
+	<attr name="floor_column_width" value="0.4" range="0.2,1"/>
 
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
@@ -15,15 +15,15 @@
 	</rule>
 	<rule name="FloorColumnAndWall_04">
 		<split splitAxis="x">
-			<param type="floating" value="0.4" name="FloorColumn_04"/>
-			<param type="floating" value="2" name="Wall_04"/>
+			<param type="floating" value="floor_column_interval" name="Wall"/>
+			<param type="floating" value="floor_column_width" name="FloorColumn_04"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn_04">
 		<size>
-			<param name="xSize" type="absolute" value="1"/>
+			<param name="xSize" type="relative" value="1"/>
 			<param name="ySize" type="absolute" value="scope.sy+column_additional_height"/>
-			<param name="zSize" type="absolute" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
 		</size>
 		<translate mode="rel" coordSystem="object">
 			<param name="x" type="absolute" value="0"/>
@@ -32,8 +32,8 @@
 		</translate>
 		<extrude height="0.3"/>
 		<comp>
-			<param name="side" value="Wall_04"/>
-			<param name="top" value="Wall_04"/>
+			<param name="side" value="WallColumn"/>
+			<param name="top" value="WallColumn"/>
 		</comp>
 	</rule>
 </grammar>

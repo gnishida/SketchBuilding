@@ -229,6 +229,38 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		}
 	}
 
+	// for circular face
+	std::map<float, float> bottom_screens;
+	std::map<float, float> top_screens;
+	for (int i = 0; i < face.vertices.size() / 3; ++i) {
+		float left_in_face = std::numeric_limits<float>::max();
+		float right_in_face = 0;
+		float bottom_in_face = std::numeric_limits<float>::max();
+		float top_in_face = 0;
+
+		for (int j = 0; j < 3; ++j) {
+			glm::vec4 projectedPt = mvpMatrix * glm::vec4(face.vertices[i * 3 + j].position, 1);
+			float x = (projectedPt.x / projectedPt.w + 1.0) * 0.5 * width;
+			if (x < left_in_face) {
+				left_in_face = x;
+			}
+			if (x > right_in_face) {
+				right_in_face = x;
+			}
+
+			float y = (projectedPt.y / projectedPt.w + 1.0) * 0.5 * height;
+			if (y < bottom_in_face) {
+				bottom_in_face = y;
+			}
+			if (y > top_in_face) {
+				top_in_face = y;
+			}
+		}
+
+		bottom_screens[(left_in_face + right_in_face) * 0.5] = bottom_in_face;
+		top_screens[(left_in_face + right_in_face) * 0.5] = top_in_face;
+	}
+
 	float horizontal_scale = floor_width / (right_screen - left_screen);
 	float vertical_scale = floor_height / (top_screen - bottom_screen);
 
@@ -241,13 +273,43 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 	std::vector<float> ret;
 
 	if (widths.size() == 1 && fabs(bboxes[0].minPt.y - bottom_screen) < 4) {
-		// Entrance
+		// only 1 Entrance
 		float entrance_width = widths[0];
 		float top_margin = top_screen - bboxes[0].maxPt.y;
 
 		ret.push_back(entrance_width * horizontal_scale);
 		ret.push_back(top_margin * vertical_scale);
 		return std::make_pair(2, ret);
+	}
+	else if (widths.size() >= 1 && bboxes[0].minPt.y - interpolate(bottom_screens, (bboxes[0].minPt.x + bboxes[0].minPt.y) * 0.5) < 5 && interpolate(top_screens, (bboxes[0].minPt.x + bboxes[0].minPt.y) * 0.5) - bboxes[0].maxPt.y <= 1) {
+		// columns (no windows)
+		// only A* pattern is supported for now
+		float column_interval;
+		float column_width;
+		float column_additional_height;
+		if (widths.size() == 1) {
+			column_interval = bboxes[0].minPt.x - left_screen;
+			column_width = bboxes[0].maxPt.x - bboxes[0].minPt.x;
+			column_additional_height = bboxes[0].maxPt.y - interpolate(top_screens, (bboxes[0].minPt.x + bboxes[0].minPt.y) * 0.5);
+		}
+		else {
+			float total_interval = bboxes[0].minPt.x - left_screen;
+			float total_width = bboxes[0].maxPt.x - bboxes[0].minPt.x;
+			float total_additional_height = bboxes[0].maxPt.y - interpolate(top_screens, (bboxes[0].minPt.x + bboxes[0].minPt.y) * 0.5);
+			for (int i = 0; i < bboxes.size() - 1; ++i) {
+				total_interval += bboxes[i + 1].minPt.x - bboxes[i].maxPt.x;
+				total_width += bboxes[i + 1].maxPt.x - bboxes[i + 1].minPt.x;
+				total_additional_height += bboxes[i + 1].maxPt.y - interpolate(top_screens, (bboxes[i + 1].minPt.x + bboxes[i + 1].minPt.y) * 0.5);
+			}
+			column_interval = total_interval / bboxes.size();
+			column_width = total_width / bboxes.size();
+			column_additional_height = total_additional_height / bboxes.size();
+		}
+
+		ret.push_back(column_additional_height * vertical_scale);
+		ret.push_back(column_interval * horizontal_scale);
+		ret.push_back(column_width * horizontal_scale);
+		return std::make_pair(3, ret);
 	}
 	else if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.3) {
 		// A* pattern (i.e., every window has the same width)
@@ -306,4 +368,18 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		ret.push_back(window_width2 * horizontal_scale);
 		return std::make_pair(1, ret);
 	}
+}
+
+float LayoutExtractor::interpolate(const std::map<float, float>& values, float key) {
+	float prev = values.begin()->second;
+	for (auto it = values.begin(); it != values.end(); ++it) {
+		if (key < it->first) {
+			return (it->second + prev) * 0.5f;
+		}
+		else {
+			prev = it->second;
+		}
+	}
+	
+	return prev;
 }
