@@ -92,7 +92,7 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 
 	if (splitAxis == DIRECTION_X) {
 		for (int i = 0; i < sizes.size(); ++i) {
-			if (names[i] != "NIL") {
+			if (names[i] != "NIL" && sizes[i] > 0) {
 				glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_radius_x * sinf(rot_y), 0, _radius_y * cosf(rot_y) - _radius_y)), rot_y, glm::vec3(0, 1, 0));
 				if (_texCoords.size() > 0) {
 					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, _scope.y, sizes[i] / _radius_x, _color, _texture,
@@ -107,10 +107,8 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 			offset += sizes[i];
 		}
 	} else if (splitAxis == DIRECTION_Y) {
-		float offset = 0.0f;
-
 		for (int i = 0; i < sizes.size(); ++i) {
-			if (names[i] != "NIL") {
+			if (names[i] != "NIL" && sizes[i] > 0) {
 				glm::mat4 mat = glm::translate(_modelMat, glm::vec3(0, offset, 0));
 
 				if (_texCoords.size() > 0) {
