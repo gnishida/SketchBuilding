@@ -67,7 +67,7 @@
 	</rule>
 	<rule name="LedgeTopBottom">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+0.44"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrusion*2*0.846"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>
@@ -79,7 +79,7 @@
 	</rule>
 	<rule name="LedgeTopMiddle">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+0.48"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrusion*2*0.923"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>
@@ -91,7 +91,7 @@
 	</rule>
 	<rule name="LedgeTopTop">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+0.52"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrusion*2"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>

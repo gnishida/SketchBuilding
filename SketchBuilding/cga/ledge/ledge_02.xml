@@ -10,6 +10,11 @@
 		</split>
 	</rule>
 	<rule name="LedgeLayer1">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height1*scope.sy*2"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
 		<extrude height="scope.sy*ledge_extrude_height1"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
@@ -17,6 +22,11 @@
 		</comp>
 	</rule>
 	<rule name="LedgeLayer2">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height1*ledge_extrude_height_ratio*scope.sy*2"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
 		<extrude height="scope.sy*ledge_extrude_height1*ledge_extrude_height_ratio"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>

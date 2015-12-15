@@ -178,6 +178,8 @@ Scene::Scene() {
 
 	faceSelector = new FaceSelector(this);
 	buildingSelector = new BuildingSelector(this);
+
+	loadDefaultGrammar("cga/paris.xml");
 }
 
 void Scene::clear() {
@@ -412,6 +414,38 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	// Since the geometry will be updated, the pointer to a face will not be valid any more.
 	//faceSelector->unselect();
 
+	if (stage == "final" || stage == "peek_final") {
+		// facadeのfloor border sizeを0にする
+		if (default_grammars.find("Facade") != default_grammars.end()) {
+			if (default_grammars["Facade"].attrs.find("z_floor_border_size") != default_grammars["Facade"].attrs.end()) {
+				default_grammars["Facade"].attrs["z_floor_border_size"].value = "0";
+			}
+		}
+
+		// floorのwindowのborder sizeを0にする
+		if (default_grammars.find("Floor") != default_grammars.end()) {
+			if (default_grammars["Floor"].attrs.find("z_window_border_size") != default_grammars["Floor"].attrs.end()) {
+				default_grammars["Floor"].attrs["z_window_border_size"].value = "0";
+			}
+		}
+	}
+	else {
+		// facadeのfloor border sizeを0.08にする
+		if (default_grammars.find("Facade") != default_grammars.end()) {
+			if (default_grammars["Facade"].attrs.find("z_floor_border_size") != default_grammars["Facade"].attrs.end()) {
+				default_grammars["Facade"].attrs["z_floor_border_size"].value = "0.08";
+			}
+		}
+
+		// floorのwindowのborder sizeを0.03にする
+		if (default_grammars.find("Floor") != default_grammars.end()) {
+			if (default_grammars["Floor"].attrs.find("z_window_border_size") != default_grammars["Floor"].attrs.end()) {
+				default_grammars["Floor"].attrs["z_window_border_size"].value = "0.03";
+			}
+		}
+	}
+
+
 	for (int i = 0; i < _objects.size(); ++i) {
 		_objects[i].generateGeometry(&system, renderManager, stage);
 	}
@@ -447,7 +481,6 @@ void Scene::updateGeometry(RenderManager* renderManager, const std::string& stag
 	std::vector<Vertex> vertices;
 	glutils::drawGrid(50, 50, 2.5, glm::vec4(0, 0, 0, 1), glm::vec4(1, 1, 1, 1), system.modelMat, vertices);
 	renderManager->addObject("grid", "", vertices, false);
-
 }
 
 void Scene::saveGeometry(const std::string& filename) {

@@ -3,6 +3,11 @@
 	<attr name="ledge_extrude_height" value="0.2" range="0.1,0.5"/>
 	
 	<rule name="Start">
+		<size centered="true">
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height*scope.sy*2"/>
+			<param name="ySize" type="relative" value="1"/>
+			<param name="zSize" type="relative" value="1"/>
+		</size>
 		<extrude height="scope.sy*ledge_extrude_height"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
