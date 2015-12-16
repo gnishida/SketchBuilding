@@ -228,7 +228,7 @@ void BuildingSelector::copy() {
 	}
 }
 
-void BuildingSelector::resize(const glm::vec2& mousePt) {
+void BuildingSelector::resize(const glm::vec2& mousePt, bool conflictAllowed) {
 	if (!isBuildingControlPointSelected()) return;
 
 	if (_selectedBuildingControlPoint == 0) {
@@ -237,9 +237,11 @@ void BuildingSelector::resize(const glm::vec2& mousePt) {
 			_scene->_objects[_selectedBuilding].offset_x += ((mousePt - _mouseStartPt).x * _yDir.y - (mousePt - _mouseStartPt).y * _yDir.x) / den;
 			_scene->_objects[_selectedBuilding].offset_y += ((mousePt - _mouseStartPt).y * _xDir.x - (mousePt - _mouseStartPt).x * _xDir.y) / den;
 
-			// check the conflict. 
-			// If exists, this building will be elevated such that the bottom face will be the same height of the other in order to avoid the conflict.
-			avoidBuildingConflict(_selectedBuilding);
+			if (!conflictAllowed) {
+				// check the conflict. 
+				// If exists, this building will be elevated such that the bottom face will be the same height of the other in order to avoid the conflict.
+				avoidBuildingConflict(_selectedBuilding);
+			}
 		}
 	}
 	else if (_selectedBuildingControlPoint == 1) {
