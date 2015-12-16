@@ -26,6 +26,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	mainWin = (MainWindow*)parent;
 	dragging = false;
 	ctrlPressed = false;
+	shiftPressed = false;
 	demo_mode = 0;
 
 	// This is necessary to prevent the screen overdrawn by OpenGL
@@ -904,10 +905,14 @@ glm::vec3 GLWidget3D::computeDownwardedCameraPos(float downward, float distToCam
 
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
+	shiftPressed = false;
 
 	switch (e->key()) {
 	case Qt::Key_Control:
 		ctrlPressed = true;
+		break;
+	case Qt::Key_Shift:
+		shiftPressed = true;
 		break;
 	case Qt::Key_0:
 		demo_mode = 0;
@@ -922,6 +927,7 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 
 void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 	ctrlPressed = false;
+	shiftPressed = false;
 }
 
 /**
@@ -976,7 +982,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 	}
 	else if (mode == MODE_SELECT_BUILDING) { // select a building
 		if (scene.buildingSelector->isBuildingControlPointSelected()) {
-			scene.buildingSelector->alignObjects();
+			if (shiftPressed) {
+				scene.buildingSelector->alignObjects();
+			}
 			scene.buildingSelector->unselectBuildingControlPoint();
 			generateGeometry();
 		}
@@ -1035,7 +1043,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 		else if (mode == MODE_SELECT_BUILDING) {
 			if (scene.buildingSelector->isBuildingControlPointSelected()) {
 				// resize the building
-				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()));
+				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !shiftPressed);
 				generateGeometry();
 			}
 		}
