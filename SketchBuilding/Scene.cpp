@@ -514,28 +514,41 @@ void Scene::saveGeometry(const std::string& filename) {
 	fclose(fp);
 }
 
-void Scene::loadDefaultGrammar(const std::string& filename) {
-	this->default_grammar_file = filename;
+void Scene::loadDefaultGrammar(const std::string& default_grammar_file) {
+	this->default_grammar_file = default_grammar_file;
 
-	cga::parseGrammar(filename.c_str(), default_grammars["Default"]);
+	// parse the file
+	QFile file(default_grammar_file.c_str());
 
+	QDomDocument doc;
+	doc.setContent(&file, true);
+	QDomElement root = doc.documentElement();
 
-	cga::Grammar defaultRoofGrammar;
-	cga::parseGrammar("cga/roof/roof_01.xml", defaultRoofGrammar);
-	setDefaultGrammar("Roof", defaultRoofGrammar);
-	cga::Grammar defaultFacadeGrammar;
-	cga::parseGrammar("cga/facade/facade_01.xml", defaultFacadeGrammar);
-	setDefaultGrammar("Facade", defaultFacadeGrammar);
-	cga::Grammar defaultFloorGrammar;
-	cga::parseGrammar("cga/floor/floor_01.xml", defaultFloorGrammar);
-	setDefaultGrammar("Floor", defaultFloorGrammar);
-	cga::Grammar defaultWindowGrammar;
-	cga::parseGrammar("cga/window/window_01.xml", defaultWindowGrammar);
-	setDefaultGrammar("Window_01", defaultWindowGrammar);
-	cga::Grammar defaultLedgeGrammar;
-	cga::parseGrammar("cga/ledge/ledge_01.xml", defaultLedgeGrammar);
-	setDefaultGrammar("Ledge", defaultLedgeGrammar);
+	QDomNode child_node = root.firstChild();
+	while (!child_node.isNull()) {
+		if (child_node.toElement().tagName() == "default_grammar") {
+			if (!child_node.toElement().hasAttribute("type")) {
+				throw "<default_grammar> tag must contain type attribute.";
+			}
+			if (!child_node.toElement().hasAttribute("file")) {
+				throw "<default_grammar> tag must contain file attribute.";
+			}
 
+			QString type = child_node.toElement().attribute("type");
+			QString filename = child_node.toElement().attribute("file");
+
+			if (type == "material") {
+				cga::parseGrammar(filename.toUtf8().constData(), default_grammars["Material"]);
+			}
+			else {
+				cga::Grammar defaultGrammar;
+				cga::parseGrammar(filename.toUtf8().constData(), defaultGrammar);
+				setDefaultGrammar(type.toUtf8().constData(), defaultGrammar);
+			}
+		}
+
+		child_node = child_node.nextSibling();
+	}
 }
 
 void Scene::setDefaultGrammar(const std::string& name, const cga::Grammar& grammar) {

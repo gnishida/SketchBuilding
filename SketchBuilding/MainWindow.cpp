@@ -151,10 +151,10 @@ void MainWindow::onViewRendering() {
 
 void MainWindow::onSetting() {
 	SettingDialog dlg(this);
-	dlg.ui.lineEditMaterial->setText(glWidget->scene.default_grammar_file.c_str());
+	dlg.ui.lineEditDefaultGrammar->setText(glWidget->scene.default_grammar_file.c_str());
 
 	if (dlg.exec() == QDialog::Accepted) {
-		glWidget->scene.loadDefaultGrammar(dlg.ui.lineEditMaterial->text().toUtf8().constData());
+		glWidget->scene.loadDefaultGrammar(dlg.ui.lineEditDefaultGrammar->text().toUtf8().constData());
 	}
 }
 

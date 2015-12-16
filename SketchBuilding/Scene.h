@@ -65,7 +65,7 @@ public:
 
 	void saveGeometry(const std::string& filename);
 
-	void loadDefaultGrammar(const std::string& filename);
+	void loadDefaultGrammar(const std::string& default_grammar_file);
 	void setDefaultGrammar(const std::string& name, const cga::Grammar& grammar);
 };
 

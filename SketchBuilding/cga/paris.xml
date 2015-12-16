@@ -1,81 +1,9 @@
 <?xml version="1.0"?>
-<grammar type="material" version="1.0" author="Gen Nishida">
-	<!-- roof -->
-	<rule name="RoofTop">
-		<setupProjection axesSelector="scope.xy">
-			<param name="texWidth" type="relative" value="1"/>
-			<param name="texHeight" type="relative" value="1"/>
-		</setupProjection>
-		<texture texturePath="textures/roof.jpg"/>
-	</rule>
-	<rule name="RoofTop_05">
-		<setupProjection axesSelector="scope.xy">
-			<param name="texWidth" type="relative" value="1"/>
-			<param name="texHeight" type="relative" value="1"/>
-		</setupProjection>
-		<texture texturePath="textures/roof.jpg"/>
-	</rule>
-	<rule name="RoofSide_05">
-		<setupProjection axesSelector="scope.xy">
-			<param name="texWidth" type="absolute" value="1"/>
-			<param name="texHeight" type="absolute" value="1"/>
-		</setupProjection>
-		<texture texturePath="textures/roof_paris.png"/>
-	</rule>
-	<rule name="RoofLedge">
-		<color s="#e5d2ba"/>
-	</rule>
-	<rule name="RoofLedge_05">
-		<color s="#e5d2ba"/>
-	</rule>
-	
-	<!-- wall -->
-	<rule name="Wall">
-		<texture texturePath="textures/wall_paris.png"/>
-	</rule>
-	<rule name="Wall_04">
-		<texture texturePath="textures/wall_paris.png"/>
-	</rule>
-	<rule name="Wall_05">
-		<texture texturePath="textures/wall_paris.png"/>
-	</rule>
-	<rule name="WallColumn">
-		<color s="#e5d2ba"/>
-	</rule>
-	
-	<!-- ledge -->
-	<rule name="LedgeFace">
-		<color s="#e5d2ba"/>
-	</rule>
-	<rule name="LedgeFace_03">
-		<color s="#e5d2ba"/>
-	</rule>
-	
-	<!-- window -->
-	<rule name="WindowFrame">
-		<color s="#e5d2ba"/>
-	</rule>
-	<rule name="WindowFrame_06">
-		<color s="#e5d2ba"/>
-	</rule>
-	<rule name="WindowSill">
-		<color s="#e5d2ba"/>
-	</rule>
-	<rule name="WindowGlass">
-		<setupProjection axesSelector="scope.xy">
-			<param name="texWidth" type="relative" value="1"/>
-			<param name="texHeight" type="relative" value="1"/>
-		</setupProjection>
-		<texture texturePath="textures/window.9.tif"/>
-	</rule>
-	<rule name="WindowGlass_06">
-		<setupProjection axesSelector="scope.xy">
-			<param name="texWidth" type="relative" value="1"/>
-			<param name="texHeight" type="relative" value="1"/>
-		</setupProjection>
-		<texture texturePath="textures/window.9.tif"/>
-	</rule>
-	<rule name="Door">
-		<color s="#000000"/>
-	</rule>
-</grammar>
+<config>
+	<default_grammar type="Material" file="cga/material/paris_material.xml"/>
+	<default_grammar type="Roof" file="cga/roof/roof_05.xml"/>
+	<default_grammar type="Facade" file="cga/facade/facade_03.xml"/>
+	<default_grammar type="Floor" file="cga/floor/floor_01.xml"/>
+	<default_grammar type="Window_01" file="cga/window/window_06.xml"/>
+	<default_grammar type="Ledge" file="cga/ledge/ledge_03.xml"/>
+</config>

@@ -7,16 +7,11 @@ SettingDialog::SettingDialog(MainWindow* mainWin) : QDialog((QWidget*)mainWin) {
 
 	// set up the UI
 	ui.setupUi(this);
-	/*ui.checkBoxHDImage->setChecked(false);
-	ui.lineEditStart->setText("0.0");
-	ui.lineEditEnd->setText("1.0");
-	ui.lineEditStep->setText("0.01");
-	*/
 
 	// register the event handlers
 	connect(ui.okButton, SIGNAL(clicked()), this, SLOT(onOK()));
 	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(onCancel()));
-	connect(ui.pushButtonMaterial, SIGNAL(clicked()), this, SLOT(onMaterial()));
+	connect(ui.pushButtonDefaultGrammar, SIGNAL(clicked()), this, SLOT(onDefaultGrammar()));
 
 	//hide();
 }
@@ -32,9 +27,9 @@ void SettingDialog::onCancel() {
 	reject();
 }
 
-void SettingDialog::onMaterial() {
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open CGA file..."), "", tr("CGA Files (*.xml)"));
+void SettingDialog::onDefaultGrammar() {
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open xml file..."), "", tr("xml files (*.xml)"));
 	if (!filename.isEmpty()) {
-		ui.lineEditMaterial->setText(filename);
+		ui.lineEditDefaultGrammar->setText(filename);
 	}
 }

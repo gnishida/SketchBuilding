@@ -79,7 +79,6 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 	// initialize deep learning network
 	classifiers["building"] = new Classifier("../models/building/building.prototxt", "../models/building/building.caffemodel", "../models/building/mean.binaryproto");
-
 	regressions["building"].resize(4);
 	regressions["building"][0] = new Regression("../models/building/building_01.prototxt", "../models/building/building_01.caffemodel");
 	regressions["building"][1] = new Regression("../models/building/building_02.prototxt", "../models/building/building_02.caffemodel");
@@ -87,6 +86,15 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][3] = new Regression("../models/building/building_04.prototxt", "../models/building/building_04.caffemodel");
 
 	classifiers["roof"] = new Classifier("../models/roof/roof.prototxt", "../models/roof/roof.caffemodel", "../models/roof/mean.binaryproto");
+	regressions["roof"].resize(7);
+	regressions["roof"][0] = new Regression("../models/roof/roof_01.prototxt", "../models/roof/roof_01.caffemodel");
+	regressions["roof"][1] = new Regression("../models/roof/roof_02.prototxt", "../models/roof/roof_02.caffemodel");
+	regressions["roof"][2] = new Regression("../models/roof/roof_03.prototxt", "../models/roof/roof_03.caffemodel");
+	regressions["roof"][3] = new Regression("../models/roof/roof_04.prototxt", "../models/roof/roof_04.caffemodel");
+	regressions["roof"][4] = new Regression("../models/roof/roof_05.prototxt", "../models/roof/roof_05.caffemodel");
+	regressions["roof"][5] = new Regression("../models/roof/roof_06.prototxt", "../models/roof/roof_06.caffemodel");
+	regressions["roof"][6] = new Regression("../models/roof/roof_07.prototxt", "../models/roof/roof_07.caffemodel");
+
 	classifiers["window"] = new Classifier("../models/window/window.prototxt", "../models/window/window.caffemodel", "../models/window/mean.binaryproto");
 	classifiers["ledge"] = new Classifier("../models/ledge/ledge.prototxt", "../models/ledge/ledge.caffemodel", "../models/ledge/mean.binaryproto");
 

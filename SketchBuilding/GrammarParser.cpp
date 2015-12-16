@@ -28,8 +28,8 @@
 
 namespace cga {
 
-void parseGrammar(const char* filename, Grammar& grammar) {
-	QFile file(filename);
+	void parseGrammar(const std::string& filename, Grammar& grammar) {
+	QFile file(filename.c_str());
 
 	QDomDocument doc;
 	doc.setContent(&file, true);

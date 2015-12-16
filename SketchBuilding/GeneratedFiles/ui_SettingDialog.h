@@ -25,8 +25,8 @@ class Ui_SettingDialog
 {
 public:
     QLabel *label;
-    QLineEdit *lineEditMaterial;
-    QPushButton *pushButtonMaterial;
+    QLineEdit *lineEditDefaultGrammar;
+    QPushButton *pushButtonDefaultGrammar;
     QPushButton *okButton;
     QPushButton *cancelButton;
 
@@ -34,22 +34,22 @@ public:
     {
         if (SettingDialog->objectName().isEmpty())
             SettingDialog->setObjectName(QStringLiteral("SettingDialog"));
-        SettingDialog->resize(372, 161);
+        SettingDialog->resize(372, 101);
         label = new QLabel(SettingDialog);
         label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(30, 20, 51, 16));
-        lineEditMaterial = new QLineEdit(SettingDialog);
-        lineEditMaterial->setObjectName(QStringLiteral("lineEditMaterial"));
-        lineEditMaterial->setGeometry(QRect(90, 20, 221, 20));
-        pushButtonMaterial = new QPushButton(SettingDialog);
-        pushButtonMaterial->setObjectName(QStringLiteral("pushButtonMaterial"));
-        pushButtonMaterial->setGeometry(QRect(320, 19, 31, 23));
+        label->setGeometry(QRect(30, 20, 81, 16));
+        lineEditDefaultGrammar = new QLineEdit(SettingDialog);
+        lineEditDefaultGrammar->setObjectName(QStringLiteral("lineEditDefaultGrammar"));
+        lineEditDefaultGrammar->setGeometry(QRect(120, 20, 191, 20));
+        pushButtonDefaultGrammar = new QPushButton(SettingDialog);
+        pushButtonDefaultGrammar->setObjectName(QStringLiteral("pushButtonDefaultGrammar"));
+        pushButtonDefaultGrammar->setGeometry(QRect(320, 19, 31, 23));
         okButton = new QPushButton(SettingDialog);
         okButton->setObjectName(QStringLiteral("okButton"));
-        okButton->setGeometry(QRect(200, 120, 75, 23));
+        okButton->setGeometry(QRect(200, 60, 75, 23));
         cancelButton = new QPushButton(SettingDialog);
         cancelButton->setObjectName(QStringLiteral("cancelButton"));
-        cancelButton->setGeometry(QRect(280, 120, 75, 23));
+        cancelButton->setGeometry(QRect(280, 60, 75, 23));
 
         retranslateUi(SettingDialog);
 
@@ -59,8 +59,8 @@ public:
     void retranslateUi(QDialog *SettingDialog)
     {
         SettingDialog->setWindowTitle(QApplication::translate("SettingDialog", "Setting Dialog", 0));
-        label->setText(QApplication::translate("SettingDialog", "Material:", 0));
-        pushButtonMaterial->setText(QApplication::translate("SettingDialog", "...", 0));
+        label->setText(QApplication::translate("SettingDialog", "Default Grammar:", 0));
+        pushButtonDefaultGrammar->setText(QApplication::translate("SettingDialog", "...", 0));
         okButton->setText(QApplication::translate("SettingDialog", "OK", 0));
         cancelButton->setText(QApplication::translate("SettingDialog", "Cancel", 0));
     } // retranslateUi

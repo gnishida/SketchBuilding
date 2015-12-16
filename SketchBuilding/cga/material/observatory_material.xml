@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<grammar type="material" version="1.0" author="Gen Nishida">
+	<!-- roof -->
+	<rule name="RoofTop">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/roof.jpg"/>
+	</rule>
+	<rule name="RoofSide_05">
+		<color s="#e0e0e0"/>
+	</rule>
+	<rule name="RoofWall">
+		<color s="#7f1f13"/>
+	</rule>
+	<rule name="RoofWall_06">
+		<color s="#7f1f13"/>
+	</rule>
+	<rule name="RoofWall_07">
+		<color s="#7f1f13"/>
+	</rule>
+	<rule name="RoofLedge">
+		<color s="#f0f0f0"/>
+	</rule>
+	<rule name="RoofLedge_05">
+		<color s="#f0f0f0"/>
+	</rule>
+	
+	<!-- wall -->
+	<rule name="Wall">
+		<texture texturePath="textures/bricks.jpg"/>
+	</rule>
+	<rule name="Wall_04">
+		<texture texturePath="textures/bricks.jpg"/>
+	</rule>
+	<rule name="WallColumn">
+		<color s="#f0f0f0"/>
+	</rule>
+	
+	<!-- ledge -->
+	<rule name="LedgeFace">
+		<color s="#f0f0f0"/>
+	</rule>
+	<rule name="LedgeFace_03">
+		<color s="#f0f0f0"/>
+	</rule>
+	
+	<!-- window -->
+	<rule name="WindowFrame">
+		<color s="#f0f0f0"/>
+	</rule>
+	<rule name="WindowSill">
+		<color s="#f0f0f0"/>
+	</rule>
+	<rule name="WindowGlass">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window.9.tif"/>
+	</rule>
+	<rule name="Door">
+		<color s="#000000"/>
+	</rule>
+</grammar>

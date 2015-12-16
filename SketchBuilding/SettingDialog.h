@@ -20,6 +20,6 @@ public:
 public slots:
 	void onOK();
 	void onCancel();
-	void onMaterial();
+	void onDefaultGrammar();
 };
 
