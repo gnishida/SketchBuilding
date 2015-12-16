@@ -4,7 +4,7 @@
 	<attr name="window_side_offset_09" value="0.16" range="0.1,0.3"/>
 
 	<rule name="Start">
-		<extrude height="-0.1"/>
+		<extrude height="-0.2"/>
 		<comp>
 			<param name="side" value="Wall"/>
 			<param name="top" value="EntranceTop"/>
@@ -24,7 +24,7 @@
 		</split>
 	</rule>
 	<rule name="EntranceTopMainMain">
-		<extrude height="-0.5"/>
+		<extrude height="-0.6"/>
 		<comp>
 			<param name="side" value="Wall"/>
 			<param name="top" value="Door"/>

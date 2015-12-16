@@ -74,7 +74,12 @@ boost::shared_ptr<Shape> Rectangle::cornerCut(const std::string& name, int type,
 }
 
 boost::shared_ptr<Shape> Rectangle::extrude(const std::string& name, float height) {
-	return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
+	if (_texCoords.size() >= 4) {
+		return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _color, _texture, _texCoords[0].x, _texCoords[0].y, _texCoords[2].x, _texCoords[2].y));
+	}
+	else {
+		return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _color));
+	}
 }
 
 boost::shared_ptr<Shape> Rectangle::innerCircle(const std::string& name) {
