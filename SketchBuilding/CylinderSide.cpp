@@ -1,6 +1,7 @@
 ﻿#include "CylinderSide.h"
 #include "GLUtils.h"
 #include "Circle.h"
+#include "Cylinder.h"
 #include "LShape.h"
 #include "Pyramid.h"
 #include "HipRoof.h"
@@ -15,7 +16,7 @@
 
 namespace cga {
 
-	CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color) {
+CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color) {
 	this->_active = true;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
@@ -29,7 +30,7 @@ namespace cga {
 	this->_textureEnabled = false;
 }
 
-	CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2) {
+CylinderSide::CylinderSide(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float radius_x, float radius_y, float height, float angle, const glm::vec3& color, const std::string& texture, float u1, float v1, float u2, float v2) {
 	this->_active = true;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
@@ -56,31 +57,41 @@ boost::shared_ptr<Shape> CylinderSide::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> CylinderSide::extrude(const std::string& name, float height) {
-	glm::vec3 p2(_radius_x * sinf(_angle), 0, _radius_y * cosf(_angle) - _radius_y);
-	float new_sx = glm::length(p2 - glm::vec3(0, 0, 0));
+	if (_angle < M_PI * 0.25) {
+		// if the angle is small enough, approximate it by a flat surface
+		glm::vec3 p2(_radius_x * sinf(_angle), 0, _radius_y * cosf(_angle) - _radius_y);
+		float new_sx = glm::length(p2 - glm::vec3(0, 0, 0));
 
-	glm::mat4 mat = glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0));
+		glm::mat4 mat = glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0));
 
-	return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, mat, new_sx, _scope.y, height, _color));
+		return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, mat, new_sx, _scope.y, height, _color));
+	}
+	else {
+		// HACK: use cylinder
+		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(-_radius_x - height, 0, height)), -M_PI * 0.5f, glm::vec3(1, 0, 0));
+		return boost::shared_ptr<Shape>(new Cylinder(name, _grammar_type, _pivot, mat, (_radius_x + height) * 2, (_radius_y + height) * 2, _scope.y, _color));
+	}
 }
 
 void CylinderSide::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	// inner shape
 	if (!inside.empty()) {
-		//glm::vec3 p2(_radius_x * sinf(_angle), 0, _radius_y * cosf(_angle) - _radius_y);
+		// approximate by a flat surface
+		float delta_theta = -offsetDistance / _radius_x;
+		glm::vec3 p1(-offsetDistance * cosf(_angle * 0.5f), -offsetDistance, offsetDistance * sinf(_angle * 0.5f));
 
-		float theta = -offsetDistance / _radius_x;
-		glm::vec3 p1(_radius_x * sinf(theta), 0, _radius_y * cosf(theta) - _radius_y);
-		glm::vec3 p2(_radius_x * sinf(_angle - theta), 0, _radius_y * cosf(_angle - theta) - _radius_y);
-
-		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, p2), _angle * 0.5f, glm::vec3(0, 1, 0));
-		float width = glm::length(p1 - p2);
+		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, p1), _angle * 0.5f, glm::vec3(0, 1, 0));
+		float width = _scope.x + offsetDistance * 2.0f;
 		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(inside, _grammar_type, _pivot, mat, width, _scope.y + offsetDistance * 2, _color)));
 	}
 
 	// border shape
 	if (!border.empty() && offsetDistance < 0) {
-
+		// approximate by a flat surface
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0)), _scope.x, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), _angle * 0.5f, glm::vec3(0, 1, 0)), _scope.x, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), _angle * 0.5f, glm::vec3(0, 1, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2, -offsetDistance, _color)));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, glm::rotate(glm::translate(glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0)), glm::vec3(_scope.x, -offsetDistance, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _scope.y + offsetDistance * 2, -offsetDistance, _color)));
 	}
 }
 
