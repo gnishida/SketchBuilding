@@ -117,6 +117,7 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 	}
 
 	glWidget->renderManager.removeObjects();
+	int prevMode = glWidget->renderManager.renderingMode;
 	glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_LINE;
 	glUseProgram(glWidget->renderManager.programs["pass1"]);
 
@@ -252,6 +253,8 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 		glBindVertexArray(0);
 		glDepthFunc(GL_LEQUAL);
 	}
+
+	glWidget->renderManager.renderingMode = prevMode;
 
 	// obtain the image from the frame buffer
 	return glWidget->grabFrameBuffer();
