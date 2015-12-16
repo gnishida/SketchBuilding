@@ -66,6 +66,50 @@ boost::shared_ptr<Shape> Circle::pyramid(const std::string& name, float height) 
 	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
 }
 
+boost::shared_ptr<Shape> Circle::roofGable(const std::string& name, float angle) {
+	float height = (_scope.x + _scope.y) * 0.25f * tanf(angle / 180.0f * M_PI);
+	
+	std::vector<glm::vec2> points;
+	for (int i = 0; i < CIRCLE_SLICES; ++i) {
+		float theta = (float)i / CIRCLE_SLICES * M_PI * 2.0f;
+		points.push_back(glm::vec2(cosf(theta) * _scope.x * 0.5 + _scope.x * 0.5, sinf(theta) * _scope.y * 0.5 + _scope.y * 0.5));
+	}
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+}
+
+boost::shared_ptr<Shape> Circle::roofHip(const std::string& name, float angle) {
+	float height = (_scope.x + _scope.y) * 0.25f * tanf(angle / 180.0f * M_PI);
+
+	std::vector<glm::vec2> points;
+	for (int i = 0; i < CIRCLE_SLICES; ++i) {
+		float theta = (float)i / CIRCLE_SLICES * M_PI * 2.0f;
+		points.push_back(glm::vec2(cosf(theta) * _scope.x * 0.5 + _scope.x * 0.5, sinf(theta) * _scope.y * 0.5 + _scope.y * 0.5));
+	}
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+}
+
+void Circle::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	if (axesSelector == AXES_SCOPE_XY) {
+		_texCoords.resize(4);
+		_texCoords[0] = glm::vec2(0, 0);
+		_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
+		_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
+		_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+	}
+	else {
+		throw "Circle supports only scope.xy for setupProjection().";
+	}
+}
+
+boost::shared_ptr<Shape> Circle::taper(const std::string& name, float height, float top_ratio) {
+	std::vector<glm::vec2> points;
+	for (int i = 0; i < CIRCLE_SLICES; ++i) {
+		float theta = (float)i / CIRCLE_SLICES * M_PI * 2.0f;
+		points.push_back(glm::vec2(cosf(theta) * _scope.x * 0.5 + _scope.x * 0.5, sinf(theta) * _scope.y * 0.5 + _scope.y * 0.5));
+	}
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, top_ratio, _color, _texture));
+}
+
 void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (!_active) return;
 

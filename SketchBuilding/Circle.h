@@ -19,6 +19,10 @@ namespace cga {
 		boost::shared_ptr<Shape> hemisphere(const std::string& name);
 		void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 		boost::shared_ptr<Shape> pyramid(const std::string& name, float height);
+		boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);
+		boost::shared_ptr<Shape> roofHip(const std::string& name, float angle);
+		void setupProjection(int axesSelector, float texWidth, float texHeight);
+		boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
 		void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
 	};
 

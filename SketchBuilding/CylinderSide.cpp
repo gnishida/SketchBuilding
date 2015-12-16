@@ -7,6 +7,7 @@
 #include "GableRoof.h"
 #include "Prism.h"
 #include "Polygon.h"
+#include "Rectangle.h"
 #include "Cuboid.h"
 #include "SemiCircle.h"
 #include "UShape.h"
@@ -61,6 +62,26 @@ boost::shared_ptr<Shape> CylinderSide::extrude(const std::string& name, float he
 	glm::mat4 mat = glm::rotate(_modelMat, _angle * 0.5f, glm::vec3(0, 1, 0));
 
 	return boost::shared_ptr<Shape>(new Cuboid(name, _grammar_type, _pivot, mat, new_sx, _scope.y, height, _color));
+}
+
+void CylinderSide::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	// inner shape
+	if (!inside.empty()) {
+		//glm::vec3 p2(_radius_x * sinf(_angle), 0, _radius_y * cosf(_angle) - _radius_y);
+
+		float theta = -offsetDistance / _radius_x;
+		glm::vec3 p1(_radius_x * sinf(theta), 0, _radius_y * cosf(theta) - _radius_y);
+		glm::vec3 p2(_radius_x * sinf(_angle - theta), 0, _radius_y * cosf(_angle - theta) - _radius_y);
+
+		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, p2), _angle * 0.5f, glm::vec3(0, 1, 0));
+		float width = glm::length(p1 - p2);
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(inside, _grammar_type, _pivot, mat, width, _scope.y + offsetDistance * 2, _color)));
+	}
+
+	// border shape
+	if (!border.empty() && offsetDistance < 0) {
+
+	}
 }
 
 void CylinderSide::setupProjection(int axesSelector, float texWidth, float texHeight) {
