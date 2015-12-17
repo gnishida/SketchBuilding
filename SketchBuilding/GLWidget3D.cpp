@@ -86,18 +86,26 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][3] = new Regression("../models/building/building_04.prototxt", "../models/building/building_04.caffemodel");
 
 	classifiers["roof"] = new Classifier("../models/roof/roof.prototxt", "../models/roof/roof.caffemodel", "../models/roof/mean.binaryproto");
-	/*
 	regressions["roof"].resize(7);
-	regressions["roof"][0] = new Regression("../models/roof/roof_01.prototxt", "../models/roof/roof_01.caffemodel");
-	regressions["roof"][1] = new Regression("../models/roof/roof_02.prototxt", "../models/roof/roof_02.caffemodel");
-	regressions["roof"][2] = new Regression("../models/roof/roof_03.prototxt", "../models/roof/roof_03.caffemodel");
-	regressions["roof"][3] = new Regression("../models/roof/roof_04.prototxt", "../models/roof/roof_04.caffemodel");
-	regressions["roof"][4] = new Regression("../models/roof/roof_05.prototxt", "../models/roof/roof_05.caffemodel");
-	regressions["roof"][5] = new Regression("../models/roof/roof_06.prototxt", "../models/roof/roof_06.caffemodel");
-	regressions["roof"][6] = new Regression("../models/roof/roof_07.prototxt", "../models/roof/roof_07.caffemodel");
-	*/
+	regressions["roof"][0] = new Regression("../models/roof/deploy_1.prototxt", "../models/roof/roof1_iter_100.caffemodel");
+	regressions["roof"][1] = new Regression("../models/roof/deploy_2.prototxt", "../models/roof/roof2_iter_100.caffemodel");
+	regressions["roof"][2] = new Regression("../models/roof/deploy_3.prototxt", "../models/roof/roof3_iter_100.caffemodel");
+	regressions["roof"][3] = new Regression("../models/roof/deploy_4.prototxt", "../models/roof/roof4_iter_100.caffemodel");
+	regressions["roof"][4] = new Regression("../models/roof/deploy_5.prototxt", "../models/roof/roof5_iter_100.caffemodel");
+	regressions["roof"][5] = new Regression("../models/roof/deploy_6.prototxt", "../models/roof/roof6_iter_100.caffemodel");
+	regressions["roof"][6] = new Regression("../models/roof/deploy_7.prototxt", "../models/roof/roof7_iter_100.caffemodel");
 
 	classifiers["window"] = new Classifier("../models/window/window.prototxt", "../models/window/window.caffemodel", "../models/window/mean.binaryproto");
+	regressions["window"].resize(9);
+	regressions["window"][0] = new Regression("../models/window/deploy_1.prototxt", "../models/window/window1_iter_100.caffemodel");
+	regressions["window"][1] = new Regression("../models/window/deploy_2.prototxt", "../models/window/window2_iter_100.caffemodel");
+	regressions["window"][2] = new Regression("../models/window/deploy_3.prototxt", "../models/window/window3_iter_100.caffemodel");
+	regressions["window"][3] = new Regression("../models/window/deploy_4.prototxt", "../models/window/window4_iter_100.caffemodel");
+	regressions["window"][4] = new Regression("../models/window/deploy_5.prototxt", "../models/window/window5_iter_100.caffemodel");
+	regressions["window"][5] = new Regression("../models/window/deploy_6.prototxt", "../models/window/window6_iter_100.caffemodel");
+	regressions["window"][6] = new Regression("../models/window/deploy_7.prototxt", "../models/window/window7_iter_100.caffemodel");
+	regressions["window"][7] = new Regression("../models/window/deploy_8.prototxt", "../models/window/window8_iter_100.caffemodel");
+	regressions["window"][8] = new Regression("../models/window/deploy_9.prototxt", "../models/window/window9_iter_100.caffemodel");
 
 	classifiers["ledge"] = new Classifier("../models/ledge/ledge.prototxt", "../models/ledge/ledge.caffemodel", "../models/ledge/mean.binaryproto");
 	regressions["ledge"].resize(3);
@@ -185,9 +193,7 @@ void GLWidget3D::loadCGA(char* filename) {
 void GLWidget3D::generateGeometry() {
 	scene.generateGeometry(&renderManager, stage);
 
-	if (stage == "final" || stage == "peek_final") {
-		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
-	}
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 }
 
 void GLWidget3D::updateGeometry() {
