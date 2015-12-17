@@ -198,50 +198,86 @@ void Scene::newObject() {
 }
 
 void Scene::alignObjects() {
-	alignObjects(_currentObject);
+	alignObjects(_currentObject, 0);
 }
 
-void Scene::alignObjects(int currentObject) {
-	float threshold = 3.5f;
+void Scene::alignObjects(int currentObject, int controlPoint) {
+	float threshold = 0.5f;
 
 	for (int i = 0; i < _objects.size(); ++i) {
 		if (i == currentObject) continue;
 
 		if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x) < threshold) {
 			float diff = _objects[i].offset_x - _objects[currentObject].offset_x;
-			_objects[currentObject].offset_x = _objects[i].offset_x;
-			_objects[currentObject].object_width -= diff;
+			if (controlPoint == 0 || controlPoint == 1) {
+				_objects[currentObject].offset_x = _objects[i].offset_x;
+			}
+			if (controlPoint == 1) {
+				_objects[currentObject].object_width -= diff;
+			}
 		}
 		if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < threshold) {
 			float diff = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
-			_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
-			_objects[currentObject].object_width -= diff;
+			if (controlPoint == 0 || controlPoint == 1) {
+				_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+			}
+			if (controlPoint == 1) {
+				_objects[currentObject].object_width -= diff;
+			}
 		}
 
 		if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y) < threshold) {
 			float diff = _objects[i].offset_y - _objects[currentObject].offset_y;
-			_objects[currentObject].offset_y = _objects[i].offset_y;
-			_objects[currentObject].object_depth -= diff;
+			if (controlPoint == 0 || controlPoint == 3) {
+				_objects[currentObject].offset_y = _objects[i].offset_y;
+			}
+			if (controlPoint == 3) {
+				_objects[currentObject].object_depth -= diff;
+			}
 		}
 		if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
 			float diff = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
-			_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
-			_objects[currentObject].object_depth -= diff;
+			if (controlPoint == 0 || controlPoint == 3) {
+				_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
+			}
+			if (controlPoint == 3) {
+				_objects[currentObject].object_depth -= diff;
+			}
 		}
 
 
 		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < threshold) {
-			_objects[currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
+			if (controlPoint == 0) {
+				_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].object_width;
+			}
+			if (controlPoint == 2) {
+				_objects[currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
+			}
 		}
 		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x) < threshold) {
-			_objects[currentObject].object_width = _objects[i].offset_x - _objects[currentObject].offset_x;
+			if (controlPoint == 0) {
+				_objects[currentObject].offset_x = _objects[i].offset_x - _objects[currentObject].object_width;
+			}
+			if (controlPoint == 2) {
+				_objects[currentObject].object_width = _objects[i].offset_x - _objects[currentObject].offset_x;
+			}
 		}
 
 		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
-			_objects[currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
+			if (controlPoint == 0) {
+				_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].object_depth;
+			}
+			if (controlPoint == 4) {
+				_objects[currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
+			}
 		}
 		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y) < threshold) {
-			_objects[currentObject].object_depth = _objects[i].offset_y - _objects[currentObject].offset_y;
+			if (controlPoint == 0) {
+				_objects[currentObject].offset_y = _objects[i].offset_y - _objects[currentObject].object_depth;
+			}
+			if (controlPoint == 4) {
+				_objects[currentObject].object_depth = _objects[i].offset_y - _objects[currentObject].offset_y;
+			}
 		}
 	}
 }

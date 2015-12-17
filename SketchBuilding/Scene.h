@@ -55,7 +55,7 @@ public:
 	void clearCurrentObject();
 	void newObject();
 	void alignObjects();
-	void alignObjects(int currentObject);
+	void alignObjects(int currentObject, int controlPoint);
 	void alignObjects(const glutils::Face& baseFace);
 	void alignObjectsForWillisTower();
 	SceneObject& currentObject() { return _objects[_currentObject]; }

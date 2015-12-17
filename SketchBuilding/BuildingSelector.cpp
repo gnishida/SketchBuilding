@@ -297,7 +297,7 @@ void BuildingSelector::avoidBuildingConflict(int currentBuilding) {
 
 void BuildingSelector::alignObjects() {
 	if (_selectedBuilding >= 0) {
-		_scene->alignObjects(_selectedBuilding);
+		_scene->alignObjects(_selectedBuilding, _selectedBuildingControlPoint);
 	}
 }
 
