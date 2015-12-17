@@ -144,7 +144,7 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 				glm::mat4 mat = glm::translate(_modelMat, glm::vec3(0, offset, 0));
 
 				if (_texCoords.size() > 0) {
-					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, sizes[i], _angle, _color, _texture, _texCoords[0].x, _texCoords[0].y, _texCoords[1].x, (_texCoords[2].y - _texCoords[1].y) / _scope.y * (offset + sizes[i]))));
+					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, sizes[i], _angle, _color, _texture, _texCoords[0].x, _texCoords[1].y + (_texCoords[2].y - _texCoords[1].y) / _scope.y * offset, _texCoords[1].x, _texCoords[1].y + (_texCoords[2].y - _texCoords[1].y) / _scope.y * (offset + sizes[i]))));
 				}
 				else {
 					objects.push_back(boost::shared_ptr<Shape>(new CylinderSide(names[i], _grammar_type, _pivot, mat, _radius_x, _radius_y, sizes[i], _angle, _color)));
@@ -188,8 +188,8 @@ void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face>
 		n4 = glm::vec3(_pivot * _modelMat * glm::vec4(n4, 0));
 
 		if (!_texture.empty() && _texCoords.size() >= 4) {
-			glm::vec2 t1(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)i / slices, 0);
-			glm::vec2 t2(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)(i + 1) / slices, 0);
+			glm::vec2 t1(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)i / slices, _texCoords[0].y);
+			glm::vec2 t2(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)(i + 1) / slices, _texCoords[0].y);
 			glm::vec2 t3(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)(i + 1) / slices, _texCoords[2].y);
 			glm::vec2 t4(_texCoords[0].x + (_texCoords[1].x - _texCoords[0].x) * (float)i / slices, _texCoords[2].y);
 
@@ -197,7 +197,7 @@ void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face>
 			vertices.push_back(Vertex(p2, n2, glm::vec4(_color, opacity), t2));
 			vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
 			vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
-			vertices.push_back(Vertex(p3, n2, glm::vec4(_color, opacity), t3));
+			vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
 			vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity), t4));
 		}
 		else {
