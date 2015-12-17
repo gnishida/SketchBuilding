@@ -34,8 +34,8 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 	// 光源位置をセット
 	// ShadowMappingは平行光源を使っている。この位置から原点方向を平行光源の方向とする。
-	//light_dir = glm::normalize(glm::vec3(-4, -5, -8));
-	light_dir = glm::normalize(glm::vec3(-1, -3, -2));
+	light_dir = glm::normalize(glm::vec3(-4, -5, -8));
+	//light_dir = glm::normalize(glm::vec3(-1, -3, -2));
 
 	// シャドウマップ用のmodel/view/projection行列を作成
 	glm::mat4 light_pMatrix = glm::ortho<float>(-100, 100, -100, 100, 0.1, 200);
@@ -124,6 +124,7 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 	painter.setRenderHint(QPainter::Antialiasing);
 	painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
+	painter.setBrush(QBrush(Qt::black));
 	painter.drawLine(pt1, pt2);
 
 	strokes.back().push_back(glm::vec2(endPoint.x(), height() - endPoint.y()));
@@ -186,6 +187,8 @@ void GLWidget3D::loadCGA(char* filename) {
 	catch (const char* ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
 	}
+
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 
 	update();
 }
@@ -465,14 +468,13 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	// predict parameter values by deep learning
 	cv::Mat img;
 	convertSketch(true, img);
-	//std::vector<float> params = regressions["roof"][grammar_id]->Predict(img);
+	std::vector<float> params = regressions["roof"][grammar_id]->Predict(img);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 		
 	// set parameter values
-	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["roof"][grammar_id]);
-	//scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["roof"][grammar_id], params, true);
+	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["roof"][grammar_id], params, true);
 
 	generateGeometry();
 	update();
@@ -517,14 +519,13 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	// predict parameter values by deep learning
 	cv::Mat img;
 	convertSketch(true, img);
-	//std::vector<float> params = regressions["window"][grammar_id]->Predict(img);
+	std::vector<float> params = regressions["window"][grammar_id]->Predict(img);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
 	// set parameter values
-	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["window"][grammar_id]);
-	//scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["window"][grammar_id], params, true);
+	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["window"][grammar_id], params, true);
 
 	generateGeometry();
 	update();
@@ -549,7 +550,6 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
 	// set parameter values
-	//scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["ledge"][grammar_id]);
 	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["ledge"][grammar_id], params, true);
 
 	generateGeometry();
@@ -800,17 +800,23 @@ void GLWidget3D::changeStage(const std::string& stage) {
 		camera_timer = new QTimer(this);
 		connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
 		camera_timer->start(20);
-	} else if (stage == "roof") {
-	} else if (stage == "facade") {
-	} else if (stage == "floor") {
-	} else if (stage == "window") {
-	} else if (stage == "ledge") {
-	} else if (stage == "final") {
+	}
+	else if (stage == "roof") {
+	}
+	else if (stage == "facade") {
+	}
+	else if (stage == "floor") {
+	}
+	else if (stage == "window") {
+	}
+	else if (stage == "ledge") {
+	}
+	else if (stage == "final") {
 		generateGeometry();
 	}
 
 	updateGeometry();
-	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);\
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 
 	update();
 }
@@ -838,6 +844,8 @@ void GLWidget3D::changeMode(int new_mode) {
 
 		mode = new_mode;
 	}
+
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 
 	update();
 }
