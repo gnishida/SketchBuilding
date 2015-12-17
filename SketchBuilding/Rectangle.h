@@ -18,6 +18,7 @@ public:
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> cornerCut(const std::string& name, int type, float length);
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
+	boost::shared_ptr<Shape> hemisphere(const std::string& name);
 	boost::shared_ptr<Shape> innerCircle(const std::string& name);
 	boost::shared_ptr<Shape> innerSemiCircle(const std::string& name);
 	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);

@@ -84,6 +84,15 @@ boost::shared_ptr<Shape> Rectangle::extrude(const std::string& name, float heigh
 	}
 }
 
+boost::shared_ptr<Shape> Rectangle::hemisphere(const std::string& name) {
+	std::vector<glm::vec2> points(4);
+	points[0] = glm::vec2(0, 0);
+	points[1] = glm::vec2(_scope.x, 0);
+	points[2] = glm::vec2(_scope.x, _scope.y);
+	points[3] = glm::vec2(0, _scope.y);
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), (_scope.x + _scope.y) * 0.25, 0, _color, _texture));
+}
+
 boost::shared_ptr<Shape> Rectangle::innerCircle(const std::string& name) {
 	return boost::shared_ptr<Shape>(new Circle(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, _color));
 }
