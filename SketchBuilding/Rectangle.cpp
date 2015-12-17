@@ -50,6 +50,8 @@ boost::shared_ptr<Shape> Rectangle::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> Rectangle::cornerCut(const std::string& name, int type, float length) {
+	length = std::min(std::min(length, _scope.x), _scope.y);
+
 	std::vector<glm::vec2> points;
 	points.push_back(glm::vec2(0, 0));
 	points.push_back(glm::vec2(_scope.x - length, 0));
