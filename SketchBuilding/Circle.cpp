@@ -116,7 +116,7 @@ void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 	std::vector<Vertex> vertices;
 
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
-	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, 24);
+	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
 
 	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 }
