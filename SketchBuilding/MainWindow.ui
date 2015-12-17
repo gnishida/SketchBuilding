@@ -31,14 +31,17 @@
     <addaction name="actionClearSketch"/>
     <addaction name="actionOpenCGA"/>
     <addaction name="actionSaveGeometry"/>
+    <addaction name="actionSketchyRendering"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuShape">
     <property name="title">
-     <string>Shape</string>
+     <string>Edit</string>
     </property>
     <addaction name="actionAddBuildingMass"/>
+    <addaction name="actionCopyBuildingMass"/>
+    <addaction name="actionDeleteBuildingMass"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -97,6 +100,9 @@
    <property name="text">
     <string>New</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpenCGA">
    <property name="text">
@@ -136,9 +142,6 @@
    <property name="text">
     <string>Clear Sketch</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
   </action>
   <action name="actionSaveGeometry">
    <property name="text">
@@ -146,6 +149,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSketchyRendering">
+   <property name="text">
+    <string>Sketchy Rendering</string>
    </property>
   </action>
   <action name="actionViewShadow">
@@ -199,6 +207,22 @@
   <action name="actionSetting">
    <property name="text">
     <string>Setting</string>
+   </property>
+  </action>
+  <action name="actionCopyBuildingMass">
+   <property name="text">
+    <string>Copy Building Mass</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionDeleteBuildingMass">
+   <property name="text">
+    <string>Delete Building Mass</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
  </widget>

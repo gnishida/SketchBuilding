@@ -54,6 +54,7 @@ public:
 	void clear();
 	void clearCurrentObject();
 	void newObject();
+	void removeObject(int objectId);
 	void alignObjects();
 	void alignObjects(int currentObject, int controlPoint);
 	void alignObjects(const glutils::Face& baseFace);

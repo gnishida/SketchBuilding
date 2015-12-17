@@ -37,6 +37,7 @@ public:
     QAction *actionFixGeometry;
     QAction *actionClearSketch;
     QAction *actionSaveGeometry;
+    QAction *actionSketchyRendering;
     QAction *actionViewShadow;
     QAction *actionViewBasicRendering;
     QAction *actionViewSSAO;
@@ -44,6 +45,8 @@ public:
     QAction *actionViewHatching;
     QAction *actionViewSketchyRendering;
     QAction *actionSetting;
+    QAction *actionCopyBuildingMass;
+    QAction *actionDeleteBuildingMass;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -82,6 +85,8 @@ public:
         actionClearSketch->setObjectName(QStringLiteral("actionClearSketch"));
         actionSaveGeometry = new QAction(MainWindowClass);
         actionSaveGeometry->setObjectName(QStringLiteral("actionSaveGeometry"));
+        actionSketchyRendering = new QAction(MainWindowClass);
+        actionSketchyRendering->setObjectName(QStringLiteral("actionSketchyRendering"));
         actionViewShadow = new QAction(MainWindowClass);
         actionViewShadow->setObjectName(QStringLiteral("actionViewShadow"));
         actionViewShadow->setCheckable(true);
@@ -102,6 +107,10 @@ public:
         actionViewSketchyRendering->setCheckable(true);
         actionSetting = new QAction(MainWindowClass);
         actionSetting->setObjectName(QStringLiteral("actionSetting"));
+        actionCopyBuildingMass = new QAction(MainWindowClass);
+        actionCopyBuildingMass->setObjectName(QStringLiteral("actionCopyBuildingMass"));
+        actionDeleteBuildingMass = new QAction(MainWindowClass);
+        actionDeleteBuildingMass->setObjectName(QStringLiteral("actionDeleteBuildingMass"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -132,9 +141,12 @@ public:
         menuFile->addAction(actionClearSketch);
         menuFile->addAction(actionOpenCGA);
         menuFile->addAction(actionSaveGeometry);
+        menuFile->addAction(actionSketchyRendering);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
         menuShape->addAction(actionAddBuildingMass);
+        menuShape->addAction(actionCopyBuildingMass);
+        menuShape->addAction(actionDeleteBuildingMass);
         menuView->addAction(actionViewShadow);
         menuView->addSeparator();
         menuView->addAction(actionViewBasicRendering);
@@ -158,6 +170,7 @@ public:
         actionPredict->setText(QApplication::translate("MainWindowClass", "Predict", 0));
         actionPredict->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+P", 0));
         actionNew->setText(QApplication::translate("MainWindowClass", "New", 0));
+        actionNew->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
         actionOpenCGA->setText(QApplication::translate("MainWindowClass", "Open CGA", 0));
         actionCuboid->setText(QApplication::translate("MainWindowClass", "Cuboid", 0));
         actionLShape->setText(QApplication::translate("MainWindowClass", "L-Shape", 0));
@@ -165,9 +178,9 @@ public:
         actionFixGeometry->setText(QApplication::translate("MainWindowClass", "Fix", 0));
         actionFixGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+F", 0));
         actionClearSketch->setText(QApplication::translate("MainWindowClass", "Clear Sketch", 0));
-        actionClearSketch->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+N", 0));
         actionSaveGeometry->setText(QApplication::translate("MainWindowClass", "Save Geometry", 0));
         actionSaveGeometry->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+S", 0));
+        actionSketchyRendering->setText(QApplication::translate("MainWindowClass", "Sketchy Rendering", 0));
         actionViewShadow->setText(QApplication::translate("MainWindowClass", "Shadow", 0));
         actionViewBasicRendering->setText(QApplication::translate("MainWindowClass", "Basic Rendering", 0));
         actionViewSSAO->setText(QApplication::translate("MainWindowClass", "SSAO", 0));
@@ -175,8 +188,12 @@ public:
         actionViewHatching->setText(QApplication::translate("MainWindowClass", "Hatching", 0));
         actionViewSketchyRendering->setText(QApplication::translate("MainWindowClass", "Sketchy Rendering", 0));
         actionSetting->setText(QApplication::translate("MainWindowClass", "Setting", 0));
+        actionCopyBuildingMass->setText(QApplication::translate("MainWindowClass", "Copy Building Mass", 0));
+        actionCopyBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+C", 0));
+        actionDeleteBuildingMass->setText(QApplication::translate("MainWindowClass", "Delete Building Mass", 0));
+        actionDeleteBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+X", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
-        menuShape->setTitle(QApplication::translate("MainWindowClass", "Shape", 0));
+        menuShape->setTitle(QApplication::translate("MainWindowClass", "Edit", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
         menuOptions->setTitle(QApplication::translate("MainWindowClass", "Options", 0));
     } // retranslateUi

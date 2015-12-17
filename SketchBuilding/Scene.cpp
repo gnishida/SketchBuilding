@@ -197,6 +197,20 @@ void Scene::newObject() {
 	_currentObject = _objects.size() - 1;
 }
 
+void Scene::removeObject(int objectId) {
+	if (objectId >= _objects.size()) return;
+
+	_objects.erase(_objects.begin() + objectId);
+	if (_objects.size() == 0) {
+		newObject();
+	}
+	else {
+		if (objectId < _currentObject) {
+			_currentObject--;
+		}
+	}
+}
+
 void Scene::alignObjects() {
 	alignObjects(_currentObject, 0);
 }

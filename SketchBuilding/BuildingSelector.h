@@ -32,6 +32,7 @@ public:
 	void unselectBuildingControlPoint();
 
 	void copy();
+	void remove();
 	void resize(const glm::vec2& mousePt, bool conflictAllowed);
 	void avoidBuildingConflict(int currentBuilding);
 	void alignObjects();

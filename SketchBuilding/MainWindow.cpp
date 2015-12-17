@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionSaveGeometry, SIGNAL(triggered()), this, SLOT(onSaveGeometry()));
 	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
+	connect(ui.actionCopyBuildingMass, SIGNAL(triggered()), this, SLOT(onCopyBuildingMass()));
+	connect(ui.actionDeleteBuildingMass, SIGNAL(triggered()), this, SLOT(onDeleteBuildingMass()));
 	connect(ui.actionViewShadow, SIGNAL(triggered()), this, SLOT(onViewShadow()));
 	connect(ui.actionViewBasicRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSSAO, SIGNAL(triggered()), this, SLOT(onViewRendering()));
@@ -123,6 +125,22 @@ void MainWindow::onSaveGeometry() {
 
 void MainWindow::onAddBuildingMass() {
 	glWidget->addBuildingMass();
+}
+
+void MainWindow::onCopyBuildingMass() {
+	if (glWidget->scene.buildingSelector->isBuildingSelected()) {
+		glWidget->scene.buildingSelector->copy();
+		glWidget->generateGeometry();
+		glWidget->update();
+	}
+}
+
+void MainWindow::onDeleteBuildingMass() {
+	if (glWidget->scene.buildingSelector->isBuildingSelected()) {
+		glWidget->scene.buildingSelector->remove();
+		glWidget->generateGeometry();
+		glWidget->update();
+	}
 }
 
 void MainWindow::onViewShadow() {

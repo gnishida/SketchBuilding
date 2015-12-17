@@ -230,6 +230,13 @@ void BuildingSelector::copy() {
 	}
 }
 
+void BuildingSelector::remove() {
+	if (_selectedBuilding == -1) return;
+
+	_scene->removeObject(_selectedBuilding);
+	unselectBuilding();
+}
+
 void BuildingSelector::resize(const glm::vec2& mousePt, bool conflictAllowed) {
 	if (!isBuildingControlPointSelected()) return;
 
