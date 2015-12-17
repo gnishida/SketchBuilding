@@ -80,7 +80,7 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 		glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(-1, 0, 0, 0));
 
 		glm::vec3 dir = p - cameraPos;
-		if (glm::dot(dir, n) < 0 && glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
+		if (glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
 			float dist = glm::length(dir);
 			if (dist < min_dist) {
 				min_dist = dist;
@@ -102,7 +102,7 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 		glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(1, 0, 0, 0));
 
 		glm::vec3 dir = p - cameraPos;
-		if (glm::dot(dir, n) < 0 && glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
+		if (glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
 			float dist = glm::length(dir);
 			if (dist < min_dist) {
 				min_dist = dist;
@@ -124,7 +124,7 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 		glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, -1, 0, 0));
 
 		glm::vec3 dir = p - cameraPos;
-		if (glm::dot(dir, n) < 0 && glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
+		if (glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
 			float dist = glm::length(dir);
 			if (dist < min_dist) {
 				min_dist = dist;
@@ -146,7 +146,7 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 		glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 1, 0, 0));
 
 		glm::vec3 dir = p - cameraPos;
-		if (glm::dot(dir, n) < 0 && glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
+		if (glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
 			float dist = glm::length(dir);
 			if (dist < min_dist) {
 				min_dist = dist;
@@ -168,7 +168,7 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 		glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 0, 1, 0));
 
 		glm::vec3 dir = p - cameraPos;
-		if (glm::dot(dir, n) < 0 && glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
+		if (glm::dot(glm::normalize(viewDir), glm::normalize(dir)) > angle_threshold) {
 			float dist = glm::length(dir);
 			if (dist < min_dist) {
 				min_dist = dist;
@@ -310,7 +310,7 @@ void BuildingSelector::alignObjects() {
 
 void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 	std::vector<Vertex> vertices;
-	const float controlPointSize = 0.7f;
+	const float controlPointSize = 0.5f;
 
 	{
 		float x = _scene->_objects[_selectedBuilding].offset_x;

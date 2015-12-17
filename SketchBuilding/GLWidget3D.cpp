@@ -1007,7 +1007,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 		else if (mode == MODE_SELECT_BUILDING) {
 			if (scene.buildingSelector->isBuildingControlPointSelected()) {
 				// resize the building
-				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !shiftPressed);
+				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !ctrlPressed);
 				generateGeometry();
 			}
 		}
