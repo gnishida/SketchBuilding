@@ -810,6 +810,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	}
 
 	updateGeometry();
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);\
 
 	update();
 }
@@ -903,6 +904,7 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 			updateGeometry();
 			update();
 		}
+		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 	}
 	else { // start drawing a stroke
 		lastPos = e->pos();
