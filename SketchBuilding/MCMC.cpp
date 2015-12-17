@@ -77,13 +77,27 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 float MCMC::distanceTransform(cga::Grammar& grammar, const cv::Mat& distMap, const std::vector<float>& params, float offset_z, int count) {
 	QImage ref_image = renderImage(grammar, params, offset_z);
 
-	char filename[256];
-	sprintf(filename, "results/image_%03d.png", count);
+	//char filename[256];
+	//sprintf(filename, "results/image_%03d.png", count);
 	//ref_image.save(filename);
 
 	cv::Mat mat(ref_image.height(), ref_image.width(), CV_8UC4, ref_image.bits(), ref_image.bytesPerLine());
 	cv::Mat grayMat;
 	cv::cvtColor(mat, grayMat, CV_BGR2GRAY);
+
+	// resize the rendered image to 128x128
+	int min_size = std::min(grayMat.cols, grayMat.rows);
+	grayMat = grayMat(cv::Rect((grayMat.cols - min_size) * 0.5, (grayMat.rows - min_size) * 0.5, min_size, min_size));
+
+	if (min_size > 512) {
+		cv::resize(grayMat, grayMat, cv::Size(512, 512));
+		cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
+
+	}
+	cv::resize(grayMat, grayMat, cv::Size(256, 256));
+	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
+	cv::resize(grayMat, grayMat, cv::Size(128, 128));
+	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
 
 	// compute a distance map
 	cv::Mat ref_distMap;

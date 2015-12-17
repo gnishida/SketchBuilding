@@ -94,6 +94,7 @@ public:
 	bool selectBuildingControlPoint(const glm::vec2& mouse_pos);
 	void addBuildingMass();
 	glm::vec3 viewVector(const glm::vec2& point, const glm::mat4& mvMatrix, float focalLength, float aspect);
+	void convertSketch(bool regression, cv::Mat& result);
 	void changeStage(const std::string& stage);
 	void changeMode(int new_mode);
 	glm::vec3 computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot);
