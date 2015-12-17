@@ -60,6 +60,13 @@
 		</setupProjection>
 		<texture texturePath="textures/window.9.tif"/>
 	</rule>
+	<rule name="WindowGlass_08">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window.9.tif"/>
+	</rule>
 	<rule name="Door">
 		<color s="#000000"/>
 	</rule>
