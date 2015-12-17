@@ -3,7 +3,7 @@
 	<attr name="floor_height" value="3" range="0.5,10"/>
 	<attr name="ground_height" value="3" range="0.5,10"/>
 	<attr name="ledge_height" value="0.1" range="0.01,2"/>
-	<attr name="z_floor_border_size" value="0.08" range="0,0.08"/>
+	<attr name="z_floor_border_size" value="0.04" range="0,0.08"/>
 	
 	<rule name="Start">
 		<setupProjection axesSelector="scope.xy">
