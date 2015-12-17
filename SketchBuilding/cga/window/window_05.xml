@@ -2,8 +2,8 @@
 <grammar type="window" version="1.0" author="Gen Nishida">
 	<attr name="horizontal_interval_ratio" value="0.5" range="0.3,0.5"/>
 	<attr name="offset_size" value="0.05" range="0.01,0.2"/>
-	<attr name="vertical_interval_ratio" value="0.5" range="0.3,0.5"/>
 	<attr name="shutter_interval" value="0.05" range="0.03,0.2"/>
+	<attr name="vertical_interval_ratio" value="0.5" range="0.3,0.5"/>
 	<attr name="window_sill_height" value="0.05" range="0.01,0.2"/>
 	
 	<rule name="Start">

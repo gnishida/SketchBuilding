@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="window" version="1.0" author="Gen Nishida">
-	<attr name="window_top_offset_09" value="0.16" range="0.1,0.3"/>
 	<attr name="window_side_offset_09" value="0.16" range="0.1,0.3"/>
+	<attr name="window_top_offset_09" value="0.16" range="0.1,0.3"/>
 
 	<rule name="Start">
 		<extrude height="-0.2"/>

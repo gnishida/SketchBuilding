@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <grammar type="window" version="1.0" author="Gen Nishida">
-	<attr name="window_sill_height_06" value="0.05" range="0.02,0.1"/>
-	<attr name="window_roof_height_06" value="0.06" range="0.05,0.08"/>
 	<attr name="window_column_bottom_ratio_06" value="0.6" range="0.5,0.7"/>
 	<attr name="window_column_extrusion_06" value="0.28" range="0.25,0.35"/>
 	<attr name="window_main_depth_06" value="0.25" range="0.1,0.4"/>
+	<attr name="window_roof_height_06" value="0.06" range="0.05,0.08"/>
+	<attr name="window_sill_height_06" value="0.05" range="0.02,0.1"/>
 	
 	<rule name="Start">
 		<split splitAxis="y">
