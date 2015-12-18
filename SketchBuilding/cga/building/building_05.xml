@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <grammar type="building" version="1.0" author="Gen Nishida">
-	<attr name="corner_cut_length" value="4" range="1,8"/>
 	<attr name="height" value="5" range="4,40"/>
+	<attr name="k_corner_cut_length" value="4" range="1,8"/>
 	
 	<rule name="Start">
-		<cornerCut type="straight" length="corner_cut_length"/>
+		<cornerCut type="straight" length="k_corner_cut_length"/>
 		<extrude height="height"/>
 		<comp>
 			<param name="side" value="Facade"/>
