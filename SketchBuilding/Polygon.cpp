@@ -89,6 +89,10 @@ void Polygon::offset(const std::string& name, float offsetDistance, const std::s
 	}
 }
 
+boost::shared_ptr<Shape> Polygon::pyramid(const std::string& name, float height) {
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, _points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, 0, _color, _texture));
+}
+
 boost::shared_ptr<Shape> Polygon::roofHip(const std::string& name, float angle) {
 	return boost::shared_ptr<Shape>(new HipRoof(name, _grammar_type, _pivot, _modelMat, _points, angle, _color));
 }
