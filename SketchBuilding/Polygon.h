@@ -20,6 +20,7 @@ public:
 	Polygon(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
+	boost::shared_ptr<Shape> hemisphere(const std::string& name);
 	boost::shared_ptr<Shape> inscribeCircle(const std::string& name);
 	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	boost::shared_ptr<Shape> roofGable(const std::string& name, float angle);

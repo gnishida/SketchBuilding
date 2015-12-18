@@ -39,6 +39,10 @@ boost::shared_ptr<Shape> Polygon::extrude(const std::string& name, float height)
 	return boost::shared_ptr<Shape>(new Prism(name, _grammar_type, _pivot, _modelMat, _points, height, _color));
 }
 
+boost::shared_ptr<Shape> Polygon::hemisphere(const std::string& name) {
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, _points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), (_scope.x + _scope.y) * 0.25, 0, _color, _texture));
+}
+
 boost::shared_ptr<Shape> Polygon::inscribeCircle(const std::string& name) {
 	return NULL;
 }
