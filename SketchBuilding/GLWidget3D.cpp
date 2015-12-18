@@ -78,24 +78,25 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
-	classifiers["building"] = new Classifier("../models/building/building.prototxt", "../models/building/building.caffemodel", "../models/building/mean.binaryproto");
-	regressions["building"].resize(4);
-	regressions["building"][0] = new Regression("../models/building/building_01.prototxt", "../models/building/building_01.caffemodel");
-	regressions["building"][1] = new Regression("../models/building/building_02.prototxt", "../models/building/building_02.caffemodel");
-	regressions["building"][2] = new Regression("../models/building/building_03.prototxt", "../models/building/building_03.caffemodel");
-	regressions["building"][3] = new Regression("../models/building/building_04.prototxt", "../models/building/building_04.caffemodel");
+	classifiers["building"] = new Classifier("../models/building/deploy.prototxt", "../models/building/train_iter_2000.caffemodel", "../models/building/buildings_mean.binaryproto");
+	regressions["building"].resize(5);
+	regressions["building"][0] = new Regression("../models/building/deploy_1.prototxt", "../models/building/building1_iter_60000.caffemodel");
+	regressions["building"][1] = new Regression("../models/building/deploy_2.prototxt", "../models/building/building2_iter_60000.caffemodel");
+	regressions["building"][2] = new Regression("../models/building/deploy_3.prototxt", "../models/building/building3_iter_60000.caffemodel");
+	regressions["building"][3] = new Regression("../models/building/deploy_4.prototxt", "../models/building/building4_iter_60000.caffemodel");
+	regressions["building"][4] = new Regression("../models/building/deploy_5.prototxt", "../models/building/building5_iter_10000.caffemodel");
 
-	classifiers["roof"] = new Classifier("../models/roof/roof.prototxt", "../models/roof/roof.caffemodel", "../models/roof/mean.binaryproto");
+	classifiers["roof"] = new Classifier("../models/roof/deploy.prototxt", "../models/roof/train_iter_2000.caffemodel", "../models/roof/roofs_mean.binaryproto");
 	regressions["roof"].resize(7);
-	regressions["roof"][0] = new Regression("../models/roof/deploy_1.prototxt", "../models/roof/roof1_iter_100.caffemodel");
-	regressions["roof"][1] = new Regression("../models/roof/deploy_2.prototxt", "../models/roof/roof2_iter_100.caffemodel");
-	regressions["roof"][2] = new Regression("../models/roof/deploy_3.prototxt", "../models/roof/roof3_iter_100.caffemodel");
-	regressions["roof"][3] = new Regression("../models/roof/deploy_4.prototxt", "../models/roof/roof4_iter_100.caffemodel");
-	regressions["roof"][4] = new Regression("../models/roof/deploy_5.prototxt", "../models/roof/roof5_iter_100.caffemodel");
-	regressions["roof"][5] = new Regression("../models/roof/deploy_6.prototxt", "../models/roof/roof6_iter_100.caffemodel");
-	regressions["roof"][6] = new Regression("../models/roof/deploy_7.prototxt", "../models/roof/roof7_iter_100.caffemodel");
+	regressions["roof"][0] = new Regression("../models/roof/deploy_1.prototxt", "../models/roof/roof1_iter_2000.caffemodel");
+	regressions["roof"][1] = new Regression("../models/roof/deploy_2.prototxt", "../models/roof/roof2_iter_2000.caffemodel");
+	regressions["roof"][2] = new Regression("../models/roof/deploy_3.prototxt", "../models/roof/roof3_iter_2000.caffemodel");
+	regressions["roof"][3] = new Regression("../models/roof/deploy_4.prototxt", "../models/roof/roof4_iter_2000.caffemodel");
+	regressions["roof"][4] = new Regression("../models/roof/deploy_5.prototxt", "../models/roof/roof5_iter_2000.caffemodel");
+	regressions["roof"][5] = new Regression("../models/roof/deploy_6.prototxt", "../models/roof/roof6_iter_2000.caffemodel");
+	regressions["roof"][6] = new Regression("../models/roof/deploy_7.prototxt", "../models/roof/roof7_iter_2000.caffemodel");
 
-	classifiers["window"] = new Classifier("../models/window/window.prototxt", "../models/window/window.caffemodel", "../models/window/mean.binaryproto");
+	classifiers["window"] = new Classifier("../models/window/deploy.prototxt", "../models/window/train_iter_2000.caffemodel", "../models/window/windows_mean.binaryproto");
 	regressions["window"].resize(9);
 	regressions["window"][0] = new Regression("../models/window/deploy_1.prototxt", "../models/window/window1_iter_100.caffemodel");
 	regressions["window"][1] = new Regression("../models/window/deploy_2.prototxt", "../models/window/window2_iter_100.caffemodel");
@@ -107,11 +108,11 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["window"][7] = new Regression("../models/window/deploy_8.prototxt", "../models/window/window8_iter_100.caffemodel");
 	regressions["window"][8] = new Regression("../models/window/deploy_9.prototxt", "../models/window/window9_iter_100.caffemodel");
 
-	classifiers["ledge"] = new Classifier("../models/ledge/ledge.prototxt", "../models/ledge/ledge.caffemodel", "../models/ledge/mean.binaryproto");
+	classifiers["ledge"] = new Classifier("../models/ledge/deploy.prototxt", "../models/ledge/train_iter_2000.caffemodel", "../models/ledge/ledges_mean.binaryproto");
 	regressions["ledge"].resize(3);
-	regressions["ledge"][0] = new Regression("../models/ledge/ledge_01.prototxt", "../models/ledge/ledge_01.caffemodel");
-	regressions["ledge"][1] = new Regression("../models/ledge/ledge_02.prototxt", "../models/ledge/ledge_02.caffemodel");
-	regressions["ledge"][2] = new Regression("../models/ledge/ledge_03.prototxt", "../models/ledge/ledge_03.caffemodel");
+	regressions["ledge"][0] = new Regression("../models/ledge/deploy_1.prototxt", "../models/ledge/ledge1_iter_2000.caffemodel");
+	regressions["ledge"][1] = new Regression("../models/ledge/deploy_2.prototxt", "../models/ledge/ledge2_iter_2000.caffemodel");
+	regressions["ledge"][2] = new Regression("../models/ledge/deploy_3.prototxt", "../models/ledge/ledge3_iter_2000.caffemodel");
 	
 	mcmc = new MCMC(this);
 }
@@ -401,7 +402,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	start = clock();
 
 	// optimize the parameter values by MCMC
-	if (strokes.size() > 2) {
+	if (strokes.size() > 2 && grammar_id != 4) {
 		mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 25, current_z, params);
 	}
 	/*
@@ -418,6 +419,14 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	float offset_y = params[1] * 16 - 8;
 	float object_width = params[2] * 24 + 4;
 	float object_depth = params[3] * 24 + 4;
+
+	// HACK: for observatory
+	if (grammar_id == 3) {
+		float avg_width_depth = (object_width + object_depth) * 0.5f;
+		object_width = avg_width_depth;
+		object_depth = avg_width_depth;
+	}
+
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
@@ -462,6 +471,8 @@ void GLWidget3D::predictRoof(int grammar_id) {
 		return;
 	}
 
+	std::cout << "Roof: grammar " << (grammar_id + 1) << " was selected." << std::endl;
+
 	renderManager.removeObjects();
 
 	time_t start = clock();
@@ -470,6 +481,7 @@ void GLWidget3D::predictRoof(int grammar_id) {
 	cv::Mat img;
 	convertSketch(true, img);
 	std::vector<float> params = regressions["roof"][grammar_id]->Predict(img);
+	debug("Roof regression", params);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -1391,3 +1403,11 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 	glEnable(GL_DEPTH_TEST);
 }
 
+void GLWidget3D::debug(const std::string& message, const std::vector<float>& values) {
+	std::cout << message << ": ";
+	for (int i = 0; i < values.size(); ++i) {
+		if (i > 0) std::cout << ", ";
+		std::cout << values[i];
+	}
+	std::cout << std::endl;
+}
