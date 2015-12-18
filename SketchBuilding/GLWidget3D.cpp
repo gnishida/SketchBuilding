@@ -395,6 +395,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	cv::Mat img;
 	convertSketch(true, img);
 	std::vector<float> params = regressions["building"][grammar_id]->Predict(img);
+	debug("Building regression: ", params);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -402,15 +403,8 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	start = clock();
 
 	// optimize the parameter values by MCMC
-	if (strokes.size() > 2 && grammar_id != 4) {
-		mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 25, current_z, params);
-	}
-	/*
-	for (int i = 0; i < params.size(); ++i) {
-		std::cout << params[i] << ",";
-	}
-	std::cout << std::endl;
-	*/
+	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 25, current_z, params);
+	debug("Building MCMC: ", params);
 
 	end = clock();
 	std::cout << "Duration of MCMC: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -533,6 +527,7 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	cv::Mat img;
 	convertSketch(true, img);
 	std::vector<float> params = regressions["window"][grammar_id]->Predict(img);
+	debug("Window regression", params);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -558,6 +553,7 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	cv::Mat img;
 	convertSketch(true, img);
 	std::vector<float> params = regressions["ledge"][grammar_id]->Predict(img);
+	debug("Ledge regression", params);
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -975,23 +971,25 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		update();
 	}
 	else {
-		if (stage == "building") {
-			updateBuildingOptions();
-		}
-		else if (stage == "roof") {
-			updateRoofOptions();
-		}
-		else if (stage == "facade") {
-			updateFacadeOptions();
-		}
-		else if (stage == "floor") {
-			updateFloorOptions();
-		}
-		else if (stage == "window") {
-			updateWindowOptions();
-		}
-		else if (stage == "ledge") {
-			updateLedgeOptions();
+		if (strokes.size() > 3) {
+			if (stage == "building") {
+				updateBuildingOptions();
+			}
+			else if (stage == "roof") {
+				updateRoofOptions();
+			}
+			else if (stage == "facade") {
+				updateFacadeOptions();
+			}
+			else if (stage == "floor") {
+				updateFloorOptions();
+			}
+			else if (stage == "window") {
+				updateWindowOptions();
+			}
+			else if (stage == "ledge") {
+				updateLedgeOptions();
+			}
 		}
 	}
 }
