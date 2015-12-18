@@ -971,25 +971,27 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		update();
 	}
 	else {
-		if (strokes.size() > 3) {
-			if (stage == "building") {
+		if (stage == "building") {
+			if (strokes.size() > 3) {
 				updateBuildingOptions();
 			}
-			else if (stage == "roof") {
-				updateRoofOptions();
-			}
-			else if (stage == "facade") {
-				updateFacadeOptions();
-			}
-			else if (stage == "floor") {
-				updateFloorOptions();
-			}
-			else if (stage == "window") {
+		}
+		else if (stage == "roof") {
+			updateRoofOptions();
+		}
+		else if (stage == "facade") {
+			updateFacadeOptions();
+		}
+		else if (stage == "floor") {
+			updateFloorOptions();
+		}
+		else if (stage == "window") {
+			if (strokes.size() > 2) {
 				updateWindowOptions();
 			}
-			else if (stage == "ledge") {
-				updateLedgeOptions();
-			}
+		}
+		else if (stage == "ledge") {
+			updateLedgeOptions();
 		}
 	}
 }
@@ -1095,6 +1097,7 @@ void GLWidget3D::initializeGL() {
 	////////////////////////////////
 	renderManager.init("", "", "", true, 8192);
 	renderManager.resize(this->width(), this->height());
+	renderManager.renderingMode = RenderManager::RENDERING_MODE_HATCHING;
 
 	glUniform1i(glGetUniformLocation(renderManager.programs["ssao"], "tex0"), 0);//tex0: 0
 
