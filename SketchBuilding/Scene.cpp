@@ -217,81 +217,159 @@ void Scene::alignObjects() {
 
 void Scene::alignObjects(int currentObject, int controlPoint) {
 	float threshold = 0.5f;
+	float min_threshold = 0.0001f;
 
-	for (int i = 0; i < _objects.size(); ++i) {
-		if (i == currentObject) continue;
+	// This flag is to check whether the face is already snapped.
+	// Note that the face that is already snaped should not be snapped to other faces again at the same time.
+	std::vector<bool> snapped(5, false);
 
-		if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x) < threshold) {
-			float diff = _objects[i].offset_x - _objects[currentObject].offset_x;
+	for (int loop = 0; loop < 5; ++loop) {
+		float min_dist = std::numeric_limits<float>::max();
+		int snap_to_object = -1;
+		int snap_type = -1;
+		for (int i = 0; i < _objects.size(); ++i) {
+			if (i == currentObject) continue;
+
+			float dist;
+			if (!snapped[0]) {
+				dist = fabs(_objects[currentObject].offset_x - _objects[i].offset_x);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 0;
+				}
+				dist = fabs(_objects[currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 1;
+				}
+			}
+			if (!snapped[2]) {
+				dist = fabs(_objects[currentObject].offset_y - _objects[i].offset_y);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 2;
+				}
+				dist = fabs(_objects[currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 3;
+				}
+			}
+			if (!snapped[1]) {
+				dist = fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x - _objects[i].object_width);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 4;
+				}
+				dist = fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 5;
+				}
+			}
+			if (!snapped[3]) {
+				dist = fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 6;
+				}
+				dist = fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y);
+				if (dist < min_dist && dist > min_threshold) {
+					min_dist = dist;
+					snap_to_object = i;
+					snap_type = 7;
+				}
+			}
+		}
+
+		if (min_dist >= threshold) break;
+
+		if (fabs(_objects[currentObject].offset_x - _objects[snap_to_object].offset_x) < threshold) {
+			float diff = _objects[snap_to_object].offset_x - _objects[currentObject].offset_x;
 			if (controlPoint == 0 || controlPoint == 1) {
-				_objects[currentObject].offset_x = _objects[i].offset_x;
+				_objects[currentObject].offset_x = _objects[snap_to_object].offset_x;
 			}
 			if (controlPoint == 1) {
 				_objects[currentObject].object_width -= diff;
 			}
+			snapped[0] = true;
 		}
-		if (fabs(_objects[currentObject].offset_x - _objects[i].offset_x - _objects[i].object_width) < threshold) {
-			float diff = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
+		if (fabs(_objects[currentObject].offset_x - _objects[snap_to_object].offset_x - _objects[snap_to_object].object_width) < threshold) {
+			float diff = _objects[snap_to_object].offset_x + _objects[snap_to_object].object_width - _objects[currentObject].offset_x;
 			if (controlPoint == 0 || controlPoint == 1) {
-				_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width;
+				_objects[currentObject].offset_x = _objects[snap_to_object].offset_x + _objects[snap_to_object].object_width;
 			}
 			if (controlPoint == 1) {
 				_objects[currentObject].object_width -= diff;
 			}
+			snapped[0] = true;
 		}
 
-		if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y) < threshold) {
-			float diff = _objects[i].offset_y - _objects[currentObject].offset_y;
+		if (fabs(_objects[currentObject].offset_y - _objects[snap_to_object].offset_y) < threshold) {
+			float diff = _objects[snap_to_object].offset_y - _objects[currentObject].offset_y;
 			if (controlPoint == 0 || controlPoint == 3) {
-				_objects[currentObject].offset_y = _objects[i].offset_y;
+				_objects[currentObject].offset_y = _objects[snap_to_object].offset_y;
 			}
 			if (controlPoint == 3) {
 				_objects[currentObject].object_depth -= diff;
 			}
+			snapped[2] = true;
 		}
-		if (fabs(_objects[currentObject].offset_y - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
-			float diff = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
+		if (fabs(_objects[currentObject].offset_y - _objects[snap_to_object].offset_y - _objects[snap_to_object].object_depth) < threshold) {
+			float diff = _objects[snap_to_object].offset_y + _objects[snap_to_object].object_depth - _objects[currentObject].offset_y;
 			if (controlPoint == 0 || controlPoint == 3) {
-				_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth;
+				_objects[currentObject].offset_y = _objects[snap_to_object].offset_y + _objects[snap_to_object].object_depth;
 			}
 			if (controlPoint == 3) {
 				_objects[currentObject].object_depth -= diff;
 			}
+			snapped[2] = true;
 		}
 
 
-		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x - _objects[i].object_width) < threshold) {
+		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[snap_to_object].offset_x - _objects[snap_to_object].object_width) < threshold) {
 			if (controlPoint == 0) {
-				_objects[currentObject].offset_x = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].object_width;
+				_objects[currentObject].offset_x = _objects[snap_to_object].offset_x + _objects[snap_to_object].object_width - _objects[currentObject].object_width;
 			}
 			if (controlPoint == 2) {
-				_objects[currentObject].object_width = _objects[i].offset_x + _objects[i].object_width - _objects[currentObject].offset_x;
+				_objects[currentObject].object_width = _objects[snap_to_object].offset_x + _objects[snap_to_object].object_width - _objects[currentObject].offset_x;
 			}
+			snapped[1] = true;
 		}
-		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[i].offset_x) < threshold) {
+		if (fabs(_objects[currentObject].offset_x + _objects[currentObject].object_width - _objects[snap_to_object].offset_x) < threshold) {
 			if (controlPoint == 0) {
-				_objects[currentObject].offset_x = _objects[i].offset_x - _objects[currentObject].object_width;
+				_objects[currentObject].offset_x = _objects[snap_to_object].offset_x - _objects[currentObject].object_width;
 			}
 			if (controlPoint == 2) {
-				_objects[currentObject].object_width = _objects[i].offset_x - _objects[currentObject].offset_x;
+				_objects[currentObject].object_width = _objects[snap_to_object].offset_x - _objects[currentObject].offset_x;
 			}
+			snapped[1] = true;
 		}
 
-		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y - _objects[i].object_depth) < threshold) {
+		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[snap_to_object].offset_y - _objects[snap_to_object].object_depth) < threshold) {
 			if (controlPoint == 0) {
-				_objects[currentObject].offset_y = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].object_depth;
+				_objects[currentObject].offset_y = _objects[snap_to_object].offset_y + _objects[snap_to_object].object_depth - _objects[currentObject].object_depth;
 			}
 			if (controlPoint == 4) {
-				_objects[currentObject].object_depth = _objects[i].offset_y + _objects[i].object_depth - _objects[currentObject].offset_y;
+				_objects[currentObject].object_depth = _objects[snap_to_object].offset_y + _objects[snap_to_object].object_depth - _objects[currentObject].offset_y;
 			}
+			snapped[3] = true;
 		}
-		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[i].offset_y) < threshold) {
+		if (fabs(_objects[currentObject].offset_y + _objects[currentObject].object_depth - _objects[snap_to_object].offset_y) < threshold) {
 			if (controlPoint == 0) {
-				_objects[currentObject].offset_y = _objects[i].offset_y - _objects[currentObject].object_depth;
+				_objects[currentObject].offset_y = _objects[snap_to_object].offset_y - _objects[currentObject].object_depth;
 			}
 			if (controlPoint == 4) {
-				_objects[currentObject].object_depth = _objects[i].offset_y - _objects[currentObject].offset_y;
+				_objects[currentObject].object_depth = _objects[snap_to_object].offset_y - _objects[currentObject].offset_y;
 			}
+			snapped[3] = true;
 		}
 	}
 }
@@ -327,59 +405,6 @@ void Scene::alignObjects(const glutils::Face& baseFace) {
 
 
 	alignObjects();
-}
-
-void Scene::alignObjectsForWillisTower() {
-	// 最下層
-	if (_currentObject == 0) {
-		float wh = (_objects[_currentObject].object_width + _objects[_currentObject].object_depth) * 0.5f;
-		_objects[_currentObject].object_width = wh;
-		_objects[_currentObject].object_depth = wh;
-	}
-	
-	// １つ目の層
-	if (_currentObject == 1) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x;
-		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-	}
-	else if (_currentObject == 2) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x;
-		_objects[_currentObject].offset_y = _objects[0].offset_y;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-	}
-	else if (_currentObject == 3) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x + _objects[0].object_width / 2;
-		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-		_objects[_currentObject].setHeight(_objects[1].height);
-	}
-	else if (_currentObject == 4) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x + _objects[0].object_width / 2;
-		_objects[_currentObject].offset_y = _objects[0].offset_y;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-		_objects[_currentObject].setHeight(_objects[1].height);
-	}
-
-	// 2つめの層
-	if (_currentObject == 5) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x;
-		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-	}
-
-	// 3つめの層
-	if (_currentObject == 6) {
-		_objects[_currentObject].offset_x = _objects[0].offset_x;
-		_objects[_currentObject].offset_y = _objects[0].offset_y + _objects[0].object_depth / 2;
-		_objects[_currentObject].object_width = _objects[0].object_width / 2;
-		_objects[_currentObject].object_depth = _objects[0].object_depth / 2;
-	}
 }
 
 /**

@@ -58,7 +58,6 @@ public:
 	void alignObjects();
 	void alignObjects(int currentObject, int controlPoint);
 	void alignObjects(const glutils::Face& baseFace);
-	void alignObjectsForWillisTower();
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 
 	void generateGeometry(RenderManager* renderManager, const std::string& stage);
