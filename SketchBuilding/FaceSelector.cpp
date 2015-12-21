@@ -81,6 +81,15 @@ bool FaceSelector::selectFace(const glm::vec3& cameraPos, const glm::vec3& viewD
 	}
 }
 
+void FaceSelector::selectFace(const boost::shared_ptr<glutils::Face>& face) {
+	unselect();
+
+	_selectedFace = face;
+	_selectedFaceCopy = *_selectedFace;
+	_selectedFaceName = _selectedFace->name;
+	_selected = true;
+}
+
 std::string FaceSelector::selectedFaceName() {
 	return _selectedFaceName;
 }

@@ -133,6 +133,15 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 	lastPos = endPoint;
 }
 
+void GLWidget3D::drawLassoLineTo(const QPoint &endPoint) {
+	QPoint pt1(lastPos.x(), lastPos.y());
+	QPoint pt2(endPoint.x(), endPoint.y());
+
+	lasso.push_back(glm::vec2(endPoint.x(), height() - endPoint.y()));
+
+	lastPos = endPoint;
+}
+
 /**
  * Clear the canvas.
  */
@@ -709,6 +718,123 @@ bool GLWidget3D::selectFace(const glm::vec2& mouse_pos) {
 	}
 }
 
+/**
+* infer stage and face
+*/
+bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
+	clearSketch();
+
+	// the selected building should be unselected.
+	scene.buildingSelector->unselectBuilding();
+	scene.faceSelector->unselect();
+
+	glm::vec3 camera_view = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
+	boost::shared_ptr<glutils::Face> face = scene.findFace(lasso, camera.mvpMatrix, camera_view, width(), height());
+
+	if (face != NULL) {
+		if (face->name.compare(0, 4, "Roof") == 0) {
+			stage = "roof";
+			scene.faceSelector->selectFace(face);
+
+			// make the yrot in the rage [-180,179]
+			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
+			if (camera.yrot > 180) camera.yrot -= 360;
+
+			// find the nearest quadrant
+			float yrot = 0.0f;
+			if (camera.yrot >= -90 && camera.yrot <= 0) {
+				yrot = -45.0f;
+			}
+			else if (camera.yrot > 0 && camera.yrot <= 90) {
+				yrot = 45.0f;
+			}
+			else if (camera.yrot > 90) {
+				yrot = 135.0f;
+			}
+			else {
+				yrot = -135.0f;
+			}
+
+			// shift the camera such that the selected face becomes a ground plane.
+			intCamera = InterpolationCamera(camera, 30, yrot, 0.0, glm::vec3(0, scene.faceSelector->selectedFace()->vertices[0].position.y, CAMERA_DEFAULT_DEPTH));
+			current_z = scene.faceSelector->selectedFace()->vertices[0].position.y;
+
+			scene.faceSelector->selectedFace()->select();
+			return true;
+		}
+		else if (face->name.compare(0, 6, "Facade") == 0) {
+			stage = "facade";
+			scene.faceSelector->selectFace(face);
+
+			// compute appropriate camera distance for the selected face
+			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.faceSelector->selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.maxPt.z + d));
+
+			scene.faceSelector->selectedFace()->select();
+			return true;
+		}
+		else if (face->name.compare(0, 5, "Floor") == 0) {
+			stage = "floor";
+			scene.faceSelector->selectFace(face);
+
+			// compute appropriate camera distance for the selected face
+			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.faceSelector->selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.maxPt.z + d));
+
+			scene.faceSelector->selectedFace()->select();
+			return true;
+		}
+		else if (face->name.compare(0, 6, "Window") == 0) {
+			stage = "window";
+			scene.faceSelector->selectFace(face);
+
+			// compute appropriate camera distance for the selected face
+			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.faceSelector->selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.maxPt.z + d));
+
+			scene.faceSelector->selectedFace()->select();
+			return true;
+		}
+		else if (face->name.compare(0, 5, "Ledge") == 0) {
+			stage = "ledge";
+			scene.faceSelector->selectFace(face);
+
+			// compute appropriate camera distance for the selected face
+			float rot_y = -M_PI * 0.4 + atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
+			glutils::Face rotatedFace = scene.faceSelector->selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
+			float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
+			float d = std::max(d1, d2) * 1.5f;
+
+			// turn the camera such that the selected face becomes parallel to the image plane.
+			intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.maxPt.z + d));
+
+			scene.faceSelector->selectedFace()->select();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool GLWidget3D::selectBuilding(const glm::vec2& mouse_pos) {
 	// camera position in the world coordinates
 	glm::vec3 cameraPos = camera.cameraPosInWorld();
@@ -799,7 +925,6 @@ void GLWidget3D::changeStage(const std::string& stage) {
 
 	// the selected building should be unselected.
 	scene.buildingSelector->unselectBuilding();
-
 	scene.faceSelector->unselect();
 
 	if (stage == "building") {
@@ -904,7 +1029,7 @@ void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 /**
  * This event handler is called when the mouse button is pressed.
  */
-void GLWidget3D::mousePressEvent(QMouseEvent *e) {
+void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 	dragging = true;
 
 	if (mode == MODE_CAMERA) { // move camera
@@ -922,16 +1047,23 @@ void GLWidget3D::mousePressEvent(QMouseEvent *e) {
 		}
 		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 	}
-	else { // start drawing a stroke
-		lastPos = e->pos();
-		strokes.resize(strokes.size() + 1);
+	else {
+		if (e->buttons() & Qt::LeftButton) {
+			// start drawing a stroke
+			lastPos = e->pos();
+			strokes.resize(strokes.size() + 1);
+		}
+		else if (e->buttons() & Qt::RightButton) {
+			// start drawing a lasso
+			lastPos = e->pos();
+		}
 	}
 }
 
 /**
  * This event handler is called when the mouse button is released.
  */
-void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
+void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 	dragging = false;
 
 	if (mode == MODE_CAMERA) {
@@ -971,27 +1103,37 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 		update();
 	}
 	else {
-		if (stage == "building") {
-			if (strokes.size() > 3) {
+		if (e->button() == Qt::LeftButton) {
+			if (stage == "building") {
 				updateBuildingOptions();
 			}
-		}
-		else if (stage == "roof") {
-			updateRoofOptions();
-		}
-		else if (stage == "facade") {
-			updateFacadeOptions();
-		}
-		else if (stage == "floor") {
-			updateFloorOptions();
-		}
-		else if (stage == "window") {
-			if (strokes.size() > 2) {
+			else if (stage == "roof") {
+				updateRoofOptions();
+			}
+			else if (stage == "facade") {
+				updateFacadeOptions();
+			}
+			else if (stage == "floor") {
+				updateFloorOptions();
+			}
+			else if (stage == "window") {
 				updateWindowOptions();
 			}
+			else if (stage == "ledge") {
+				updateLedgeOptions();
+			}
 		}
-		else if (stage == "ledge") {
-			updateLedgeOptions();
+		else if (e->button() == Qt::RightButton) {
+			if (selectStageAndFace(glm::vec2(e->x(), e->y()))) {
+				camera_timer = new QTimer(this);
+				connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
+				camera_timer->start(20);
+
+				mainWin->actionStages[stage]->setChecked(true);
+			}
+
+			lasso.clear();
+			update();
 		}
 	}
 }
@@ -999,7 +1141,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent *e) {
 /**
  * This event handler is called when the mouse is dragged.
  */
-void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
+void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 	if (dragging) {
 		if (mode == MODE_CAMERA) {
 			if (e->buttons() & Qt::LeftButton) { // Rotate
@@ -1026,8 +1168,15 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent *e) {
 				generateGeometry();
 			}
 		}
-		else { // keep drawing a stroke
-			drawLineTo(e->pos());
+		else {
+			if (e->buttons() & Qt::LeftButton) {
+				// keep drawing a stroke
+				drawLineTo(e->pos());
+			}
+			else if (e->buttons() & Qt::RightButton) {
+				// keep drawing a lasso
+				drawLassoLineTo(e->pos());
+			}
 		}
 
 		update();
@@ -1138,7 +1287,7 @@ void GLWidget3D::resizeGL(int width, int height) {
 	sketch = newImage;
 }
 
-void GLWidget3D::paintEvent(QPaintEvent *event) {
+void GLWidget3D::paintEvent(QPaintEvent* e) {
 	// OpenGLで描画
 	makeCurrent();
 
@@ -1389,6 +1538,13 @@ void GLWidget3D::paintEvent(QPaintEvent *event) {
 		for (int i = 0; i < (int)stroke.size() - 1; ++i) {
 			painter.drawLine(stroke[i].x, height() - stroke[i].y, stroke[i + 1].x, height() - stroke[i + 1].y);
 		}
+	}
+
+	// draw lasso
+	QPen pen2(Qt::red, 3);
+	painter.setPen(pen2);
+	for (int i = 0; i < (int)lasso.size() - 1; ++i) {
+		painter.drawLine(lasso[i].x, height() - lasso[i].y, lasso[i + 1].x, height() - lasso[i + 1].y);
 	}
 
 	// draw the bottom area

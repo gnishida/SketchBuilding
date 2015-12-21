@@ -408,77 +408,72 @@ void Scene::alignObjects(const glutils::Face& baseFace) {
 }
 
 /**
-* Select a face by hit testing.
-*
-* @param p			the point that emits ray.
-* @param v			the ray vector
-*/
-/*
-bool Scene::selectFace(const glm::vec3& p, const glm::vec3& v, const std::string& stage, const glm::vec3& normal) {
-	glm::vec3 intPt;
-	float min_dist = (std::numeric_limits<float>::max)();
-
-	unselectFace();
+ * 各faceについて、screen 座標を計算し、lassoに入る頂点のみで構成される面の面積を計算し、最も面積が大きい面を返却する。
+ */
+boost::shared_ptr<glutils::Face> Scene::findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height) {
+	float max_area = 0;
+	boost::shared_ptr<glutils::Face> face;
 
 	for (int i = 0; i < _objects.size(); ++i) {
 		for (int j = 0; j < _objects[i].faces.size(); ++j) {
-			if (_objects[i].faces[j]->vertices.size() < 3) continue;
+			// skip the back face
+			if (glm::dot(camera_view, _objects[i].faces[j]->vertices[0].normal) >= 0) continue;
 
-			// check the face's type
-			if (stage == "building") {
-				if (_objects[i].faces[j]->grammar_type != "building") continue;
-			}
-			else if (stage == "roof") {
-				if (_objects[i].faces[j]->grammar_type != "building") continue;
-			}
-			else if (stage == "facade") {
-				if (_objects[i].faces[j]->grammar_type != "building") continue;
-			}
-			else if (stage == "floor") {
-				if (_objects[i].faces[j]->grammar_type != "facade") continue;
-			}
-			else if (stage == "window") {
-				if (_objects[i].faces[j]->grammar_type != "floor") continue;
-			}
-			else if (stage == "ledge") {
-				if (_objects[i].faces[j]->grammar_type != "facade") continue;
-			}
+			std::vector<glm::vec2> insideFacePoints;
 
-			for (int k = 0; k < _objects[i].faces[j]->vertices.size(); k += 3) {
-				if (fabs(glm::dot(_objects[i].faces[j]->vertices[0].normal, normal)) < 0.99f) continue;
+			for (int k = 0; k < _objects[i].faces[j]->vertices.size() / 3; ++k) {
+				if (k == 0) {
+					glm::vec4 pp = mvpMatrix * glm::vec4(_objects[i].faces[j]->vertices[k * 3].position, 1);
+					glm::vec2 p((pp.x / pp.w * 0.5 + 0.5) * screen_width, (pp.y / pp.w * 0.5 + 0.5) * screen_height);
 
-				if (glutils::rayTriangleIntersection(p, v, _objects[i].faces[j]->vertices[k].position, _objects[i].faces[j]->vertices[k + 1].position, _objects[i].faces[j]->vertices[k + 2].position, intPt)) {
-					float dist = glm::length(intPt - p);
+					// 点pが、lasso内にあるか？
+					if (glutils::isWithinPolygon(p, lasso)) {
+						insideFacePoints.push_back(p);
+					}
 
-					if (dist < min_dist) {
-						min_dist = dist;
-						_selectedFace = _objects[i].faces[j];
-						_currentObject = i;
+					glm::vec4 pp2 = mvpMatrix * glm::vec4(_objects[i].faces[j]->vertices[k * 3 + 1].position, 1);
+					glm::vec2 p2((pp2.x / pp2.w * 0.5 + 0.5) * screen_width, (pp2.y / pp2.w * 0.5 + 0.5) * screen_height);
+
+					// 点p2が、lasso内にあるか？
+					if (glutils::isWithinPolygon(p2, lasso)) {
+						insideFacePoints.push_back(p2);
+					}
+
+					glm::vec4 pp3 = mvpMatrix * glm::vec4(_objects[i].faces[j]->vertices[k * 3 + 2].position, 1);
+					glm::vec2 p3((pp3.x / pp3.w * 0.5 + 0.5) * screen_width, (pp3.y / pp3.w * 0.5 + 0.5) * screen_height);
+
+					// 点p3が、lasso内にあるか？
+					if (glutils::isWithinPolygon(p3, lasso)) {
+						insideFacePoints.push_back(p3);
 					}
 				}
+				else {
+					glm::vec4 pp = mvpMatrix * glm::vec4(_objects[i].faces[j]->vertices[k * 3 + 2].position, 1);
+					glm::vec2 p((pp.x / pp.w * 0.5 + 0.5) * screen_width, (pp.y / pp.w * 0.5 + 0.5) * screen_height);
 
+					// 点pが、lasso内にあるか？
+					if (glutils::isWithinPolygon(p, lasso)) {
+						insideFacePoints.push_back(p);
+					}
+				}
+			}
+
+			// lasso内の頂点のみで構成される面の面積を計算する
+			float area = 0;
+			if (insideFacePoints.size() >= 3) {
+				area = glutils::area(insideFacePoints);
+			}
+
+			if (area > max_area) {
+				max_area = area;
+
+				face = _objects[i].faces[j];
 			}
 		}
 	}
 
-	if (_selectedFace) {
-		//_selectedFace->select();
-		_selectedFaceName = _selectedFace->name;
-		return true;
-	}
-	else {
-		_selectedFaceName = "";
-		return false;
-	}
+	return face;
 }
-*/
-
-/*void Scene::unselectFace() {
-	if (faceSelector.selected()) {
-		_selectedFace->unselect();
-		_selectedFace.reset();
-	}
-}*/
 
 /**
  * Generate geometry by the grammars, and send the geometry to GPU memory.

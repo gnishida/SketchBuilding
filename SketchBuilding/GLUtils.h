@@ -50,6 +50,7 @@ public:
 
 // geometry computation
 bool isWithinPolygon(const glm::vec2& p, const std::vector<glm::vec2>& points);
+float area(const std::vector<glm::vec2>& points);
 void offsetPolygon(const std::vector<glm::vec2>& points, float offsetDistance, std::vector<glm::vec2>& offset_points);
 float distance(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, bool segmentOnly = false);
 float distance(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c);

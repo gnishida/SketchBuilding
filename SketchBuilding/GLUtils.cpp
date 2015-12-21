@@ -194,6 +194,16 @@ bool isWithinPolygon(const glm::vec2& p, const std::vector<glm::vec2>& points) {
 	return boost::geometry::within(point_2d(p.x, p.y), contour);
 }
 
+float area(const std::vector<glm::vec2>& points) {
+	boost::geometry::model::ring<point_2d> contour;
+	for (int i = 0; i < points.size(); ++i) {
+		contour.push_back(point_2d(points[i].x, points[i].y));
+	}
+	boost::geometry::correct(contour);
+
+	return boost::geometry::area(contour);
+}
+
 /**
  * Compute the offset polygon.
  */
