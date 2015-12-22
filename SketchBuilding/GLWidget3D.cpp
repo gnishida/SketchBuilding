@@ -90,7 +90,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][3] = new Regression("../models/building/deploy_4.prototxt", "../models/building/building4_iter_60000.caffemodel");
 	regressions["building"][4] = new Regression("../models/building/deploy_5.prototxt", "../models/building/building5_iter_10000.caffemodel");
 
-	classifiers["roof"] = new Classifier("../models/roof/deploy.prototxt", "../models/roof/train_iter_2000.caffemodel", "../models/roof/roofs_mean.binaryproto");
+	classifiers["roof"] = new Classifier("../models/roof/deploy.prototxt", "../models/roof/train_iter_10000.caffemodel", "../models/roof/roofs_mean.binaryproto");
 	regressions["roof"].resize(7);
 	regressions["roof"][0] = new Regression("../models/roof/deploy_1.prototxt", "../models/roof/roof1_iter_2000.caffemodel");
 	regressions["roof"][1] = new Regression("../models/roof/deploy_2.prototxt", "../models/roof/roof2_iter_2000.caffemodel");
@@ -100,7 +100,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["roof"][5] = new Regression("../models/roof/deploy_6.prototxt", "../models/roof/roof6_iter_2000.caffemodel");
 	regressions["roof"][6] = new Regression("../models/roof/deploy_7.prototxt", "../models/roof/roof7_iter_2000.caffemodel");
 
-	classifiers["window"] = new Classifier("../models/window/deploy.prototxt", "../models/window/train_iter_2000.caffemodel", "../models/window/windows_mean.binaryproto");
+	classifiers["window"] = new Classifier("../models/window/deploy.prototxt", "../models/window/train_iter_10000.caffemodel", "../models/window/windows_mean.binaryproto");
 	regressions["window"].resize(9);
 	regressions["window"][0] = new Regression("../models/window/deploy_1.prototxt", "../models/window/window1_iter_100.caffemodel");
 	regressions["window"][1] = new Regression("../models/window/deploy_2.prototxt", "../models/window/window2_iter_100.caffemodel");
@@ -112,7 +112,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["window"][7] = new Regression("../models/window/deploy_8.prototxt", "../models/window/window8_iter_100.caffemodel");
 	regressions["window"][8] = new Regression("../models/window/deploy_9.prototxt", "../models/window/window9_iter_100.caffemodel");
 
-	classifiers["ledge"] = new Classifier("../models/ledge/deploy.prototxt", "../models/ledge/train_iter_2000.caffemodel", "../models/ledge/ledges_mean.binaryproto");
+	classifiers["ledge"] = new Classifier("../models/ledge/deploy.prototxt", "../models/ledge/train_iter_10000.caffemodel", "../models/ledge/ledges_mean.binaryproto");
 	regressions["ledge"].resize(3);
 	regressions["ledge"][0] = new Regression("../models/ledge/deploy_1.prototxt", "../models/ledge/ledge1_iter_2000.caffemodel");
 	regressions["ledge"][1] = new Regression("../models/ledge/deploy_2.prototxt", "../models/ledge/ledge2_iter_2000.caffemodel");
