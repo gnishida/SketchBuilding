@@ -211,12 +211,11 @@ void Scene::removeObject(int objectId) {
 	}
 }
 
-void Scene::alignObjects() {
-	alignObjects(_currentObject, 0);
+void Scene::alignObjects(float threshold) {
+	alignObjects(_currentObject, 0, threshold);
 }
 
-void Scene::alignObjects(int currentObject, int controlPoint) {
-	float threshold = 0.5f;
+void Scene::alignObjects(int currentObject, int controlPoint, float threshold) {
 	float min_threshold = 0.0001f;
 
 	// This flag is to check whether the face is already snapped.
@@ -374,7 +373,7 @@ void Scene::alignObjects(int currentObject, int controlPoint) {
 	}
 }
 
-void Scene::alignObjects(const glutils::Face& baseFace) {
+void Scene::alignObjects(const glutils::Face& baseFace, float threshold) {
 	if (_objects[_currentObject].offset_x < baseFace.bbox.minPt.x) {
 		float diff = baseFace.bbox.minPt.x - _objects[_currentObject].offset_x;
 		_objects[_currentObject].offset_x = baseFace.bbox.minPt.x;
@@ -404,7 +403,7 @@ void Scene::alignObjects(const glutils::Face& baseFace) {
 	}
 
 
-	alignObjects();
+	alignObjects(threshold);
 }
 
 /**

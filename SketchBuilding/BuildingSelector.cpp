@@ -302,9 +302,9 @@ void BuildingSelector::avoidBuildingConflict(int currentBuilding) {
 	}
 }
 
-void BuildingSelector::alignObjects() {
+void BuildingSelector::alignObjects(float threshold) {
 	if (_selectedBuilding >= 0) {
-		_scene->alignObjects(_selectedBuilding, _selectedBuildingControlPoint);
+		_scene->alignObjects(_selectedBuilding, _selectedBuildingControlPoint, threshold);
 	}
 }
 

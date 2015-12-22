@@ -35,7 +35,7 @@ public:
 	void remove();
 	void resize(const glm::vec2& mousePt, bool conflictAllowed);
 	void avoidBuildingConflict(int currentBuilding);
-	void alignObjects();
+	void alignObjects(float threshold);
 
 	void generateGeometry(RenderManager* renderManager);
 };

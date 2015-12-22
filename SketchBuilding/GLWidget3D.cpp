@@ -27,7 +27,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	dragging = false;
 	ctrlPressed = false;
 	shiftPressed = false;
-	demo_mode = 0;
+	align_threshold = 0.5;
 	pen_pressure = 0.5;
 
 	// this flag is for workaround.
@@ -443,10 +443,10 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	if (scene.faceSelector->selected()) {
-		scene.alignObjects(scene.faceSelector->selectedFaceCopy());
+		scene.alignObjects(scene.faceSelector->selectedFaceCopy(), align_threshold);
 	}
 	else {
-		scene.alignObjects();
+		scene.alignObjects(align_threshold);
 	}
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
@@ -1009,12 +1009,6 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	case Qt::Key_Shift:
 		shiftPressed = true;
 		break;
-	case Qt::Key_0:
-		demo_mode = 0;
-		break;
-	case Qt::Key_1:
-		demo_mode = 1;
-		break;
 	default:
 		break;
 	}
@@ -1097,7 +1091,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 	else if (mode == MODE_SELECT_BUILDING) { // select a building
 		if (scene.buildingSelector->isBuildingControlPointSelected()) {
 			if (shiftPressed) {
-				scene.buildingSelector->alignObjects();
+				scene.buildingSelector->alignObjects(align_threshold);
 			}
 			scene.buildingSelector->unselectBuildingControlPoint();
 			generateGeometry();
@@ -1153,6 +1147,12 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 * This event handler is called when the mouse is dragged.
 */
 void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
+	// Workaround:
+	// Tablet emits the mouseMoveEvent even if the pen touches the screen for a very short time.
+	// Thus, if the elapsed time is too short, skip this event.
+	time_t time = clock();
+	if (time - mouse_pressed_time < 100) return;
+
 	if (dragging) {
 		if (mode == MODE_CAMERA) {
 			if (e->buttons() & Qt::RightButton) { // Zoom
@@ -1174,7 +1174,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 				// resize the building
 				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !ctrlPressed);
 				if (shiftPressed) {
-					scene.buildingSelector->alignObjects();
+					scene.buildingSelector->alignObjects(align_threshold);
 				}
 				generateGeometry();
 			}

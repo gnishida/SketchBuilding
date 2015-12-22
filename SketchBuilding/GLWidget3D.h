@@ -54,7 +54,8 @@ public:
 	std::string preStage;
 	int preRenderingMode;
 	int mode;
-	int demo_mode;
+	float align_threshold;
+	time_t mouse_pressed_time;
 	std::map<std::string, std::vector<Regression*> > regressions;
 	std::map<std::string, Classifier*> classifiers;
 	MCMC* mcmc;

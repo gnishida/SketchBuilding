@@ -55,9 +55,9 @@ public:
 	void clearCurrentObject();
 	void newObject();
 	void removeObject(int objectId);
-	void alignObjects();
-	void alignObjects(int currentObject, int controlPoint);
-	void alignObjects(const glutils::Face& baseFace);
+	void alignObjects(float threshold);
+	void alignObjects(int currentObject, int controlPoint, float threshold);
+	void alignObjects(const glutils::Face& baseFace, float threshold);
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 
 	boost::shared_ptr<glutils::Face> findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height);
