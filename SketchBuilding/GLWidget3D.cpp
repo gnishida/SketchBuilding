@@ -420,7 +420,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	start = clock();
 
 	// optimize the parameter values by MCMC
-	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 25, current_z, params);
+	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 20, current_z, params);
 	debug("Building MCMC: ", params);
 
 	end = clock();
@@ -1034,6 +1034,7 @@ void GLWidget3D::tabletEvent(QTabletEvent *e) {
 */
 void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 	dragging = true;
+	mouse_pressed_time = clock();
 
 	if (mode == MODE_CAMERA) { // move camera
 		camera.mousePress(e->x(), e->y());
