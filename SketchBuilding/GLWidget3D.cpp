@@ -29,6 +29,10 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	shiftPressed = false;
 	demo_mode = 0;
 
+	// this flag is for workaround.
+	// Qt should not call TabletEvent and MouseEvent at the same time, but it actually calls both events.
+	tableEventUsed = false;
+
 	// This is necessary to prevent the screen overdrawn by OpenGL
 	setAutoFillBackground(false);
 
@@ -117,7 +121,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	mcmc = new MCMC(this);
 }
 
-void GLWidget3D::drawLineTo(const QPoint &endPoint) {
+void GLWidget3D::drawLineTo(const QPoint &endPoint, float width) {
 	QPoint pt1(lastPos.x(), lastPos.y());
 	QPoint pt2(endPoint.x(), endPoint.y());
 
@@ -129,15 +133,17 @@ void GLWidget3D::drawLineTo(const QPoint &endPoint) {
 	painter.drawLine(pt1, pt2);
 
 	strokes.back().push_back(glm::vec2(endPoint.x(), height() - endPoint.y()));
+	stroke_widths.back().push_back(width);
 
 	lastPos = endPoint;
 }
 
-void GLWidget3D::drawLassoLineTo(const QPoint &endPoint) {
+void GLWidget3D::drawLassoLineTo(const QPoint &endPoint, float width) {
 	QPoint pt1(lastPos.x(), lastPos.y());
 	QPoint pt2(endPoint.x(), endPoint.y());
 
 	lasso.push_back(glm::vec2(endPoint.x(), height() - endPoint.y()));
+	lasso_widths.push_back(width);
 
 	lastPos = endPoint;
 }
@@ -148,6 +154,7 @@ void GLWidget3D::drawLassoLineTo(const QPoint &endPoint) {
 void GLWidget3D::clearSketch() {
 	sketch.fill(qRgba(255, 255, 255, 255));
 	strokes.clear();
+	stroke_widths.clear();
 }
 
 void GLWidget3D::clearGeometry() {
@@ -1029,18 +1036,18 @@ void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 /**
  * This event handler is called when the mouse button is pressed.
  */
-void GLWidget3D::mousePressEvent(QMouseEvent* e) {
+void GLWidget3D::mousePress(const QPoint& pos, Qt::MouseButtons buttons) {
 	dragging = true;
 
 	if (mode == MODE_CAMERA) { // move camera
-		camera.mousePress(e->x(), e->y());
+		camera.mousePress(pos.x(), pos.y());
 	}
 	else if (mode == MODE_SELECT) {
 		// do nothing
 	}
 	else if (mode == MODE_SELECT_BUILDING) {
 		if (scene.buildingSelector->isBuildingSelected()) {
-			selectBuildingControlPoint(glm::vec2(e->x(), e->y()));
+			selectBuildingControlPoint(glm::vec2(pos.x(), pos.y()));
 
 			updateGeometry();
 			update();
@@ -1048,14 +1055,15 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 	}
 	else {
-		if (e->buttons() & Qt::LeftButton) {
-			// start drawing a stroke
-			lastPos = e->pos();
-			strokes.resize(strokes.size() + 1);
-		}
-		else if (e->buttons() & Qt::RightButton) {
+		if (buttons & Qt::RightButton) {
 			// start drawing a lasso
-			lastPos = e->pos();
+			lastPos = pos;
+		}
+		else if (buttons & Qt::LeftButton) {
+			// start drawing a stroke
+			lastPos = pos;
+			strokes.resize(strokes.size() + 1);
+			stroke_widths.resize(stroke_widths.size() + 1);
 		}
 	}
 }
@@ -1063,14 +1071,14 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 /**
  * This event handler is called when the mouse button is released.
  */
-void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
+void GLWidget3D::mouseRelease(const QPoint& pos, Qt::MouseButton button) {
 	dragging = false;
 
 	if (mode == MODE_CAMERA) {
 		// do nothing
 	}
 	else if (mode == MODE_SELECT) { // select a face
-		if (selectFace(glm::vec2(e->x(), e->y()))) {
+		if (selectFace(glm::vec2(pos.x(), pos.y()))) {
 			updateGeometry();
 
 			// When a face is selected, the user should start drawing.
@@ -1093,7 +1101,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 			generateGeometry();
 		}
 		else {
-			if (selectBuilding(glm::vec2(e->x(), e->y()))) {
+			if (selectBuilding(glm::vec2(pos.x(), pos.y()))) {
 				std::cout << "A building is selected." << std::endl;
 			}
 		}
@@ -1103,7 +1111,19 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 		update();
 	}
 	else {
-		if (e->button() == Qt::LeftButton) {
+		if (button == Qt::RightButton) {
+			if (selectStageAndFace(glm::vec2(pos.x(), pos.y()))) {
+				camera_timer = new QTimer(this);
+				connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
+				camera_timer->start(20);
+
+				mainWin->actionStages[stage]->setChecked(true);
+			}
+
+			lasso.clear();
+			update();
+		}
+		else if (button == Qt::LeftButton) {
 			if (stage == "building") {
 				updateBuildingOptions();
 			}
@@ -1123,35 +1143,24 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 				updateLedgeOptions();
 			}
 		}
-		else if (e->button() == Qt::RightButton) {
-			if (selectStageAndFace(glm::vec2(e->x(), e->y()))) {
-				camera_timer = new QTimer(this);
-				connect(camera_timer, SIGNAL(timeout()), mainWin, SLOT(camera_update()));
-				camera_timer->start(20);
 
-				mainWin->actionStages[stage]->setChecked(true);
-			}
-
-			lasso.clear();
-			update();
-		}
 	}
 }
 
 /**
  * This event handler is called when the mouse is dragged.
  */
-void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
+void GLWidget3D::mouseMove(const QPoint& pos, float pressure, Qt::MouseButtons buttons) {
 	if (dragging) {
 		if (mode == MODE_CAMERA) {
-			if (e->buttons() & Qt::LeftButton) { // Rotate
-				camera.rotate(e->x(), e->y());
+			if (buttons & Qt::RightButton) { // Zoom
+				camera.zoom(pos.x(), pos.y());
 			}
-			else if (e->buttons() & Qt::MidButton) { // Move
-				camera.move(e->x(), e->y());
+			else if (buttons & Qt::MidButton) { // Move
+				camera.move(pos.x(), pos.y());
 			}
-			else if (e->buttons() & Qt::RightButton) { // Zoom
-				camera.zoom(e->x(), e->y());
+			else if (buttons & Qt::LeftButton) { // Rotate
+				camera.rotate(pos.x(), pos.y());
 			}
 			clearSketch();
 		}
@@ -1161,7 +1170,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 		else if (mode == MODE_SELECT_BUILDING) {
 			if (scene.buildingSelector->isBuildingControlPointSelected()) {
 				// resize the building
-				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !ctrlPressed);
+				scene.buildingSelector->resize(glm::vec2(pos.x(), pos.y()), !ctrlPressed);
 				if (shiftPressed) {
 					scene.buildingSelector->alignObjects();
 				}
@@ -1169,20 +1178,20 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 			}
 		}
 		else {
-			if (e->buttons() & Qt::LeftButton) {
-				// keep drawing a stroke
-				drawLineTo(e->pos());
-			}
-			else if (e->buttons() & Qt::RightButton) {
+			if (buttons & Qt::RightButton) {
 				// keep drawing a lasso
-				drawLassoLineTo(e->pos());
+				drawLassoLineTo(pos, pressure * 10 + 1);
+			}
+			else if (buttons & Qt::LeftButton) {
+				// keep drawing a stroke
+				drawLineTo(pos, pressure * 10 + 1);
 			}
 		}
 
 		update();
 	}
 	else {
-		if (e->y() > height() - BOTTOM_AREA_HEIGHT) {
+		if (pos.y() > height() - BOTTOM_AREA_HEIGHT) {
 			if (stage != "peek_final") {
 				preStage = stage;
 				stage = "peek_final";
@@ -1204,6 +1213,36 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 			}
 		}
 	}
+}
+
+void GLWidget3D::tabletEvent(QTabletEvent *e) {
+	tableEventUsed = true;
+
+	switch (e->type()) {
+	case QEvent::TabletPress:
+		mousePress(e->pos(), e->buttons());
+		break;
+	case QEvent::TabletRelease:
+		mouseRelease(e->pos(), e->button());
+		break;
+	case QEvent::TabletMove:
+		mouseMove(e->pos(), e->pressure(), e->buttons());
+		break;
+	default:
+		break;
+	}
+}
+
+void GLWidget3D::mousePressEvent(QMouseEvent* e) {
+	if (!tableEventUsed) mousePress(e->pos(), e->buttons());
+}
+
+void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
+	if (!tableEventUsed) mouseRelease(e->pos(), e->button());
+}
+
+void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
+	if (!tableEventUsed) mouseMove(e->pos(), 0.5, e->buttons());
 }
 
 /**
@@ -1530,13 +1569,13 @@ void GLWidget3D::paintEvent(QPaintEvent* e) {
 
 	// draw sketch
 	QPainter painter(this);
-	//painter.setOpacity(0.5);
-	//painter.drawImage(0, 0, sketch);
 	QPen pen(Qt::blue, 3);
 	painter.setPen(pen);
-	for (auto stroke : strokes) {
-		for (int i = 0; i < (int)stroke.size() - 1; ++i) {
-			painter.drawLine(stroke[i].x, height() - stroke[i].y, stroke[i + 1].x, height() - stroke[i + 1].y);
+	for (int k = 0; k < strokes.size(); ++k) {
+		for (int i = 0; i < (int)strokes[k].size() - 1; ++i) {
+			pen.setWidthF(stroke_widths[k][i]);
+			painter.setPen(pen);
+			painter.drawLine(strokes[k][i].x, height() - strokes[k][i].y, strokes[k][i + 1].x, height() - strokes[k][i + 1].y);
 		}
 	}
 
@@ -1544,6 +1583,8 @@ void GLWidget3D::paintEvent(QPaintEvent* e) {
 	QPen pen2(Qt::red, 3);
 	painter.setPen(pen2);
 	for (int i = 0; i < (int)lasso.size() - 1; ++i) {
+		pen2.setWidthF(lasso_widths[i]);
+		painter.setPen(pen2);
 		painter.drawLine(lasso[i].x, height() - lasso[i].y, lasso[i + 1].x, height() - lasso[i + 1].y);
 	}
 

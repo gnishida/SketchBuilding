@@ -39,11 +39,15 @@ public:
 	MainWindow* mainWin;
 	QImage sketch;
 	std::vector<std::vector<glm::vec2> > strokes;
+	std::vector<std::vector<float> > stroke_widths;
 	std::vector<glm::vec2> lasso;
+	std::vector<float> lasso_widths;
 	QPoint lastPos;
 	bool dragging;
 	bool ctrlPressed;
 	bool shiftPressed;
+
+	bool tableEventUsed;
 
 	std::string stage;
 	std::string preStage;
@@ -67,8 +71,8 @@ public:
 
 public:
 	GLWidget3D(QWidget* parent);
-	void drawLineTo(const QPoint& endPoint);
-	void drawLassoLineTo(const QPoint& endPoint);
+	void drawLineTo(const QPoint& endPoint, float width);
+	void drawLassoLineTo(const QPoint& endPoint, float width);
 	void clearSketch();
 	void clearGeometry();
 	void drawScene();
@@ -104,8 +108,12 @@ public:
 	void camera_update();
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
+	void mousePress(const QPoint& pos, Qt::MouseButtons buttons);
+	void mouseRelease(const QPoint& pos, Qt::MouseButton button);
+	void mouseMove(const QPoint& pos, float pressure, Qt::MouseButtons buttons);
 
 protected:
+	void tabletEvent(QTabletEvent* e);
 	void mousePressEvent(QMouseEvent* e);
 	void mouseMoveEvent(QMouseEvent* e);
 	void mouseReleaseEvent(QMouseEvent* e);
