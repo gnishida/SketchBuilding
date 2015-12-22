@@ -51,6 +51,7 @@ public:
 
 	std::string stage;
 	std::string preStage;
+	int preRenderingMode;
 	int mode;
 	int demo_mode;
 	std::map<std::string, std::vector<Regression*> > regressions;

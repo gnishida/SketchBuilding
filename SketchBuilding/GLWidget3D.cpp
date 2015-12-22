@@ -440,7 +440,6 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 
-	std::cout << current_z << std::endl;
 	scene.currentObject().setFootprint(offset_x, offset_y, current_z, object_width, object_depth);
 	if (scene.faceSelector->selected()) {
 		scene.alignObjects(scene.faceSelector->selectedFaceCopy());
@@ -448,22 +447,13 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	else {
 		scene.alignObjects();
 	}
-	//scene.alignObjectsForWillisTower();
 	
 	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
 
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
-	
-
-	// HACK
-	if (params[0] < 0) params[0] = 0;
-	if (params[0] > 1) params[0] = 1;
-	params[0] = (int)(params[0] * 10 + 0.5) * 0.1f;
-
 	std::cout << "Height: " << params[0] << std::endl;
-
-
+	
 	// set parameter values
 	scene.currentObject().setGrammar("Start", grammars["building"][grammar_id], params, true);
 	
@@ -953,6 +943,7 @@ void GLWidget3D::changeStage(const std::string& stage) {
 	else if (stage == "ledge") {
 	}
 	else if (stage == "final") {
+		renderManager.renderingMode = RenderManager::RENDERING_MODE_SSAO;
 		generateGeometry();
 	}
 
@@ -1121,14 +1112,15 @@ void GLWidget3D::mouseRelease(const QPoint& pos, Qt::MouseButton button) {
 			}
 
 			lasso.clear();
+			lasso_widths.clear();
 			update();
 		}
 		else if (button == Qt::LeftButton) {
 			if (stage == "building") {
-				updateBuildingOptions();
+				if (strokes.size() > 3) updateBuildingOptions();
 			}
 			else if (stage == "roof") {
-				updateRoofOptions();
+				if (strokes.size() > 3) updateRoofOptions();
 			}
 			else if (stage == "facade") {
 				updateFacadeOptions();
@@ -1137,7 +1129,7 @@ void GLWidget3D::mouseRelease(const QPoint& pos, Qt::MouseButton button) {
 				updateFloorOptions();
 			}
 			else if (stage == "window") {
-				updateWindowOptions();
+				if (strokes.size() > 3) updateWindowOptions();
 			}
 			else if (stage == "ledge") {
 				updateLedgeOptions();
@@ -1194,7 +1186,9 @@ void GLWidget3D::mouseMove(const QPoint& pos, float pressure, Qt::MouseButtons b
 		if (pos.y() > height() - BOTTOM_AREA_HEIGHT) {
 			if (stage != "peek_final") {
 				preStage = stage;
+				preRenderingMode = renderManager.renderingMode;
 				stage = "peek_final";
+				renderManager.renderingMode = RenderManager::RENDERING_MODE_SSAO;
 
 				// generate final geometry
 				generateGeometry();
@@ -1205,6 +1199,7 @@ void GLWidget3D::mouseMove(const QPoint& pos, float pressure, Qt::MouseButtons b
 		else {
 			if (stage == "peek_final") {
 				stage = preStage;
+				renderManager.renderingMode = preRenderingMode;
 
 				// generate geometry
 				generateGeometry();
