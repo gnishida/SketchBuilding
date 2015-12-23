@@ -8,6 +8,7 @@ namespace cga {
 
 Cuboid::Cuboid(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
@@ -20,6 +21,7 @@ Cuboid::Cuboid(const std::string& name, const std::string& grammar_type, const g
 
 Cuboid::Cuboid(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color, const std::string& texture, float s1, float t1, float s2, float t2) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;

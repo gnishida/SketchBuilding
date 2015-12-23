@@ -119,56 +119,18 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 	updateGeometry(renderManager, stage);
 }
 
+/**
+* Select only those visible faces and send them to GPU
+*/
 void SceneObject::updateGeometry(RenderManager* renderManager, const std::string& stage) {
+	std::vector<boost::shared_ptr<glutils::Face> > visible_faces;
 	for (int i = 0; i < faces.size(); ++i) {
-		bool transparent = false;
-
-		if (stage == "") {
-			transparent = false;
-		}
-		else if (stage == "building") {
-			if (faces[i]->grammar_type != "building") {
-				transparent = true;
-			}
-		}
-		else if (stage == "roof") {
-			if (faces[i]->grammar_type == "roof") {
-				transparent = true;
-			}
-		}
-		else if (stage == "facade") {
-			if (faces[i]->grammar_type != "building" && faces[i]->grammar_type != "roof") {
-				transparent = true;
-			}
-		}
-		else if (stage == "floor") {
-			if (faces[i]->grammar_type != "building" && faces[i]->grammar_type != "roof" && faces[i]->grammar_type != "facade") {
-				transparent = true;
-			}
-		}
-		else if (stage == "window") {
-			if (faces[i]->grammar_type == "window") {
-				transparent = true;
-			}
-		}
-		else if (stage == "ledge") {
-			if (faces[i]->grammar_type == "ledge") {
-				transparent = true;
-			}
-		}
-
-		if (transparent) {
-			for (int j = 0; j < faces[i]->vertices.size(); ++j) {
-				faces[i]->vertices[j].color.a = 0.5f;
-			}
-		} else {
-			for (int j = 0; j < faces[i]->vertices.size(); ++j) {
-				faces[i]->vertices[j].color.a = 1.0f;
-			}
+		if (faces[i]->vertices[0].color.a == 1.0f) {
+			visible_faces.push_back(faces[i]);
 		}
 	}
 
-	renderManager->addFaces(faces);
+	renderManager->addFaces(visible_faces);
 }
 
 Scene::Scene() {

@@ -9,6 +9,7 @@ namespace cga {
 
 Cylinder::Cylinder(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, float height, const glm::vec3& color) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;

@@ -6,6 +6,7 @@ namespace cga {
 
 GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
@@ -18,6 +19,7 @@ GeneralObject::GeneralObject(const std::string& name, const std::string& grammar
 
 GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
@@ -30,6 +32,7 @@ GeneralObject::GeneralObject(const std::string& name, const std::string& grammar
 
 GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec3>& points, const std::vector<glm::vec3>& normals, const glm::vec3& color, const std::vector<glm::vec2>& texCoords, const std::string& texture) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
@@ -44,6 +47,7 @@ GeneralObject::GeneralObject(const std::string& name, const std::string& grammar
 
 GeneralObject::GeneralObject(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<std::vector<glm::vec3> >& points, const std::vector<std::vector<glm::vec3> >& normals, const glm::vec3& color, const std::vector<std::vector<glm::vec2> >& texCoords, const std::string& texture) {
 	this->_active = true;
+	this->_axiom = false;
 	this->_name = name;
 	this->_grammar_type = grammar_type;
 	this->_pivot = pivot;
