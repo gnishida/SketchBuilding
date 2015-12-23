@@ -44,7 +44,9 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 		if (old_value - delta >= 0.0f) {
 			params[r] = old_value - delta;
 			dist1 = distanceTransform(grammar, distMap, params, offset_z, i * 2);
-			std::cout << "    proposal 1 (" << old_value << " -> " << params[r] << "): " << dist1 << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+			//std::cout << "    proposal 1 (" << old_value << " -> " << params[r] << "): " << dist1 << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
 		}
 
 		// dist from the proposal 2
