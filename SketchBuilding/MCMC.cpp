@@ -8,8 +8,6 @@ MCMC::MCMC(GLWidget3D* glWidget) {
 }
 
 void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold, int maxIters, float offset_z, std::vector<float>& params) {
-	time_t start = clock();
-
 	// cretae a binary image
 	cv::Mat image2;
 	cv::threshold(image, image2, 254, 255, CV_THRESH_BINARY);
@@ -26,7 +24,7 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 	int WIDTH = image.cols;
 	int HEIGHT = image.rows;
 
-	float delta = 0.1f;
+	float delta = 0.05f;
 	int stepsize = 10;
 
 	int step_count = 0;
@@ -87,9 +85,6 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 
 		if (dist < threshold) break;
 	}
-
-	time_t end = clock();
-	std::cout << "Duration: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 }
 
 float MCMC::distanceTransform(cga::Grammar& grammar, const cv::Mat& distMap, const std::vector<float>& params, float offset_z, int count) {

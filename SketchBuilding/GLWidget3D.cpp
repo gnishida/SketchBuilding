@@ -417,7 +417,7 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 
 	// optimize the parameter values by MCMC
 	start = clock();
-	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 20, current_z, params);
+	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 14, current_z, params);
 	debug("Building MCMC: ", params);
 	end = clock();
 	std::cout << "Duration of MCMC: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
