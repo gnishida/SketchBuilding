@@ -406,23 +406,19 @@ void GLWidget3D::updateLedgeOptions() {
 void GLWidget3D::predictBuilding(int grammar_id) {
 	renderManager.removeObjects();
 
-	time_t start = clock();
-
 	// predict parameter values by deep learning
+	time_t start = clock();
 	cv::Mat img;
 	convertSketch(true, img);
 	std::vector<float> params = regressions["building"][grammar_id]->Predict(img);
 	debug("Building regression: ", params);
-
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
-	start = clock();
-
 	// optimize the parameter values by MCMC
+	start = clock();
 	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 20, current_z, params);
 	debug("Building MCMC: ", params);
-
 	end = clock();
 	std::cout << "Duration of MCMC: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 	
@@ -449,8 +445,6 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 		scene.alignObjects(align_threshold);
 	}
 	
-	//std::cout << offset_x << "," << offset_y << "," << object_width << "," << object_depth << std::endl;
-
 	// remove the first four parameters because they are not included in the grammar
 	params.erase(params.begin(), params.begin() + 4);
 	std::cout << "Height: " << params[0] << std::endl;

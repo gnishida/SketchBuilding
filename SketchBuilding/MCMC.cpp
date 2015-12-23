@@ -14,7 +14,9 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 	cv::Mat image2;
 	cv::threshold(image, image2, 254, 255, CV_THRESH_BINARY);
 
+	///////////////////////////////// DEBUG ///////////////////////////////// 
 	//cv::imwrite("results/input.png", image2);
+	///////////////////////////////// DEBUG ///////////////////////////////// 
 
 	// compute a distance map
 	cv::Mat distMap;
@@ -29,37 +31,51 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 
 	int step_count = 0;
 	float dist = std::numeric_limits<float>::max();
-	for (int i = 0; i < maxIters; ++i) {
-		///////////////////////////////// DEBUG ///////////////////////////////// 
-		/*
-		QImage hoge = renderImage(params, ranges);
-		char filename[256];
-		sprintf(filename, "results/image_%04d.png", i);
-		hoge.save(filename);
-		*/
-		///////////////////////////////// DEBUG ///////////////////////////////// 
-		
+	for (int i = 0; i < maxIters; ++i) {		
 		int r = i % params.size();
 		float old_value = params[r];
 
+		///////////////////////////////// DEBUG ///////////////////////////////// 
+		//std::cout << "Round: " << (i + 1) << " (" << (r+1) << "th param)" << std::endl;
+		///////////////////////////////// DEBUG ///////////////////////////////// 
+
 		// dist from the proposal 1
-		params[r] = std::max(0.0f, old_value - delta);
-		float dist1 = distanceTransform(grammar, distMap, params, offset_z, i);
+		float dist1 = std::numeric_limits<float>::max();
+		if (old_value - delta >= 0.0f) {
+			params[r] = old_value - delta;
+			dist1 = distanceTransform(grammar, distMap, params, offset_z, i * 2);
+			std::cout << "    proposal 1 (" << old_value << " -> " << params[r] << "): " << dist1 << std::endl;
+		}
 
 		// dist from the proposal 2
-		params[r] = std::min(1.0f, old_value + delta);
-		float dist2 = distanceTransform(grammar, distMap, params, offset_z, i);
+		float dist2 = std::numeric_limits<float>::max();
+		if (old_value + delta <= 1.0f) {
+			params[r] = std::min(1.0f, old_value + delta);
+			dist2 = distanceTransform(grammar, distMap, params, offset_z, i * 2 + 1);
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+			//std::cout << "    proposal 2 (" << old_value << " -> " << params[r] << "): " << dist2 << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+		}
 
 		if (dist1 <= dist2 && dist1 <= dist) {
 			params[r] = old_value - delta;
 			dist = dist1;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+			//std::cout << "--> proposal 1" << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
 		}
 		else if (dist2 <= dist1 && dist2 <= dist) {
 			params[r] = old_value + delta;
 			dist = dist2;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+			//std::cout << "--> proposal 2" << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
 		}
 		else {
 			params[r] = old_value;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
+			//std::cout << "--> remain the current state" << std::endl;
+			///////////////////////////////// DEBUG ///////////////////////////////// 
 		}
 
 		if (step_count >= stepsize) {
@@ -76,10 +92,6 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 
 float MCMC::distanceTransform(cga::Grammar& grammar, const cv::Mat& distMap, const std::vector<float>& params, float offset_z, int count) {
 	QImage ref_image = renderImage(grammar, params, offset_z);
-
-	//char filename[256];
-	//sprintf(filename, "results/image_%03d.png", count);
-	//ref_image.save(filename);
 
 	cv::Mat mat(ref_image.height(), ref_image.width(), CV_8UC4, ref_image.bits(), ref_image.bytesPerLine());
 	cv::Mat grayMat;
@@ -99,15 +111,23 @@ float MCMC::distanceTransform(cga::Grammar& grammar, const cv::Mat& distMap, con
 	cv::resize(grayMat, grayMat, cv::Size(128, 128));
 	cv::threshold(grayMat, grayMat, 250, 255, CV_THRESH_BINARY);
 
+	///////////////////////////////// DEBUG ///////////////////////////////// 
+	//char filename[256];
+	//sprintf(filename, "results/image_%03d.png", count);
+	//cv::imwrite(filename, grayMat);
+	///////////////////////////////// DEBUG ///////////////////////////////// 
+
 	// compute a distance map
 	cv::Mat ref_distMap;
 	cv::distanceTransform(grayMat, ref_distMap, CV_DIST_L2, 3);
 	ref_distMap.convertTo(ref_distMap, CV_32F);
 
-	char filename2[256];
-	sprintf(filename2, "results/ref_distMap_%03d.png", count);
+	///////////////////////////////// DEBUG ///////////////////////////////// 
+	//char filename2[256];
+	//sprintf(filename2, "results/ref_distMap_%03d.png", count);
 	//cv::imwrite(filename2, ref_distMap);
-	
+	///////////////////////////////// DEBUG ///////////////////////////////// 
+
 	// compute the squared difference
 	cv::Mat tmp;
 	cv::reduce((distMap - ref_distMap).mul(distMap - ref_distMap), tmp, 0, CV_REDUCE_SUM);
@@ -134,15 +154,6 @@ QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params
 	int prevMode = glWidget->renderManager.renderingMode;
 	glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_LINE;
 	glUseProgram(glWidget->renderManager.programs["pass1"]);
-
-	// set camera
-	/*
-	glWidget->camera.xrot = 25.0f;
-	glWidget->camera.yrot = -40.0f;
-	glWidget->camera.zrot = 0.0f;
-	glWidget->camera.pos = glm::vec3(0, 0, 40.0f);
-	glWidget->camera.updateMVPMatrix();
-	*/
 
 	// lot
 	cga::Rectangle* start = new cga::Rectangle("Start", "building", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
