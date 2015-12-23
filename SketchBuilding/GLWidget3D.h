@@ -100,6 +100,12 @@ public:
 
 	bool selectFace(const glm::vec2& mouse_pos);
 	bool selectStageAndFace(const glm::vec2& mouse_pos);
+	void selectFaceForBuilding();
+	void selectFaceForRoof();
+	void selectFaceForFacade();
+	void selectFaceForFloor();
+	void selectFaceForWindow();
+	void selectFaceForLedge();
 	bool selectBuilding(const glm::vec2& mouse_pos);
 	bool selectBuildingControlPoint(const glm::vec2& mouse_pos);
 	void addBuildingMass();

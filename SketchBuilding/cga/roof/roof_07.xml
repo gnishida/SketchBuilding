@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
-	<attr name="overhang" value="0.2" range="0.01,1"/>
+	<attr name="overhang" value="0.2" range="0.05,1"/>
 	
 	<rule name="Start">
 		<offset offsetDistance="overhang" inside="RoofOffset_07" border="RoofWall_07"/>

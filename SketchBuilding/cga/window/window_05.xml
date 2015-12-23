@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <grammar type="window" version="1.0" author="Gen Nishida">
 	<attr name="horizontal_interval_ratio" value="0.5" range="0.3,0.5"/>
-	<attr name="offset_size" value="0.05" range="0.01,0.2"/>
+	<attr name="offset_size" value="0.05" range="0.02,0.2"/>
 	<attr name="shutter_interval" value="0.05" range="0.03,0.2"/>
+	<attr name="shutter_ratio" value="0.2" range="0.1,0.3"/>
 	<attr name="vertical_interval_ratio" value="0.5" range="0.3,0.5"/>
-	<attr name="window_sill_height" value="0.05" range="0.01,0.2"/>
+	<attr name="window_sill_height" value="0.05" range="0.02,0.15"/>
 	
 	<rule name="Start">
 		<split splitAxis="x">
-			<param type="relative" value="0.2" name="WindowShutterArea_05"/>
-			<param type="relative" value="0.6" name="WindowMainArea_05"/>
-			<param type="relative" value="0.2" name="WindowShutterArea_05"/>
+			<param type="relative" value="shutter_ratio" name="WindowShutterArea_05"/>
+			<param type="relative" value="1-shutter_ratio*2" name="WindowMainArea_05"/>
+			<param type="relative" value="shutter_ratio" name="WindowShutterArea_05"/>
 		</split>
 	</rule>
 	<rule name="WindowMainArea_05">

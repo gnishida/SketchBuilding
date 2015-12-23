@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
-	<attr name="overhang" value="0.2" range="0,1"/>
-	<attr name="roof_extrude_height" value="0.2" range="0.01,2"/>
+	<attr name="overhang" value="0.2" range="0.05,1"/>
+	<attr name="roof_extrude_height" value="0.2" range="0.02,2"/>
 	
 	<rule name="Start">
 		<offset offsetDistance="overhang*0.8" inside="TopFaceOffset"/>
