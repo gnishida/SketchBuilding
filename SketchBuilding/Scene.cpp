@@ -371,8 +371,9 @@ void Scene::alignObjects(const glutils::Face& baseFace, float threshold) {
 /**
  * 各faceについて、screen 座標を計算し、lassoに入る頂点のみで構成される面の面積を計算し、最も面積が大きい面を返却する。
  */
-boost::shared_ptr<glutils::Face> Scene::findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height) {
+std::pair<int, boost::shared_ptr<glutils::Face> > Scene::findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height) {
 	float max_area = 0;
+	int object_id;
 	boost::shared_ptr<glutils::Face> face;
 
 	for (int i = 0; i < _objects.size(); ++i) {
@@ -428,12 +429,13 @@ boost::shared_ptr<glutils::Face> Scene::findFace(const std::vector<glm::vec2>& l
 			if (area > max_area) {
 				max_area = area;
 
+				object_id = i;
 				face = _objects[i].faces[j];
 			}
 		}
 	}
 
-	return face;
+	return std::make_pair(object_id, face);
 }
 
 /**

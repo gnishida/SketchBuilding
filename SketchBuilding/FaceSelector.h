@@ -26,7 +26,7 @@ public:
 	glutils::Face selectedFaceCopy();
 	std::string selectedFaceName();
 	bool selectFace(const glm::vec3& cameraPos, const glm::vec3& viewDir, const std::string& stage, const glm::vec3& normal);
-	void selectFace(const boost::shared_ptr<glutils::Face>& face);
+	void selectFace(int object_id, const boost::shared_ptr<glutils::Face>& face);
 	void unselect();
 };
 

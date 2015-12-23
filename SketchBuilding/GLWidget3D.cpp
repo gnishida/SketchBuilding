@@ -721,12 +721,14 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 	scene.faceSelector->unselect();
 
 	glm::vec3 camera_view = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
-	boost::shared_ptr<glutils::Face> face = scene.findFace(lasso, camera.mvpMatrix, camera_view, width(), height());
+	std::pair<int, boost::shared_ptr<glutils::Face> > result = scene.findFace(lasso, camera.mvpMatrix, camera_view, width(), height());
+	int object_id = result.first;
+	boost::shared_ptr<glutils::Face> face = result.second;
 
 	if (face != NULL) {
 		if (face->name.compare(0, 4, "Roof") == 0) {
 			stage = "roof";
-			scene.faceSelector->selectFace(face);
+			scene.faceSelector->selectFace(object_id, face);
 
 			// make the yrot in the rage [-180,179]
 			camera.yrot = (int)(camera.yrot + 360 * 10) % 360;
@@ -756,7 +758,7 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 		}
 		else if (face->name.compare(0, 6, "Facade") == 0) {
 			stage = "facade";
-			scene.faceSelector->selectFace(face);
+			scene.faceSelector->selectFace(object_id, face);
 
 			// compute appropriate camera distance for the selected face
 			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
@@ -773,7 +775,7 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 		}
 		else if (face->name.compare(0, 5, "Floor") == 0) {
 			stage = "floor";
-			scene.faceSelector->selectFace(face);
+			scene.faceSelector->selectFace(object_id, face);
 
 			// compute appropriate camera distance for the selected face
 			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
@@ -790,7 +792,7 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 		}
 		else if (face->name.compare(0, 6, "Window") == 0) {
 			stage = "window";
-			scene.faceSelector->selectFace(face);
+			scene.faceSelector->selectFace(object_id, face);
 
 			// compute appropriate camera distance for the selected face
 			float rot_y = atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
@@ -807,7 +809,7 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 		}
 		else if (face->name.compare(0, 5, "Ledge") == 0) {
 			stage = "ledge";
-			scene.faceSelector->selectFace(face);
+			scene.faceSelector->selectFace(object_id, face);
 
 			// compute appropriate camera distance for the selected face
 			float rot_y = -M_PI * 0.4 + atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);

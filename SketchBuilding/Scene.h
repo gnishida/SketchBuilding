@@ -60,7 +60,7 @@ public:
 	void alignObjects(const glutils::Face& baseFace, float threshold);
 	SceneObject& currentObject() { return _objects[_currentObject]; }
 
-	boost::shared_ptr<glutils::Face> findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height);
+	std::pair<int, boost::shared_ptr<glutils::Face> > findFace(const std::vector<glm::vec2>& lasso, const glm::mat4& mvpMatrix, const glm::vec3& camera_view, int screen_width, int screen_height);
 
 	void generateGeometry(RenderManager* renderManager, const std::string& stage);
 	void updateGeometry(RenderManager* renderManager, const std::string& stage);
