@@ -93,7 +93,8 @@ void main(){
 			ivec3 sizeOfTex = textureSize(hatchingTexture, 0);
 
 			// sample 3D texture to get hatching intensity
-			outputF.rgb = texture(hatchingTexture, vec3(coord.x / pixelSize.x / sizeOfTex.x, coord.y / pixelSize.y / sizeOfTex.y, lightIntensity)).rgb;
+			//outputF.rgb = texture(hatchingTexture, vec3(coord.x / pixelSize.x / sizeOfTex.x, coord.y / pixelSize.y / sizeOfTex.y, lightIntensity)).rgb;
+			outputF.rgb = texture(hatchingTexture, vec3((originPos.x + originPos.z) * 0.5, (originPos.x * 0.5 + originPos.y + originPos.z) * 0.5, lightIntensity)).rgb;
 			outputF.a = 1;
 		}
 		else {
