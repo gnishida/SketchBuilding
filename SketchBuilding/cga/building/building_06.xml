@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<grammar type="building" version="1.0" author="Gen Nishida">
+	<attr name="height" value="5" range="4,40"/>
+	<attr name="k_corner_cut_length" value="4" range="1,8"/>
+	
+	<rule name="Start">
+		<cornerCut type="curve" length="k_corner_cut_length"/>
+		<extrude height="height"/>
+		<comp>
+			<param name="side" value="Facade"/>
+			<param name="top" value="Roof"/>
+			<param name="bottom" value="Base."/>
+		</comp>
+	</rule>
+</rules>
