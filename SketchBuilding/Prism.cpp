@@ -15,6 +15,25 @@ Prism::Prism(const std::string& name, const std::string& grammar_type, const glm
 	this->_modelMat = modelMat;
 	this->_points = points;
 	this->_color = color;
+	this->_textureEnabled = false;
+
+	glutils::BoundingBox bbox(points);
+	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, height);
+}
+
+Prism::Prism(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, float height, const glm::vec3& color, const std::string& texture, float texWidth, float texHeight) {
+	this->_active = true;
+	this->_axiom = false;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
+	this->_pivot = pivot;
+	this->_modelMat = modelMat;
+	this->_points = points;
+	this->_color = color;
+	this->_texture = texture;
+	this->_textureEnabled = true;
+	this->_texWidth = texWidth;
+	this->_texHeight = texHeight;
 
 	glutils::BoundingBox bbox(points);
 	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, height);
@@ -29,12 +48,22 @@ boost::shared_ptr<Shape> Prism::clone(const std::string& name) const {
 void Prism::comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	// top face
 	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
+		if (_textureEnabled) {
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture, _texWidth, _texHeight)));
+		}
+		else {
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("top"), _grammar_type, _pivot, glm::translate(_modelMat, glm::vec3(0, 0, _scope.z)), _points, _color, _texture)));
+		}
 	}
 
 	// bottom face
 	if (name_map.find("bottom") != name_map.end() && name_map.at("bottom") != "NIL") {
-		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture)));
+		if (_textureEnabled) {
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture, _texWidth, _texHeight)));
+		}
+		else {
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("bottom"), _grammar_type, _pivot, _modelMat, _points, _color, _texture)));
+		}
 	}
 
 	// front face

@@ -367,6 +367,33 @@ void drawCircle(float r1, float r2, const glm::vec4& color, const glm::mat4& mat
 	}
 }
 
+void drawCircle(float r1, float r2, float texWidth, float texHeight, const glm::mat4& mat, std::vector<Vertex>& vertices, int slices) {
+	glm::vec4 p1(0, 0, 0, 1);
+	glm::vec4 n(0, 0, 1, 0);
+	glm::vec2 t1(r1 / texWidth, r2 / texHeight);
+
+	p1 = mat * p1;
+	n = mat * n;
+
+	for (int i = 0; i < slices; ++i) {
+		float theta1 = (float)i / slices * M_PI * 2.0f;
+		float theta2 = (float)(i + 1) / slices * M_PI * 2.0f;
+
+		glm::vec4 p2(cosf(theta1) * r1, sinf(theta1) * r2, 0, 1);
+		glm::vec4 p3(cosf(theta2) * r1, sinf(theta2) * r2, 0, 1);
+
+		glm::vec2 t2((p2.x + r1) / texWidth, (p2.y + r2) / texHeight);
+		glm::vec2 t3((p3.x + r1) / texWidth, (p3.y + r2) / texHeight);
+
+		p2 = mat * p2;
+		p3 = mat * p3;
+
+		vertices.push_back(Vertex(glm::vec3(p1), glm::vec3(n), glm::vec4(1, 1, 1, 1), t1));
+		vertices.push_back(Vertex(glm::vec3(p2), glm::vec3(n), glm::vec4(1, 1, 1, 1), t2, 1));
+		vertices.push_back(Vertex(glm::vec3(p3), glm::vec3(n), glm::vec4(1, 1, 1, 1), t3, 1));
+	}
+}
+
 void drawQuad(float w, float h, const glm::vec4& color, const glm::mat4& mat, std::vector<Vertex>& vertices) {
 	glm::vec4 p1(-w * 0.5, -h * 0.5, 0, 1);
 	glm::vec4 p2(w * 0.5, -h * 0.5, 0, 1);

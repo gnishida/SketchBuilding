@@ -90,12 +90,16 @@ boost::shared_ptr<Shape> Circle::roofHip(const std::string& name, float angle) {
 }
 
 void Circle::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	this->_texWidth = texWidth;
+	this->_texHeight = texHeight;
+
 	if (axesSelector == AXES_SCOPE_XY) {
 		_texCoords.resize(4);
 		_texCoords[0] = glm::vec2(0, 0);
 		_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
 		_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
 		_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+		_textureEnabled = true;
 	}
 	else {
 		throw "Circle supports only scope.xy for setupProjection().";
@@ -117,9 +121,14 @@ void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 	std::vector<Vertex> vertices;
 
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
-	glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
-
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+	if (!_texture.empty() && _textureEnabled) {
+		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, _texWidth, _texHeight, mat, vertices, CIRCLE_SLICES);
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+	}
+	else {
+		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+	}
 }
 
 }

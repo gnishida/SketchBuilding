@@ -19,6 +19,36 @@ Polygon::Polygon(const std::string& name, const std::string& grammar_type, const
 	this->_points = points;
 	this->_color = color;
 	this->_texture = texture;
+	this->_textureEnabled = false;
+
+	glutils::BoundingBox bbox(points);
+	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, 0);
+
+	this->_center = glm::vec2(0, 0);
+	for (int i = 0; i < points.size(); ++i) {
+		_center += points[i];
+	}
+	_center /= points.size();
+}
+
+Polygon::Polygon(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture, float texWidth, float texHeight) {
+	this->_active = true;
+	this->_axiom = false;
+	this->_name = name;
+	this->_grammar_type = grammar_type;
+	this->_pivot = pivot;
+	this->_modelMat = modelMat;
+	this->_points = points;
+	this->_color = color;
+	this->_texture = texture;
+	this->_texWidth = texWidth;
+	this->_texHeight = texHeight;
+	this->_textureEnabled = true;
+
+	_texCoords.resize(_points.size());
+	for (int i = 0; i < _points.size(); ++i) {
+		_texCoords[i] = glm::vec2(_points[i].x / texWidth, _points[i].y / texHeight);
+	}
 
 	glutils::BoundingBox bbox(points);
 	this->_scope = glm::vec3(bbox.maxPt.x, bbox.maxPt.y, 0);
@@ -37,7 +67,12 @@ boost::shared_ptr<Shape> Polygon::clone(const std::string& name) const {
 }
 
 boost::shared_ptr<Shape> Polygon::extrude(const std::string& name, float height) {
-	return boost::shared_ptr<Shape>(new Prism(name, _grammar_type, _pivot, _modelMat, _points, height, _color));
+	if (_textureEnabled) {
+		return boost::shared_ptr<Shape>(new Prism(name, _grammar_type, _pivot, _modelMat, _points, height, _color, _texture, _texWidth, _texHeight));
+	}
+	else {
+		return boost::shared_ptr<Shape>(new Prism(name, _grammar_type, _pivot, _modelMat, _points, height, _color));
+	}
 }
 
 boost::shared_ptr<Shape> Polygon::hemisphere(const std::string& name) {
@@ -103,11 +138,15 @@ boost::shared_ptr<Shape> Polygon::roofGable(const std::string& name, float angle
 }
 
 void Polygon::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	this->_texWidth = texWidth;
+	this->_texHeight = texHeight;
+
 	if (axesSelector == AXES_SCOPE_XY) {
 		_texCoords.resize(_points.size());
 		for (int i = 0; i < _points.size(); ++i) {
 			_texCoords[i] = glm::vec2(_points[i].x / texWidth, _points[i].y / texHeight);
 		}
+		_textureEnabled = true;
 	}
 	else {
 		throw "Polygon supports only scope.xy for setupProjection().";

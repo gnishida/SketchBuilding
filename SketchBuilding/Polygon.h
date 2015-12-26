@@ -14,10 +14,13 @@ class Polygon : public Shape {
 private:
 	std::vector<glm::vec2> _points;
 	glm::vec2 _center;
+	float _texWidth;
+	float _texHeight;
 
 public:
 	Polygon() {}
 	Polygon(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture);
+	Polygon(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, const std::vector<glm::vec2>& points, const glm::vec3& color, const std::string& texture, float texWidth, float texHeight);
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	boost::shared_ptr<Shape> extrude(const std::string& name, float height);
 	boost::shared_ptr<Shape> hemisphere(const std::string& name);

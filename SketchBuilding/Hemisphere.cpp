@@ -83,6 +83,10 @@ void Hemisphere::comp(const std::map<std::string, std::string>& name_map, std::v
 	}
 }
 
+void Hemisphere::setupProjection(int axesSelector, float texWidth, float texHeight) {
+
+}
+
 void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (!_active) return;
 
