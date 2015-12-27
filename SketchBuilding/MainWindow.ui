@@ -60,6 +60,7 @@
      <string>Options</string>
     </property>
     <addaction name="actionSetting"/>
+    <addaction name="actionGrammarWindow"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuShape"/>
@@ -223,6 +224,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionGrammarWindow">
+   <property name="text">
+    <string>Grammar Window</string>
    </property>
   </action>
  </widget>

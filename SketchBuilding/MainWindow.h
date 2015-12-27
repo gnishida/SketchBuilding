@@ -5,6 +5,7 @@
 #include "ui_MainWindow.h"
 #include "GLWidget3D.h"
 #include <QListWidget>
+#include "GrammarDialog.h"
 #include <map>
 #include <QAction>
 
@@ -14,7 +15,8 @@ class MainWindow : public QMainWindow {
 public:
 	Ui::MainWindowClass ui;
 	GLWidget3D* glWidget;
-	QListWidget *thumbsList;
+	QListWidget* thumbsList;
+	GrammarDialog* grammarDialog;
 	std::map<std::string, QAction*> actionStages;
 	std::map<std::string, QAction*> actionModes;
 
@@ -36,6 +38,7 @@ public slots:
 	void onViewShadow();
 	void onViewRendering();
 	void onSetting();
+	void onGrammarWindow();
 	void onStageChanged();
 	void onModeChanged();
 	void addListItem(const QString& text, const QImage& image, int option_index);

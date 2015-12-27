@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionViewHatching, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSketchyRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionSetting, SIGNAL(triggered()), this, SLOT(onSetting()));
+	connect(ui.actionGrammarWindow, SIGNAL(triggered()), this, SLOT(onGrammarWindow()));
 
 	// create tool bar for stages
 	QActionGroup* stageGroup = new QActionGroup(this);
@@ -83,6 +84,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	layout->addWidget(glWidget);
 
 	centralWidget()->setLayout(layout);
+
+	grammarDialog = new GrammarDialog(this);
+	grammarDialog->show();
+	addDockWidget(Qt::BottomDockWidgetArea, grammarDialog);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* e) {
@@ -176,6 +181,10 @@ void MainWindow::onSetting() {
 	if (dlg.exec() == QDialog::Accepted) {
 		glWidget->scene.loadDefaultGrammar(dlg.ui.lineEditDefaultGrammar->text().toUtf8().constData());
 	}
+}
+
+void MainWindow::onGrammarWindow() {
+	grammarDialog->show();
 }
 
 void MainWindow::onStageChanged() {

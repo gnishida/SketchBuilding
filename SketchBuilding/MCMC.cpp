@@ -136,10 +136,10 @@ float MCMC::distanceTransform(cga::Grammar& grammar, const cv::Mat& distMap, con
 QImage MCMC::renderImage(cga::Grammar& grammar, const std::vector<float>& params, float offset_z) {
 	std::vector<float> params2;
 
-	float offset_x = params[0] * 16 - 8;
-	float offset_y = params[1] * 16 - 8;
-	float object_width = params[2] * 24 + 4;
-	float object_depth = params[3] * 24 + 4;
+	float offset_x = params[0] * (BUILDING_MASS_MAX_X - BUILDING_MASS_MIN_X) + BUILDING_MASS_MIN_X;
+	float offset_y = params[1] * (BUILDING_MASS_MAX_Y - BUILDING_MASS_MIN_Y) + BUILDING_MASS_MIN_Y;
+	float object_width = params[2] * (BUILDING_MASS_MAX_WIDTH - BUILDING_MASS_MIN_WIDTH) + BUILDING_MASS_MIN_WIDTH;
+	float object_depth = params[3] * (BUILDING_MASS_MAX_DEPTH - BUILDING_MASS_MIN_DEPTH) + BUILDING_MASS_MIN_DEPTH;
 	offset_x -= object_width * 0.5f;
 	offset_y -= object_depth * 0.5f;
 

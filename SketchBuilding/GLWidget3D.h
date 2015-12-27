@@ -27,6 +27,15 @@ class MainWindow;
 class Regression;
 class MCMC;
 
+const int BUILDING_MASS_MIN_X = -24;
+const int BUILDING_MASS_MIN_Y = -24;
+const int BUILDING_MASS_MAX_X = 24;
+const int BUILDING_MASS_MAX_Y = 24;
+const int BUILDING_MASS_MIN_WIDTH = 4;
+const int BUILDING_MASS_MIN_DEPTH = 4;
+const int BUILDING_MASS_MAX_WIDTH = 28;
+const int BUILDING_MASS_MAX_DEPTH = 28;
+
 class GLWidget3D : public QGLWidget {
 public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
