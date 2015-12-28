@@ -37,7 +37,7 @@ float Value::getEstimateValue(float size, const Grammar& grammar, const boost::s
  * いくつかのオペレーション (compやsplitなど)は、適用後のshapeをstackに格納する。
  *
  * @param shape		shape
- * @param ruleSet	全ルール
+ * @param grammar	このshapeに適用されるルールセット (nugetに相当)
  * @param stack		stack
  */
 void Rule::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack, std::vector<boost::shared_ptr<Shape> >& shapes) const {
