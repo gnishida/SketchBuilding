@@ -7,7 +7,7 @@
 
 namespace sc {
 
-SceneObject::SceneObject(Scene* scene) : scene(scene), offset_x(0), offset_y(0), object_width(0), object_depth(0), height(0) {
+SceneObject::SceneObject(Scene* scene) : scene(scene), offset_x(0), offset_y(0), offset_z(0), object_width(0), object_depth(0), height(0) {
 	// set the default grammar for Window, Ledge, and Wall
 	try {
 		cga::parseGrammar("cga/default_border.xml", grammars["Border"]);
@@ -68,7 +68,8 @@ void SceneObject::setGrammar(const std::string& name, const cga::Grammar& gramma
 void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage) {
 	faces.clear();
 
-	//if (height == 0.0f) return;
+	// if no building mass is created, don't generate geometry.
+	if (offset_x == 0 && offset_y == 0 && offset_z == 0) return;
 
 	if (stage == "final" || stage == "peek_final") {
 		// facadeのfloor border sizeを0にする
@@ -487,11 +488,6 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	if (buildingSelector->isBuildingSelected()) {
 		buildingSelector->generateGeometry(renderManager);
 	}
-
-	// add a ground plane
-	std::vector<Vertex> vertices;
-	glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), system.modelMat, vertices);
-	renderManager->addObject("grid", "", vertices, false);
 }
 
 /**
@@ -509,11 +505,6 @@ void Scene::updateGeometry(RenderManager* renderManager, const std::string& stag
 	if (buildingSelector->isBuildingSelected()) {
 		buildingSelector->generateGeometry(renderManager);
 	}
-
-	// add a ground plane
-	std::vector<Vertex> vertices;
-	glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), system.modelMat, vertices);
-	renderManager->addObject("grid", "", vertices, false);
 }
 
 void Scene::saveGeometry(const std::string& filename) {
