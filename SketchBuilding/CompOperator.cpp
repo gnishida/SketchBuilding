@@ -19,4 +19,20 @@ boost::shared_ptr<Shape> CompOperator::apply(boost::shared_ptr<Shape>& shape, co
 	return boost::shared_ptr<Shape>();
 }
 
+std::string CompOperator::to_string() {
+	std::string ret = "comp(f) { ";
+
+	int count = 0;
+	for (auto it = name_map.begin(); it != name_map.end(); ++it, ++count) {
+		if (count > 0) {
+			ret += " | ";
+		}
+		ret += it->first + " : " + it->second;
+	}
+
+	ret += " }";
+
+	return ret;
+}
+
 }

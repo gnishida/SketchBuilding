@@ -14,4 +14,8 @@ boost::shared_ptr<Shape> RoofHipOperator::apply(boost::shared_ptr<Shape>& shape,
 	return shape->roofHip(shape->_name, actual_angle);
 }
 
+std::string RoofHipOperator::to_string() {
+	return "roofHip(" + angle + ")";
+}
+
 }

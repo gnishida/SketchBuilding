@@ -39,4 +39,47 @@ boost::shared_ptr<Shape> SizeOperator::apply(boost::shared_ptr<Shape>& shape, co
 	return shape;
 }
 
+std::string SizeOperator::to_string() {
+	std::string ret = "size(";
+
+	if (xSize.type == Value::TYPE_ABSOLUTE) {
+		ret += xSize.value;
+	}
+	else if (xSize.type == Value::TYPE_RELATIVE) {
+		ret += "'" + xSize.value;
+	}
+	else {
+		ret += "~" + xSize.value;
+	}
+	ret += ", ";
+
+	if (ySize.type == Value::TYPE_ABSOLUTE) {
+		ret += ySize.value;
+	}
+	else if (ySize.type == Value::TYPE_RELATIVE) {
+		ret += "'" + ySize.value;
+	}
+	else {
+		ret += "~" + ySize.value;
+	}
+	ret += ", ";
+
+	if (zSize.type == Value::TYPE_ABSOLUTE) {
+		ret += zSize.value;
+	}
+	else if (zSize.type == Value::TYPE_RELATIVE) {
+		ret += "'" + zSize.value;
+	}
+	else {
+		ret += "~" + zSize.value;
+	}
+
+	if (centered) {
+		ret += ", centered";
+	}
+	ret += ")";
+
+	return ret;
+}
+
 }

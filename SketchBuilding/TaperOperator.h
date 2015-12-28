@@ -13,6 +13,7 @@ public:
 	TaperOperator(const std::string& height, const std::string& top_ratio);
 
 	boost::shared_ptr<Shape> apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack);
+	std::string to_string();
 };
 
 }

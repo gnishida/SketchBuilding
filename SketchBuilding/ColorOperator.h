@@ -17,6 +17,7 @@ public:
 	ColorOperator(const std::string& s);
 
 	boost::shared_ptr<Shape> apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack);
+	std::string to_string();
 
 private:
 	static void decodeRGB(const std::string& str, float& r, float& g, float& b);

@@ -31,4 +31,32 @@ boost::shared_ptr<Shape> ShapeUOperator::apply(boost::shared_ptr<Shape>& shape, 
 	return shape->shapeU(shape->_name, actual_frontWidth, actual_backDepth);
 }
 
+std::string ShapeUOperator::to_string() {
+	std::string ret = "shapeU(";
+
+	if (frontWidth.type == Value::TYPE_ABSOLUTE) {
+		ret += frontWidth.value;
+	}
+	else if (frontWidth.type == Value::TYPE_RELATIVE) {
+		ret += "'" + frontWidth.value;
+	}
+	else {
+		ret += "~" + frontWidth.value;
+	}
+	ret += ", ";
+
+	if (backDepth.type == Value::TYPE_ABSOLUTE) {
+		ret += backDepth.value;
+	}
+	else if (backDepth.type == Value::TYPE_RELATIVE) {
+		ret += "'" + backDepth.value;
+	}
+	else {
+		ret += "~" + backDepth.value;
+	}
+	ret += ")";
+
+	return ret;
+}
+
 }

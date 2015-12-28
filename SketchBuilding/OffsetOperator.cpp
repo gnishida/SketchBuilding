@@ -21,4 +21,23 @@ boost::shared_ptr<Shape> OffsetOperator::apply(boost::shared_ptr<Shape>& shape, 
 	return boost::shared_ptr<Shape>();
 }
 
+std::string OffsetOperator::to_string() {
+	std::string ret = "offset(" + offsetDistance + ") { ";
+
+	if (!inside.empty() && !border.empty()) {
+		ret += "inside: " + inside + " | border: " + border + " }";
+	}
+	else if (!inside.empty()) {
+		ret += "inside: " + inside + " }";
+	}
+	else if (!border.empty()) {
+		ret += "border: " + border + " }";
+	}
+	else {
+		ret += "}";
+	}
+
+	return ret;
+}
+
 }

@@ -15,4 +15,8 @@ boost::shared_ptr<Shape> PyramidOperator::apply(boost::shared_ptr<Shape>& shape,
 	return shape->pyramid(shape->_name, actual_height);
 }
 
+std::string PyramidOperator::to_string() {
+	return "pyramid(" + height + ")";
+}
+
 }

@@ -15,4 +15,8 @@ boost::shared_ptr<Shape> ExtrudeOperator::apply(boost::shared_ptr<Shape>& shape,
 	return shape->extrude(shape->_name, actual_height);
 }
 
+std::string ExtrudeOperator::to_string() {
+	return "extrude(" + height + ")";
+}
+
 }

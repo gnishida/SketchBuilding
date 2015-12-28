@@ -16,4 +16,8 @@ boost::shared_ptr<Shape> RotateOperator::apply(boost::shared_ptr<Shape>& shape, 
 	return shape;
 }
 
+std::string RotateOperator::to_string() {
+	return "rotate(rel, object, " + std::to_string(xAngle) + ", " + std::to_string(yAngle) + ", " + std::to_string(zAngle) + ")";
+}
+
 }

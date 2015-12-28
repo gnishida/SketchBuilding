@@ -12,4 +12,8 @@ boost::shared_ptr<Shape> HemisphereOperator::apply(boost::shared_ptr<Shape>& sha
 	return shape->hemisphere(shape->_name);
 }
 
+std::string HemisphereOperator::to_string() {
+	return "hemisphere";
+}
+
 }

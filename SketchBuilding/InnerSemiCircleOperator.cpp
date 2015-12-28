@@ -12,4 +12,8 @@ boost::shared_ptr<Shape> InnerSemiCircleOperator::apply(boost::shared_ptr<Shape>
 	return shape->innerSemiCircle(shape->_name);
 }
 
+std::string InnerSemiCircleOperator::to_string() {
+	return "semiCircle";
+}
+
 }

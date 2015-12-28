@@ -14,4 +14,8 @@ boost::shared_ptr<Shape> TextureOperator::apply(boost::shared_ptr<Shape>& shape,
 	return shape;
 }
 
+std::string TextureOperator::to_string() {
+	return "texture(\"" + texture + "\")";
+}
+
 }

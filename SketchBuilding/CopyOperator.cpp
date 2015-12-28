@@ -16,4 +16,8 @@ boost::shared_ptr<Shape> CopyOperator::apply(boost::shared_ptr<Shape>& shape, co
 	return shape;
 }
 
+std::string CopyOperator::to_string() {
+	return "copy(" + copy_name + ")";
+}
+
 }

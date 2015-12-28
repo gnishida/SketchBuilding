@@ -40,4 +40,68 @@ boost::shared_ptr<Shape> TranslateOperator::apply(boost::shared_ptr<Shape>& shap
 	return shape;
 }
 
+std::string TranslateOperator::to_string() {
+	std::string ret = "translate(";
+
+	switch (mode) {
+	case MODE_ABSOLUTE:
+		ret += "abs";
+		break;
+	case MODE_RELATIVE:
+		ret += "rel";
+		break;
+	default:
+		ret += "?";
+	}
+	ret += ", ";
+
+	switch (coordSystem) {
+	case COORD_SYSTEM_WORLD:
+		ret += "world";
+		break;
+	case COORD_SYSTEM_OBJECT:
+		ret += "object";
+		break;
+	default:
+		ret += "?";
+		break;
+	}
+	ret += ", ";
+
+	if (x.type == Value::TYPE_ABSOLUTE) {
+		ret += x.value;
+	}
+	else if (x.type == Value::TYPE_RELATIVE) {
+		ret += "'" + x.value;
+	}
+	else {
+		ret += "~" + x.value;
+	}
+	ret += ", ";
+
+	if (y.type == Value::TYPE_ABSOLUTE) {
+		ret += y.value;
+	}
+	else if (y.type == Value::TYPE_RELATIVE) {
+		ret += "'" + y.value;
+	}
+	else {
+		ret += "~" + y.value;
+	}
+	ret += ", ";
+
+	if (z.type == Value::TYPE_ABSOLUTE) {
+		ret += z.value;
+	}
+	else if (z.type == Value::TYPE_RELATIVE) {
+		ret += "'" + z.value;
+	}
+	else {
+		ret += "~" + z.value;
+	}
+	ret += ")";
+
+	return ret;
+}
+
 }

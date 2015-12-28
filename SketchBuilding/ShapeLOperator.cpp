@@ -31,4 +31,32 @@ boost::shared_ptr<Shape> ShapeLOperator::apply(boost::shared_ptr<Shape>& shape, 
 	return shape->shapeL(shape->_name, actual_frontWidth, actual_leftWidth);
 }
 
+std::string ShapeLOperator::to_string() {
+	std::string ret = "shapeL(";
+
+	if (frontWidth.type == Value::TYPE_ABSOLUTE) {
+		ret += frontWidth.value;
+	}
+	else if (frontWidth.type == Value::TYPE_RELATIVE) {
+		ret += "'" + frontWidth.value;
+	}
+	else {
+		ret += "~" + frontWidth.value;
+	}
+	ret += ", ";
+
+	if (leftWidth.type == Value::TYPE_ABSOLUTE) {
+		ret += leftWidth.value;
+	}
+	else if (leftWidth.type == Value::TYPE_RELATIVE) {
+		ret += "'" + leftWidth.value;
+	}
+	else {
+		ret += "~" + leftWidth.value;
+	}
+	ret += ")";
+
+	return ret;
+}
+
 }

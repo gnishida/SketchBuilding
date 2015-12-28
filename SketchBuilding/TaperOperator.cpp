@@ -17,4 +17,8 @@ boost::shared_ptr<Shape> TaperOperator::apply(boost::shared_ptr<Shape>& shape, c
 	return shape->taper(shape->_name, actual_height, actual_top_ratio);
 }
 
+std::string TaperOperator::to_string() {
+	return "taper(" + height + ", " + top_ratio + ")";
+}
+
 }

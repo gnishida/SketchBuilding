@@ -13,4 +13,8 @@ boost::shared_ptr<Shape> InsertOperator::apply(boost::shared_ptr<Shape>& shape, 
 	return shape->insert(shape->_name, grammar.evalString(geometryPath, shape));
 }
 
+std::string InsertOperator::to_string() {
+	return "insert(\"" + geometryPath + "\")";
+}
+
 }

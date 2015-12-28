@@ -49,6 +49,7 @@ public:
 	Operator() {}
 
 	virtual boost::shared_ptr<Shape> apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack) = 0;
+	virtual std::string to_string() = 0;
 };
 
 class Rule {

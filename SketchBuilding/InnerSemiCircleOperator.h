@@ -9,6 +9,7 @@ public:
 	InnerSemiCircleOperator();
 
 	boost::shared_ptr<Shape> apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack);
+	std::string to_string();
 };
 
 }

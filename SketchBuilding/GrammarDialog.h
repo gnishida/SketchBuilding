@@ -3,7 +3,7 @@
 
 #include <QDockWidget>
 #include "ui_GrammarDialog.h"
-#include <QListWidget>
+#include <QTreeWidget>
 
 class MainWindow;
 
@@ -13,7 +13,7 @@ class GrammarDialog : public QDockWidget {
 private:
 	Ui::GrammarDialog ui;
 	MainWindow* mainWin;
-	QListWidget* listWidget;
+	QTreeWidget* treeWidget;
 
 public:
 	GrammarDialog(MainWindow* parent = 0);

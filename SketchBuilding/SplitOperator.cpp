@@ -27,9 +27,49 @@ boost::shared_ptr<Shape> SplitOperator::apply(boost::shared_ptr<Shape>& shape, c
 	shape->split(splitAxis, decoded_sizes, decoded_output_names, floors);
 	stack.insert(stack.end(), floors.begin(), floors.end());
 
-	//delete shape;
-	//return NULL;
 	return boost::shared_ptr<Shape>();
+}
+
+std::string SplitOperator::to_string() {
+	std::string ret = "split";
+
+	switch (splitAxis) {
+	case DIRECTION_X:
+		ret += "(x)";
+		break;
+	case DIRECTION_Y:
+		ret += "(y)";
+		break;
+	case DIRECTION_Z:
+		ret += "(z)";
+		break;
+	default:
+		ret += "(?)";
+		break;
+	}
+
+	ret += " { ";
+
+	for (int k = 0; k < sizes.size(); ++k) {
+		if (k > 0) {
+			ret += " | ";
+		}
+
+		if (sizes[k].type == Value::TYPE_ABSOLUTE) {
+			ret += sizes[k].value;
+		}
+		else if (sizes[k].type == Value::TYPE_RELATIVE) {
+			ret += "'" + sizes[k].value;
+		}
+		else {
+			ret += "~" + sizes[k].value;
+		}
+
+		ret += " : " + output_names[k];
+	}
+	ret += " }";
+
+	return ret;
 }
 
 }

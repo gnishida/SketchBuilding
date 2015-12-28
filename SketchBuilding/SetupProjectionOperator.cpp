@@ -32,4 +32,45 @@ boost::shared_ptr<Shape> SetupProjectionOperator::apply(boost::shared_ptr<Shape>
 	return shape;
 }
 
+std::string SetupProjectionOperator::to_string() {
+	std::string ret = "setupProjection(0, ";
+
+	switch (axesSelector) {
+	case AXES_SCOPE_XY:
+		ret += "scope.xy";
+		break;
+	case AXES_SCOPE_XZ:
+		ret += "scope.xz";
+		break;
+	default:
+		ret += "?";
+		break;
+	}
+	ret += ", ";
+
+	if (texWidth.type == Value::TYPE_ABSOLUTE) {
+		ret += texWidth.value;
+	}
+	else if (texWidth.type == Value::TYPE_RELATIVE) {
+		ret += "'" + texWidth.value;
+	}
+	else {
+		ret += "~" + texWidth.value;
+	}
+	ret += ", ";
+
+	if (texHeight.type == Value::TYPE_ABSOLUTE) {
+		ret += texHeight.value;
+	}
+	else if (texHeight.type == Value::TYPE_RELATIVE) {
+		ret += "'" + texHeight.value;
+	}
+	else {
+		ret += "~" + texHeight.value;
+	}
+	ret += ")";
+
+	return ret;
+}
+
 }

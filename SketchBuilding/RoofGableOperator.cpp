@@ -14,4 +14,8 @@ boost::shared_ptr<Shape> RoofGableOperator::apply(boost::shared_ptr<Shape>& shap
 	return shape->roofGable(shape->_name, actual_angle);
 }
 
+std::string RoofGableOperator::to_string() {
+	return "roofGable(" + angle + ")";
+}
+
 }

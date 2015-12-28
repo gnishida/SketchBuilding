@@ -44,4 +44,13 @@ void ColorOperator::decodeRGB(const std::string& str, float& r, float& g, float&
 	b = (float)ib / 255;
 }
 
+std::string ColorOperator::to_string() {
+	if (s.empty()) {
+		return "color(" + r + ", " + g + ", " + b + ")";
+	}
+	else {
+		return "color(\"" + s + "\")";
+	}
+}
+
 }
