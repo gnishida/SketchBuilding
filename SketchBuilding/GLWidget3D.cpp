@@ -29,6 +29,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	shiftPressed = false;
 	align_threshold = 0.5;
 	pen_pressure = 0.5;
+	showGroundPlane = true;
 
 	// this flag is for workaround.
 	// Qt should not call TabletEvent and MouseEvent at the same time, but it actually calls both events.
@@ -217,9 +218,11 @@ void GLWidget3D::generateGeometry() {
 	scene.generateGeometry(&renderManager, stage);
 
 	// add a ground plane
-	std::vector<Vertex> vertices;
-	glutils::drawGrid(100, 100, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
-	renderManager.addObject("grid", "", vertices, false);
+	if (showGroundPlane) {
+		std::vector<Vertex> vertices;
+		glutils::drawGrid(100, 100, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
+		renderManager.addObject("grid", "", vertices, false);
+	}
 
 	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 }
@@ -228,9 +231,11 @@ void GLWidget3D::updateGeometry() {
 	scene.updateGeometry(&renderManager, stage);
 
 	// add a ground plane
-	std::vector<Vertex> vertices;
-	glutils::drawGrid(100, 100, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
-	renderManager.addObject("grid", "", vertices, false);
+	if (showGroundPlane) {
+		std::vector<Vertex> vertices;
+		glutils::drawGrid(100, 100, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
+		renderManager.addObject("grid", "", vertices, false);
+	}
 }
 
 void GLWidget3D::selectOption(int option_index) {

@@ -72,6 +72,7 @@ public:
 	std::map<std::string, std::vector<cga::Grammar> > grammars;
 	sc::Scene scene;
 	float current_z;
+	bool showGroundPlane;
 
 	Camera camera;
 	glm::vec3 light_dir;

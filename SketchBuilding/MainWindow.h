@@ -37,6 +37,7 @@ public slots:
 	void onDeleteBuildingMass();
 	void onViewShadow();
 	void onViewRendering();
+	void onViewGroundPlane();
 	void onSetting();
 	void onGrammarWindow();
 	void onStageChanged();

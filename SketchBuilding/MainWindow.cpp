@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 	ui.actionViewShadow->setChecked(true);
 	ui.actionViewBasicRendering->setChecked(true);
+	ui.actionViewGroundPlane->setChecked(true);
 
 	// add menu handlers
 	connect(ui.actionNew, SIGNAL(triggered()), this, SLOT(onNew()));
@@ -33,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionViewLineRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewHatching, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSketchyRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
+	connect(ui.actionViewGroundPlane, SIGNAL(triggered()), this, SLOT(onViewGroundPlane()));
 	connect(ui.actionSetting, SIGNAL(triggered()), this, SLOT(onSetting()));
 	connect(ui.actionGrammarWindow, SIGNAL(triggered()), this, SLOT(onGrammarWindow()));
 
@@ -171,6 +173,12 @@ void MainWindow::onViewRendering() {
 	else {
 		glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_SKETCHY;
 	}
+	glWidget->update();
+}
+
+void MainWindow::onViewGroundPlane() {
+	glWidget->showGroundPlane = true;
+	glWidget->updateGeometry();
 	glWidget->update();
 }
 

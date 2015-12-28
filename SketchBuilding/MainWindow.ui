@@ -54,6 +54,8 @@
     <addaction name="actionViewLineRendering"/>
     <addaction name="actionViewHatching"/>
     <addaction name="actionViewSketchyRendering"/>
+    <addaction name="separator"/>
+    <addaction name="actionViewGroundPlane"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -229,6 +231,14 @@
   <action name="actionGrammarWindow">
    <property name="text">
     <string>Grammar Window</string>
+   </property>
+  </action>
+  <action name="actionViewGroundPlane">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ground Plane</string>
    </property>
   </action>
  </widget>

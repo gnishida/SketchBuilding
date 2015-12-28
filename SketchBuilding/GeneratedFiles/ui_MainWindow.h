@@ -48,6 +48,7 @@ public:
     QAction *actionCopyBuildingMass;
     QAction *actionDeleteBuildingMass;
     QAction *actionGrammarWindow;
+    QAction *actionViewGroundPlane;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -114,6 +115,9 @@ public:
         actionDeleteBuildingMass->setObjectName(QStringLiteral("actionDeleteBuildingMass"));
         actionGrammarWindow = new QAction(MainWindowClass);
         actionGrammarWindow->setObjectName(QStringLiteral("actionGrammarWindow"));
+        actionViewGroundPlane = new QAction(MainWindowClass);
+        actionViewGroundPlane->setObjectName(QStringLiteral("actionViewGroundPlane"));
+        actionViewGroundPlane->setCheckable(true);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -157,6 +161,8 @@ public:
         menuView->addAction(actionViewLineRendering);
         menuView->addAction(actionViewHatching);
         menuView->addAction(actionViewSketchyRendering);
+        menuView->addSeparator();
+        menuView->addAction(actionViewGroundPlane);
         menuOptions->addAction(actionSetting);
         menuOptions->addAction(actionGrammarWindow);
 
@@ -197,6 +203,7 @@ public:
         actionDeleteBuildingMass->setText(QApplication::translate("MainWindowClass", "Delete Building Mass", 0));
         actionDeleteBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+X", 0));
         actionGrammarWindow->setText(QApplication::translate("MainWindowClass", "Grammar Window", 0));
+        actionViewGroundPlane->setText(QApplication::translate("MainWindowClass", "Ground Plane", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Edit", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
