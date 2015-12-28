@@ -8,10 +8,11 @@ GrammarDialog::GrammarDialog(MainWindow *parent) : QDockWidget(parent) {
 	this->mainWin = parent;
 
 	ui.setupUi(this);
-
+		
 	treeWidget = new QTreeWidget(this);
 	treeWidget->setMinimumHeight(200);
 	treeWidget->setColumnCount(1);
+	treeWidget->header()->close();
 
 	QVBoxLayout* layout = new QVBoxLayout();
 	this->widget()->setLayout(layout);
@@ -30,14 +31,25 @@ void GrammarDialog::updateGrammar() {
 
 		QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
 		rootItem->setText(0, it->first.c_str());
-		//rootItem->setText(1, (boost::lexical_cast<std::string>(it->second.rules.size()) + " rules").c_str());
+
+		for (auto it2 = it->second.attrs.begin(); it2 != it->second.attrs.end(); ++it2) {
+			QTreeWidgetItem* childItem = new QTreeWidgetItem();
+			childItem->setText(0, (it2->first + ": " + it2->second.value).c_str());
+			rootItem->addChild(childItem);
+		}
 
 		for (auto it2 = it->second.rules.begin(); it2 != it->second.rules.end(); ++it2) {
+			QTreeWidgetItem* childItem = new QTreeWidgetItem();
+			childItem->setText(0, it2->first.c_str());
+			rootItem->addChild(childItem);
+
 			for (int k = 0; k < it2->second.operators.size(); ++k) {
-				QTreeWidgetItem* childItem = new QTreeWidgetItem();
-				childItem->setText(0, it2->second.operators[k]->to_string().c_str());
-				rootItem->addChild(childItem);
+				QTreeWidgetItem* groundChildItem = new QTreeWidgetItem();
+				groundChildItem->setText(0, it2->second.operators[k]->to_string().c_str());
+				childItem->addChild(groundChildItem);
 			}
 		}
 	}
+
+	treeWidget->expandAll();
 }

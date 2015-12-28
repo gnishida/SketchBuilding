@@ -66,6 +66,10 @@ std::string SplitOperator::to_string() {
 		}
 
 		ret += " : " + output_names[k];
+
+		if (sizes[k].repeat) {
+			ret += "*";
+		}
 	}
 	ret += " }";
 

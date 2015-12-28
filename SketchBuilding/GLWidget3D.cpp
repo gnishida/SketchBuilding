@@ -825,7 +825,10 @@ bool GLWidget3D::selectBuilding(const glm::vec2& mouse_pos) {
 	// view direction
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
-	if (scene.buildingSelector->selectBuilding(cameraPos, view_dir)) {
+	// select a building
+	int current_object = scene.buildingSelector->selectBuilding(cameraPos, view_dir);
+	if (current_object >= 0) {
+		scene._currentObject = current_object;
 		return true;
 	}
 	else {
@@ -841,7 +844,9 @@ bool GLWidget3D::selectBuildingControlPoint(const glm::vec2& mouse_pos) {
 	glm::vec3 view_dir = viewVector(mouse_pos, camera.mvMatrix, camera.f(), camera.aspect());
 
 	// select a control point
-	if (scene.buildingSelector->selectBuildingControlPoint(cameraPos, view_dir, mouse_pos, camera.mvpMatrix, width(), height())) {
+	int object_id = scene.buildingSelector->selectBuildingControlPoint(cameraPos, view_dir, mouse_pos, camera.mvpMatrix, width(), height());
+	if (object_id >= 0) {
+		scene._currentObject = object_id;
 		return true;
 	}
 	else {
@@ -1026,13 +1031,11 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 		// do nothing
 	}
 	else if (mode == MODE_SELECT_BUILDING) {
-		if (scene.buildingSelector->isBuildingSelected()) {
-			selectBuildingControlPoint(glm::vec2(e->x(), e->y()));
-
+		if (selectBuildingControlPoint(glm::vec2(e->x(), e->y()))) {
 			updateGeometry();
-			update();
 		}
 		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
+		update();
 	}
 	else {
 		if (e->buttons() & Qt::RightButton) {
@@ -1087,6 +1090,9 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 		}
 
 		updateGeometry();
+
+		// updte the grammar window
+		mainWin->grammarDialog->updateGrammar();
 
 		update();
 	}

@@ -26,8 +26,8 @@ public:
 
 	bool isBuildingSelected();
 	bool isBuildingControlPointSelected();
-	bool selectBuilding(const glm::vec3& cameraPos, const glm::vec3& viewDir);
-	bool selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height);
+	int selectBuilding(const glm::vec3& cameraPos, const glm::vec3& viewDir);
+	int selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height);
 	void unselectBuilding();
 	void unselectBuildingControlPoint();
 

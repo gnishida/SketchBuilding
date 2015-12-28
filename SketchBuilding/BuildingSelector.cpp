@@ -26,7 +26,7 @@ bool BuildingSelector::isBuildingControlPointSelected() {
 	}
 }
 
-bool BuildingSelector::selectBuilding(const glm::vec3& cameraPos, const glm::vec3& viewDir) {
+int BuildingSelector::selectBuilding(const glm::vec3& cameraPos, const glm::vec3& viewDir) {
 	glm::vec3 intPt;
 	float min_dist = (std::numeric_limits<float>::max)();
 
@@ -53,20 +53,17 @@ bool BuildingSelector::selectBuilding(const glm::vec3& cameraPos, const glm::vec
 		}
 	}
 
-	if (_selectedBuilding >= 0) {
-		return true;
-	}
-	else {
-		return false;
-	}
+	return _selectedBuilding;
 }
 
-bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height) {
+int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height) {
 	this->_mouseStartPt = mousePt;
 
 	_selectedBuildingControlPoint = -1;
 
-	if (_selectedBuilding == -1) return false;
+	// check whether the user clicks inside a building.
+	_selectedBuilding = selectBuilding(cameraPos, viewDir);
+	if (_selectedBuilding == -1) return -1;
 
 	float min_dist = (std::numeric_limits<float>::max)();
 
@@ -183,28 +180,23 @@ bool BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, co
 	}
 
 	if (_selectedBuildingControlPoint >= 1) {
-		return true;
+		return _selectedBuilding;
 	}
 	else {
 		// select the entire building
-		if (selectBuilding(cameraPos, viewDir)) {
-			_selectedBuildingControlPoint = 0;
+		_selectedBuildingControlPoint = 0;
 
-			float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
-			float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
-			float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-			glm::vec4 screen_p1 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y, z, 1);
-			glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x + 1, y, z, 1);
-			glm::vec4 screen_p3 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y + 1, z, 1);
+		float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
+		float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
+		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
+		glm::vec4 screen_p1 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y, z, 1);
+		glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x + 1, y, z, 1);
+		glm::vec4 screen_p3 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y + 1, z, 1);
 
-			_xDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
-			_yDir = glm::vec2((screen_p3.x / screen_p3.w + 1.0) * 0.5f * screen_width, (1 - screen_p3.y / screen_p3.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
+		_xDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
+		_yDir = glm::vec2((screen_p3.x / screen_p3.w + 1.0) * 0.5f * screen_width, (1 - screen_p3.y / screen_p3.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 
-			return true;
-		}
-		else {
-			return false;
-		}
+		return _selectedBuilding;
 	}
 }
 
