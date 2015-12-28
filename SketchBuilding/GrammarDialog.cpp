@@ -36,9 +36,14 @@ void GrammarDialog::updateGrammar() {
 		rootItem->setText(0, it->first.c_str());
 
 		for (auto it2 = it->second.attrs.begin(); it2 != it->second.attrs.end(); ++it2) {
+			// Hack: skip the grammar for the border
+			if (it2->first == "z_floor_border_size" || it2->first == "z_window_border_size") continue;
+
 			QTreeWidgetItem* childItem = new QTreeWidgetItem();
-			//childItem->setText(0, (it2->first + ": " + it2->second.value).c_str());
 			childItem->setText(0, it2->first.c_str());
+			QFont font = childItem->font(0);
+			font.setBold(true);
+			childItem->setFont(0, font);
 			rootItem->addChild(childItem);
 
 			QTreeWidgetItem* groundChildItem = new QTreeWidgetItem();
