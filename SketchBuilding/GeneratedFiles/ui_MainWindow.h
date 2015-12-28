@@ -47,6 +47,7 @@ public:
     QAction *actionSetting;
     QAction *actionCopyBuildingMass;
     QAction *actionDeleteBuildingMass;
+    QAction *actionGrammarWindow;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -111,6 +112,8 @@ public:
         actionCopyBuildingMass->setObjectName(QStringLiteral("actionCopyBuildingMass"));
         actionDeleteBuildingMass = new QAction(MainWindowClass);
         actionDeleteBuildingMass->setObjectName(QStringLiteral("actionDeleteBuildingMass"));
+        actionGrammarWindow = new QAction(MainWindowClass);
+        actionGrammarWindow->setObjectName(QStringLiteral("actionGrammarWindow"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -155,6 +158,7 @@ public:
         menuView->addAction(actionViewHatching);
         menuView->addAction(actionViewSketchyRendering);
         menuOptions->addAction(actionSetting);
+        menuOptions->addAction(actionGrammarWindow);
 
         retranslateUi(MainWindowClass);
 
@@ -192,6 +196,7 @@ public:
         actionCopyBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+C", 0));
         actionDeleteBuildingMass->setText(QApplication::translate("MainWindowClass", "Delete Building Mass", 0));
         actionDeleteBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+X", 0));
+        actionGrammarWindow->setText(QApplication::translate("MainWindowClass", "Grammar Window", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Edit", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));

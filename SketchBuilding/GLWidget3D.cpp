@@ -83,13 +83,14 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
-	classifiers["building"] = new Classifier("../models/building/deploy.prototxt", "../models/building/train_iter_10000.caffemodel", "../models/building/buildings_mean.binaryproto");
-	regressions["building"].resize(5);
+	classifiers["building"] = new Classifier("../models/building/deploy.prototxt", "../models/building/train_iter_20000.caffemodel", "../models/building/buildings_mean.binaryproto");
+	regressions["building"].resize(6);
 	regressions["building"][0] = new Regression("../models/building/deploy_1.prototxt", "../models/building/building1_iter_80000.caffemodel");
 	regressions["building"][1] = new Regression("../models/building/deploy_2.prototxt", "../models/building/building2_iter_80000.caffemodel");
 	regressions["building"][2] = new Regression("../models/building/deploy_3.prototxt", "../models/building/building3_iter_80000.caffemodel");
 	regressions["building"][3] = new Regression("../models/building/deploy_4.prototxt", "../models/building/building4_iter_80000.caffemodel");
 	regressions["building"][4] = new Regression("../models/building/deploy_5.prototxt", "../models/building/building5_iter_80000.caffemodel");
+	regressions["building"][5] = new Regression("../models/building/deploy_6.prototxt", "../models/building/building6_iter_80000.caffemodel");
 
 	classifiers["roof"] = new Classifier("../models/roof/deploy.prototxt", "../models/roof/train_iter_10000.caffemodel", "../models/roof/roofs_mean.binaryproto");
 	regressions["roof"].resize(7);
