@@ -19,6 +19,9 @@ public:
 	GrammarDialog(MainWindow* parent = 0);
 
 	void updateGrammar();
+
+public slots:
+	void updateCheckState(QTreeWidgetItem*, int);
 };
 
 #endif // GRAMMARDIALOG_H

@@ -3,6 +3,7 @@
 #include <QLayout>
 #include <QScrollArea>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 
 GrammarDialog::GrammarDialog(MainWindow *parent) : QDockWidget(parent) {
 	this->mainWin = parent;
@@ -20,6 +21,8 @@ GrammarDialog::GrammarDialog(MainWindow *parent) : QDockWidget(parent) {
 
 	treeWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	treeWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+	connect(treeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(updateCheckState(QTreeWidgetItem*, int)));
 }
 
 void GrammarDialog::updateGrammar() {
@@ -34,8 +37,16 @@ void GrammarDialog::updateGrammar() {
 
 		for (auto it2 = it->second.attrs.begin(); it2 != it->second.attrs.end(); ++it2) {
 			QTreeWidgetItem* childItem = new QTreeWidgetItem();
-			childItem->setText(0, (it2->first + ": " + it2->second.value).c_str());
+			//childItem->setText(0, (it2->first + ": " + it2->second.value).c_str());
+			childItem->setText(0, it2->first.c_str());
 			rootItem->addChild(childItem);
+
+			QTreeWidgetItem* groundChildItem = new QTreeWidgetItem();
+			groundChildItem->setText(0, it2->second.value.c_str());
+			groundChildItem->setData(1, Qt::UserRole, it->first.c_str());
+			groundChildItem->setData(2, Qt::UserRole, it2->first.c_str());
+			groundChildItem->setFlags(groundChildItem->flags() | Qt::ItemIsEditable);
+			childItem->addChild(groundChildItem);
 		}
 
 		for (auto it2 = it->second.rules.begin(); it2 != it->second.rules.end(); ++it2) {
@@ -52,4 +63,16 @@ void GrammarDialog::updateGrammar() {
 	}
 
 	treeWidget->expandAll();
+}
+
+void GrammarDialog::updateCheckState(QTreeWidgetItem* item, int a) {
+	std::string type = item->data(1, Qt::UserRole).toString().toUtf8().constData();
+	std::string paramter = item->data(2, Qt::UserRole).toString().toUtf8().constData();
+	std::string value = item->text(0).toUtf8().constData();
+	
+	if (type.empty() || paramter.empty() || value.empty()) return;
+
+	mainWin->glWidget->scene.currentObject().grammars[type].attrs[paramter].value = value;
+	mainWin->glWidget->generateGeometry();
+	mainWin->glWidget->update();
 }

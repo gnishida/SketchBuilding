@@ -177,7 +177,12 @@ void MainWindow::onViewRendering() {
 }
 
 void MainWindow::onViewGroundPlane() {
-	glWidget->showGroundPlane = true;
+	if (ui.actionViewGroundPlane->isChecked()) {
+		glWidget->showGroundPlane = true;
+	}
+	else {
+		glWidget->showGroundPlane = false;
+	}
 	glWidget->updateGeometry();
 	glWidget->update();
 }
