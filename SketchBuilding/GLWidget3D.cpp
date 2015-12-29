@@ -346,17 +346,19 @@ void GLWidget3D::updateFloorOptions() {
 
 	std::pair<int, std::vector<float> > result = LayoutExtractor::extractFloorPattern(width(), height(), strokes, scene.faceSelector->selectedFaceCopy(), camera.mvpMatrix);
 
-	QPainter painter(&sketch);
-	mainWin->addListItem("1.00", grammarImages["floor"][result.first], result.first);
-	for (int i = 0; i < grammarImages["floor"].size(); ++i) {
-		if (i == result.first) continue;
+	if (result.first >= 0) {
+		QPainter painter(&sketch);
+		mainWin->addListItem("1.00", grammarImages["floor"][result.first], result.first);
+		for (int i = 0; i < grammarImages["floor"].size(); ++i) {
+			if (i == result.first) continue;
 
-		mainWin->addListItem("0.00", grammarImages["floor"][i], i);
+			mainWin->addListItem("0.00", grammarImages["floor"][i], i);
+		}
+
+		predictFloor(result.first, result.second);
+
+		update();
 	}
-
-	predictFloor(result.first, result.second);
-
-	update();
 }
 
 void GLWidget3D::updateWindowOptions() {

@@ -6,6 +6,8 @@
 	<attr name="floor_padding" value="1" range="0.01,5"/>
 	<attr name="floor_top_margin1" value="0.5" range="0.01,3"/>
 	<attr name="floor_top_margin2" value="0.5" range="0.01,3"/>
+	<attr name="floor_window_height1" value="1" range="0.1,10"/>
+	<attr name="floor_window_height2" value="1" range="0.1,10"/>
 	<attr name="floor_window_width1" value="1" range="0.1,10"/>
 	<attr name="floor_window_width2" value="1" range="0.1,10"/>
 	<attr name="z_window_border_size" value="0.03" range="0,0.03"/>
@@ -29,14 +31,14 @@
 	<rule name="FloorColumn2_02">
 		<split splitAxis="y">
 			<param type="floating" value="floor_bottom_margin1" name="Wall"/>
-			<param type="floating" value="floor_window_width1" name="BorderAndWindow_02"/>
+			<param type="floating" value="floor_window_height1" name="BorderAndWindow_02"/>
 			<param type="floating" value="floor_top_margin1" name="Wall"/>
 		</split>
 	</rule>
 	<rule name="FloorColumn3_02">
 		<split splitAxis="y">
 			<param type="floating" value="floor_bottom_margin2" name="Wall"/>
-			<param type="floating" value="floor_window_width2" name="BorderAndWindow2_02"/>
+			<param type="floating" value="floor_window_height2" name="BorderAndWindow2_02"/>
 			<param type="floating" value="floor_top_margin2" name="Wall"/>
 		</split>
 	</rule>

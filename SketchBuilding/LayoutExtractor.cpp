@@ -169,10 +169,20 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 	const float threshold = 3.0f;
 
 	for (auto stroke : strokes) {
+		if (stroke.size() <= 1) continue;
+
 		bool belongToBox = false;
 
 		for (int i = 0; i < bboxes.size(); ++i) {
-			if (bboxes[i].contains(stroke[0], 0) || bboxes[i].contains(stroke.back(), 0)) {
+			bool contained = false;
+			for (int j = 0; j < stroke.size(); ++j) {
+				if (bboxes[i].contains(stroke[j], 2)) {
+					contained = true;
+					break;
+				}
+			}
+
+			if (contained) {
 				// this stroke belongs to this bounding box, so update the bounding box accordingly.
 				belongToBox = true;
 				for (auto pt : stroke) {
@@ -187,6 +197,10 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 			glutils::BoundingBox bbox(stroke);
 			bboxes.push_back(bbox);
 		}
+	}
+
+	if (bboxes.size() == 0) {
+		return std::make_pair(-1, std::vector<float>());
 	}
 
 	// for now, we assume that the bounding boxes are already ordered horizontally.
@@ -326,7 +340,7 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		ret.push_back(column_width * horizontal_scale);
 		return std::make_pair(3, ret);
 	}
-	else if (widths.size() <= 1 || fabs(widths[1] - widths[0]) < (widths[0] + widths[1]) * 0.3) {
+	else if (widths.size() <= 1 || (fabs(widths[1] - widths[0]) < 15 && fabs(bboxes[0].sy() - bboxes[1].sy()) < 15)) {
 		// A* pattern (i.e., every window has the same width)
 		float total_width = 0.0f;
 		for (int i = 0; i < widths.size(); ++i) {
@@ -366,6 +380,8 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		// {AB}* Pattern (i.e., every two windows have the same size)
 		float window_width1 = bboxes[0].sx();
 		float window_width2 = bboxes[1].sx();
+		float window_height1 = bboxes[0].sy();
+		float window_height2 = bboxes[1].sy();
 		float bottom_margin1 = bboxes[0].minPt.y - bottom_screen;
 		float top_margin1 = top_screen - bboxes[0].maxPt.y;
 		float bottom_margin2 = bboxes[1].minPt.y - bottom_screen;
@@ -379,6 +395,8 @@ std::pair<int, std::vector<float> > LayoutExtractor::extractFloorPattern(int wid
 		ret.push_back(padding * horizontal_scale);
 		ret.push_back(top_margin1 * vertical_scale);
 		ret.push_back(top_margin2 * vertical_scale);
+		ret.push_back(window_height1 * vertical_scale);
+		ret.push_back(window_height2 * vertical_scale);
 		ret.push_back(window_width1 * horizontal_scale);
 		ret.push_back(window_width2 * horizontal_scale);
 		return std::make_pair(1, ret);
