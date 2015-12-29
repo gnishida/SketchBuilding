@@ -13,6 +13,9 @@ class Scene;
 
 class BuildingSelector {
 private:
+	static float CONTROL_POINT_SIZE;
+
+private:
 	sc::Scene* _scene;
 	int _selectedBuilding;
 	int _selectedBuildingControlPoint;
@@ -38,6 +41,9 @@ public:
 	void alignObjects(float threshold);
 
 	void generateGeometry(RenderManager* renderManager);
+
+private:
+	bool hitTestForControlPoint(const glm::vec3& point, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height);
 };
 
 }

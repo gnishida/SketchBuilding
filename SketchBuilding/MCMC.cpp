@@ -24,7 +24,7 @@ void MCMC::optimize(cga::Grammar& grammar, const cv::Mat& image, float threshold
 	int WIDTH = image.cols;
 	int HEIGHT = image.rows;
 
-	float delta = 0.05f;
+	float delta = 0.03f;
 	int stepsize = 10;
 
 	int step_count = 0;

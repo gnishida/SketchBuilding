@@ -84,42 +84,42 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	}
 
 	// initialize deep learning network
-	classifiers["building"] = new Classifier("../models/building/deploy.prototxt", "../models/building/train_iter_20000.caffemodel", "../models/building/buildings_mean.binaryproto");
+	classifiers["building"] = new Classifier("models/building/deploy.prototxt", "models/building/train_iter_20000.caffemodel", "models/building/buildings_mean.binaryproto");
 	regressions["building"].resize(6);
-	regressions["building"][0] = new Regression("../models/building/deploy_1.prototxt", "../models/building/building1_iter_80000.caffemodel");
-	regressions["building"][1] = new Regression("../models/building/deploy_2.prototxt", "../models/building/building2_iter_80000.caffemodel");
-	regressions["building"][2] = new Regression("../models/building/deploy_3.prototxt", "../models/building/building3_iter_80000.caffemodel");
-	regressions["building"][3] = new Regression("../models/building/deploy_4.prototxt", "../models/building/building4_iter_80000.caffemodel");
-	regressions["building"][4] = new Regression("../models/building/deploy_5.prototxt", "../models/building/building5_iter_80000.caffemodel");
-	regressions["building"][5] = new Regression("../models/building/deploy_6.prototxt", "../models/building/building6_iter_80000.caffemodel");
+	regressions["building"][0] = new Regression("models/building/deploy_1.prototxt", "models/building/building1_iter_80000.caffemodel");
+	regressions["building"][1] = new Regression("models/building/deploy_2.prototxt", "models/building/building2_iter_80000.caffemodel");
+	regressions["building"][2] = new Regression("models/building/deploy_3.prototxt", "models/building/building3_iter_80000.caffemodel");
+	regressions["building"][3] = new Regression("models/building/deploy_4.prototxt", "models/building/building4_iter_80000.caffemodel");
+	regressions["building"][4] = new Regression("models/building/deploy_5.prototxt", "models/building/building5_iter_80000.caffemodel");
+	regressions["building"][5] = new Regression("models/building/deploy_6.prototxt", "models/building/building6_iter_80000.caffemodel");
 
-	classifiers["roof"] = new Classifier("../models/roof/deploy.prototxt", "../models/roof/train_iter_10000.caffemodel", "../models/roof/roofs_mean.binaryproto");
+	classifiers["roof"] = new Classifier("models/roof/deploy.prototxt", "models/roof/train_iter_10000.caffemodel", "models/roof/roofs_mean.binaryproto");
 	regressions["roof"].resize(7);
-	regressions["roof"][0] = new Regression("../models/roof/deploy_1.prototxt", "../models/roof/roof1_iter_80000.caffemodel");
-	regressions["roof"][1] = new Regression("../models/roof/deploy_2.prototxt", "../models/roof/roof2_iter_80000.caffemodel");
-	regressions["roof"][2] = new Regression("../models/roof/deploy_3.prototxt", "../models/roof/roof3_iter_80000.caffemodel");
-	regressions["roof"][3] = new Regression("../models/roof/deploy_4.prototxt", "../models/roof/roof4_iter_80000.caffemodel");
-	regressions["roof"][4] = new Regression("../models/roof/deploy_5.prototxt", "../models/roof/roof5_iter_80000.caffemodel");
-	regressions["roof"][5] = new Regression("../models/roof/deploy_6.prototxt", "../models/roof/roof6_iter_80000.caffemodel");
-	regressions["roof"][6] = new Regression("../models/roof/deploy_7.prototxt", "../models/roof/roof7_iter_80000.caffemodel");
+	regressions["roof"][0] = new Regression("models/roof/deploy_1.prototxt", "models/roof/roof1_iter_80000.caffemodel");
+	regressions["roof"][1] = new Regression("models/roof/deploy_2.prototxt", "models/roof/roof2_iter_80000.caffemodel");
+	regressions["roof"][2] = new Regression("models/roof/deploy_3.prototxt", "models/roof/roof3_iter_80000.caffemodel");
+	regressions["roof"][3] = new Regression("models/roof/deploy_4.prototxt", "models/roof/roof4_iter_80000.caffemodel");
+	regressions["roof"][4] = new Regression("models/roof/deploy_5.prototxt", "models/roof/roof5_iter_80000.caffemodel");
+	regressions["roof"][5] = new Regression("models/roof/deploy_6.prototxt", "models/roof/roof6_iter_80000.caffemodel");
+	regressions["roof"][6] = new Regression("models/roof/deploy_7.prototxt", "models/roof/roof7_iter_80000.caffemodel");
 
-	classifiers["window"] = new Classifier("../models/window/deploy.prototxt", "../models/window/train_iter_10000.caffemodel", "../models/window/windows_mean.binaryproto");
+	classifiers["window"] = new Classifier("models/window/deploy.prototxt", "models/window/train_iter_10000.caffemodel", "models/window/windows_mean.binaryproto");
 	regressions["window"].resize(9);
-	regressions["window"][0] = new Regression("../models/window/deploy_1.prototxt", "../models/window/window1_iter_80000.caffemodel");
-	regressions["window"][1] = new Regression("../models/window/deploy_2.prototxt", "../models/window/window2_iter_80000.caffemodel");
-	regressions["window"][2] = new Regression("../models/window/deploy_3.prototxt", "../models/window/window3_iter_80000.caffemodel");
-	regressions["window"][3] = new Regression("../models/window/deploy_4.prototxt", "../models/window/window4_iter_80000.caffemodel");
-	regressions["window"][4] = new Regression("../models/window/deploy_5.prototxt", "../models/window/window5_iter_80000.caffemodel");
-	regressions["window"][5] = new Regression("../models/window/deploy_6.prototxt", "../models/window/window6_iter_80000.caffemodel");
-	regressions["window"][6] = new Regression("../models/window/deploy_7.prototxt", "../models/window/window7_iter_80000.caffemodel");
-	regressions["window"][7] = new Regression("../models/window/deploy_8.prototxt", "../models/window/window8_iter_80000.caffemodel");
-	regressions["window"][8] = new Regression("../models/window/deploy_9.prototxt", "../models/window/window9_iter_80000.caffemodel");
+	regressions["window"][0] = new Regression("models/window/deploy_1.prototxt", "models/window/window1_iter_80000.caffemodel");
+	regressions["window"][1] = new Regression("models/window/deploy_2.prototxt", "models/window/window2_iter_80000.caffemodel");
+	regressions["window"][2] = new Regression("models/window/deploy_3.prototxt", "models/window/window3_iter_80000.caffemodel");
+	regressions["window"][3] = new Regression("models/window/deploy_4.prototxt", "models/window/window4_iter_80000.caffemodel");
+	regressions["window"][4] = new Regression("models/window/deploy_5.prototxt", "models/window/window5_iter_80000.caffemodel");
+	regressions["window"][5] = new Regression("models/window/deploy_6.prototxt", "models/window/window6_iter_80000.caffemodel");
+	regressions["window"][6] = new Regression("models/window/deploy_7.prototxt", "models/window/window7_iter_80000.caffemodel");
+	regressions["window"][7] = new Regression("models/window/deploy_8.prototxt", "models/window/window8_iter_80000.caffemodel");
+	regressions["window"][8] = new Regression("models/window/deploy_9.prototxt", "models/window/window9_iter_80000.caffemodel");
 
-	classifiers["ledge"] = new Classifier("../models/ledge/deploy.prototxt", "../models/ledge/train_iter_10000.caffemodel", "../models/ledge/ledges_mean.binaryproto");
+	classifiers["ledge"] = new Classifier("models/ledge/deploy.prototxt", "models/ledge/train_iter_10000.caffemodel", "models/ledge/ledges_mean.binaryproto");
 	regressions["ledge"].resize(3);
-	regressions["ledge"][0] = new Regression("../models/ledge/deploy_1.prototxt", "../models/ledge/ledge1_iter_2000.caffemodel");
-	regressions["ledge"][1] = new Regression("../models/ledge/deploy_2.prototxt", "../models/ledge/ledge2_iter_2000.caffemodel");
-	regressions["ledge"][2] = new Regression("../models/ledge/deploy_3.prototxt", "../models/ledge/ledge3_iter_2000.caffemodel");
+	regressions["ledge"][0] = new Regression("models/ledge/deploy_1.prototxt", "models/ledge/ledge1_iter_2000.caffemodel");
+	regressions["ledge"][1] = new Regression("models/ledge/deploy_2.prototxt", "models/ledge/ledge2_iter_2000.caffemodel");
+	regressions["ledge"][2] = new Regression("models/ledge/deploy_3.prototxt", "models/ledge/ledge3_iter_2000.caffemodel");
 	
 	mcmc = new MCMC(this);
 }
