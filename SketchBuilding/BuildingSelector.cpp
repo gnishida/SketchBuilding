@@ -59,11 +59,11 @@ int BuildingSelector::selectBuilding(const glm::vec3& cameraPos, const glm::vec3
 }
 
 /**
-* Find the control point that is close to the mouse pointer.
-* If such a control point exists, return the id of the corresponding building mass.
-* Otherwise, find the building mass that is close to the mouse pointer and return its id.
-* If no such a building mass exists, return -1.
-*/
+ * Find the control point that is close to the mouse pointer.
+ * If such a control point exists, return the id of the corresponding building mass.
+ * Otherwise, find the building mass that is close to the mouse pointer and return its id.
+ * If no such a building mass exists, return -1.
+ */
 int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height) {
 	this->_mouseStartPt = mousePt;
 
@@ -75,27 +75,28 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 	const float angle_threshold = 0.99993f;
 
 	for (int i = 0; i < _scene->_objects.size(); ++i) {
-			{
-				float x = _scene->_objects[i].offset_x;
-				float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
-				float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
-				glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+		{
+			float x = _scene->_objects[i].offset_x;
+			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
+			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
+			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
 
-				if (hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
-					glm::vec3 dir = p - cameraPos;
-					float dist = glm::dot(glm::normalize(viewDir), dir);
-					if (dist < min_dist) {
-						min_dist = dist;
-						_selectedBuilding = i;
-						_selectedBuildingControlPoint = 1;
+			glm::vec3 dir = p - cameraPos;
+			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(-1, 0, 0, 0));
+			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
+				float dist = glm::dot(glm::normalize(viewDir), dir);
+				if (dist < min_dist) {
+					min_dist = dist;
+					_selectedBuilding = i;
+					_selectedBuildingControlPoint = 1;
 
-						// compute the projected direction vector for this control point
-						glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-						glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x - 1, y, z, 1);
-						_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
-					}
+					// compute the projected direction vector for this control point
+					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x - 1, y, z, 1);
+					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
+		}
 
 		{
 			float x = _scene->_objects[i].offset_x + _scene->_objects[i].object_width;
@@ -103,8 +104,9 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
 			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
 
-			if (hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
-				glm::vec3 dir = p - cameraPos;
+			glm::vec3 dir = p - cameraPos;
+			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(1, 0, 0, 0));
+			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
 					min_dist = dist;
@@ -125,8 +127,9 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
 			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
 
-			if (hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
-				glm::vec3 dir = p - cameraPos;
+			glm::vec3 dir = p - cameraPos;
+			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, -1, 0, 0));
+			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
 					min_dist = dist;
@@ -147,8 +150,9 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
 			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
 
-			if (hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
-				glm::vec3 dir = p - cameraPos;
+			glm::vec3 dir = p - cameraPos;
+			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 1, 0, 0));
+			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
 					min_dist = dist;
@@ -169,8 +173,9 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height;
 			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
 
-			if (hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
-				glm::vec3 dir = p - cameraPos;
+			glm::vec3 dir = p - cameraPos;
+			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 0, 1, 0));
+			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
 					min_dist = dist;
