@@ -952,6 +952,8 @@ void GLWidget3D::changeStage(const std::string& stage) {
 
 void GLWidget3D::changeMode(int new_mode) {
 	if (new_mode == MODE_COPY) {
+		clearSketch();
+
 		if (scene.buildingSelector->isBuildingSelected()) {
 			scene.buildingSelector->copy();
 			generateGeometry();
@@ -966,6 +968,8 @@ void GLWidget3D::changeMode(int new_mode) {
 
 	}
 	else {
+		clearSketch();
+
 		if (scene.buildingSelector->isBuildingSelected()) {
 			scene.buildingSelector->unselectBuilding();
 			updateGeometry();
