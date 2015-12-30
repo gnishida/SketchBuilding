@@ -27,6 +27,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	dragging = false;
 	ctrlPressed = false;
 	shiftPressed = false;
+	altPressed = false;
 	align_threshold = 0.5;
 	pen_pressure = 0.5;
 	showGroundPlane = true;
@@ -996,6 +997,7 @@ glm::vec3 GLWidget3D::computeDownwardedCameraPos(float downward, float distToCam
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
 	shiftPressed = false;
+	altPressed = false;
 
 	switch (e->key()) {
 	case Qt::Key_Control:
@@ -1003,6 +1005,9 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 		break;
 	case Qt::Key_Shift:
 		shiftPressed = true;
+		break;
+	case Qt::Key_Alt:
+		altPressed = true;
 		break;
 	default:
 		break;
@@ -1012,6 +1017,7 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
 	ctrlPressed = false;
 	shiftPressed = false;
+	altPressed = false;
 }
 
 void GLWidget3D::tabletEvent(QTabletEvent *e) {
@@ -1172,7 +1178,7 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 		else if (mode == MODE_SELECT_BUILDING) {
 			if (scene.buildingSelector->isBuildingControlPointSelected()) {
 				// resize the building
-				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !ctrlPressed);
+				scene.buildingSelector->resize(glm::vec2(e->x(), e->y()), !ctrlPressed, altPressed);
 				if (shiftPressed) {
 					scene.buildingSelector->alignObjects(align_threshold);
 				}

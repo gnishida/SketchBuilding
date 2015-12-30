@@ -36,7 +36,7 @@ public:
 
 	void copy();
 	void remove();
-	void resize(const glm::vec2& mousePt, bool conflictAllowed);
+	void resize(const glm::vec2& mousePt, bool conflictAllowed, bool sameWidthDepth);
 	void avoidBuildingConflict(int currentBuilding);
 	void alignObjects(float threshold);
 

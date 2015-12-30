@@ -56,6 +56,7 @@ public:
 	bool dragging;
 	bool ctrlPressed;
 	bool shiftPressed;
+	bool altPressed;
 
 	bool tableEventUsed;
 
