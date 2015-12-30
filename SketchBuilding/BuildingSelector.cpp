@@ -67,7 +67,7 @@ int BuildingSelector::selectBuilding(const glm::vec3& cameraPos, const glm::vec3
 int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height) {
 	this->_mouseStartPt = mousePt;
 
-	_selectedBuilding = -1;
+	_selectedBuilding = selectBuilding(cameraPos, viewDir);
 	_selectedBuildingControlPoint = -1;
 
 	float min_dist = (std::numeric_limits<float>::max)();
@@ -75,6 +75,8 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 	const float angle_threshold = 0.99993f;
 
 	for (int i = 0; i < _scene->_objects.size(); ++i) {
+		if (_selectedBuilding >= 0 && i != _selectedBuilding) continue;
+
 		{
 			float x = _scene->_objects[i].offset_x;
 			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
@@ -191,12 +193,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 		}
 	}
 
-	if (_selectedBuilding >= 0) {
+	if (_selectedBuildingControlPoint > 0) {
 		return _selectedBuilding;
 	}
 	else {
-		_selectedBuilding = selectBuilding(cameraPos, viewDir);
-
 		if (_selectedBuilding >= 0) {
 			// select the entire building
 			_selectedBuildingControlPoint = 0;
@@ -263,34 +263,52 @@ void BuildingSelector::resize(const glm::vec2& mousePt, bool conflictAllowed, bo
 	}
 	else if (_selectedBuildingControlPoint == 1) {
 		float diff = glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
-		_scene->_objects[_selectedBuilding].offset_x -= diff;
-		_scene->_objects[_selectedBuilding].object_width += diff;
-		if (sameWidthDepth) {
+		if (!sameWidthDepth) {
+			_scene->_objects[_selectedBuilding].offset_x -= diff;
+			_scene->_objects[_selectedBuilding].object_width += diff;
+		}
+		else {
+			_scene->_objects[_selectedBuilding].offset_x -= diff;
+			_scene->_objects[_selectedBuilding].object_width += diff * 2.0f;
+			_scene->_objects[_selectedBuilding].offset_y -= (_scene->_objects[_selectedBuilding].object_width - _scene->_objects[_selectedBuilding].object_depth) * 0.5f;
 			_scene->_objects[_selectedBuilding].object_depth = _scene->_objects[_selectedBuilding].object_width;
 		}
 	}
 	else if (_selectedBuildingControlPoint == 2) {
-		_scene->_objects[_selectedBuilding].object_width += glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
-		if (sameWidthDepth) {
-			float diff = _scene->_objects[_selectedBuilding].object_width - _scene->_objects[_selectedBuilding].object_depth;
+		float diff = glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
+		if (!sameWidthDepth) {
+			_scene->_objects[_selectedBuilding].object_width += diff;
+		}
+		else {
+			_scene->_objects[_selectedBuilding].offset_x -= diff;
+			_scene->_objects[_selectedBuilding].object_width += diff * 2.0f;
+			_scene->_objects[_selectedBuilding].offset_y -= (_scene->_objects[_selectedBuilding].object_width - _scene->_objects[_selectedBuilding].object_depth) * 0.5f;
 			_scene->_objects[_selectedBuilding].object_depth = _scene->_objects[_selectedBuilding].object_width;
-			_scene->_objects[_selectedBuilding].offset_y -= diff;
 		}
 	}
 	else if (_selectedBuildingControlPoint == 3) {
 		float diff = glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
-		_scene->_objects[_selectedBuilding].offset_y -= diff;
-		_scene->_objects[_selectedBuilding].object_depth += diff;
-		if (sameWidthDepth) {
+		if (!sameWidthDepth) {
+			_scene->_objects[_selectedBuilding].offset_y -= diff;
+			_scene->_objects[_selectedBuilding].object_depth += diff;
+		}
+		else {
+			_scene->_objects[_selectedBuilding].offset_y -= diff;
+			_scene->_objects[_selectedBuilding].object_depth += diff * 2.0f;
+			_scene->_objects[_selectedBuilding].offset_x -= (_scene->_objects[_selectedBuilding].object_depth - _scene->_objects[_selectedBuilding].object_width) * 0.5f;
 			_scene->_objects[_selectedBuilding].object_width = _scene->_objects[_selectedBuilding].object_depth;
 		}
 	}
 	else if (_selectedBuildingControlPoint == 4) {
-		_scene->_objects[_selectedBuilding].object_depth += glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
-		if (sameWidthDepth) {
-			float diff = _scene->_objects[_selectedBuilding].object_depth - _scene->_objects[_selectedBuilding].object_width;
+		float diff = _scene->_objects[_selectedBuilding].object_depth - _scene->_objects[_selectedBuilding].object_width;
+		if (!sameWidthDepth) {
+			_scene->_objects[_selectedBuilding].object_depth += diff;
+		}
+		else {
+			_scene->_objects[_selectedBuilding].offset_y -= diff;
+			_scene->_objects[_selectedBuilding].object_depth += diff * 2.0f;
+			_scene->_objects[_selectedBuilding].offset_x -= (_scene->_objects[_selectedBuilding].object_depth - _scene->_objects[_selectedBuilding].object_width) * 0.5f;
 			_scene->_objects[_selectedBuilding].object_width = _scene->_objects[_selectedBuilding].object_depth;
-			_scene->_objects[_selectedBuilding].offset_x -= diff;
 		}
 	}
 	else if (_selectedBuildingControlPoint == 5) {
