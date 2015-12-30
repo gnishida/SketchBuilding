@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<grammar type="material" version="1.0" author="Gen Nishida">
+	<!-- roof -->
+	<rule name="RoofTop">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/roof.jpg"/>
+	</rule>
+	<rule name="RoofTop_05">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/roof.jpg"/>
+	</rule>
+	<rule name="RoofSide_05">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="1"/>
+			<param name="texHeight" type="absolute" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/roof_paris.png"/>
+	</rule>
+	<rule name="RoofLedge">
+		<color s="#f2f2c5"/>
+	</rule>
+	<rule name="RoofLedge_05">
+		<color s="#f2f2c5"/>
+	</rule>
+	
+	<!-- wall -->
+	<rule name="Wall">
+		<texture texturePath="textures/wall_paris2.png"/>
+	</rule>
+	<rule name="Wall_04">
+		<texture texturePath="textures/wall_paris2.png"/>
+	</rule>
+	<rule name="Wall_05">
+		<texture texturePath="textures/wall_paris2.png"/>
+	</rule>
+	<rule name="WallColumn">
+		<color s="#f2f2c5"/>
+	</rule>
+	
+	<!-- ledge -->
+	<rule name="LedgeFace">
+		<texture texturePath="textures/wall_paris2.png"/>
+	</rule>
+	<rule name="LedgeFace_03">
+		<texture texturePath="textures/wall_paris2.png"/>
+	</rule>
+	
+	<!-- window -->
+	<rule name="WindowFrame">
+		<color s="#e0e0e0"/>
+	</rule>
+	<rule name="WindowSill">
+		<color s="#e0e0e0"/>
+	</rule>
+	<rule name="WindowShutterFrame">
+		<color s="#e0e0e0"/>
+	</rule>
+	<rule name="WindowFrame_06">
+		<color s="#e0e0e0"/>
+	</rule>
+	<rule name="WindowGlass">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window.9.tif"/>
+	</rule>
+	<rule name="WindowGlass_06">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window.9.tif"/>
+	</rule>
+	<rule name="Door">
+		<color s="#000000"/>
+	</rule>
+</grammar>
