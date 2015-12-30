@@ -20,8 +20,22 @@
 	<rule name="TopFaceOffsetTopInside">
 		<roofGable angle="roof_slope"/>
 		<comp>
-			<param name="side" value="Wall"/>
+			<param name="side" value="TopFaceOffsetTopInsideSide"/>
 			<param name="top" value="RoofTop"/>
+		</comp>
+	</rule>
+	<rule name="TopFaceOffsetTopInsideSide">
+		<offset offsetDistance="-0.1" inside="TopFaceOffsetTopInsideSideInside" border="RoofSide"/>
+	</rule>
+	<rule name="TopFaceOffsetTopInsideSideInside">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="absolute" value="5"/>
+			<param name="texHeight" type="absolute" value="5"/>
+		</setupProjection>
+		<extrude height="-0.3"/>
+		<comp>
+			<param name="side" value="RoofSide"/>
+			<param name="top" value="RoofSide"/>
 		</comp>
 	</rule>
 </grammar>
