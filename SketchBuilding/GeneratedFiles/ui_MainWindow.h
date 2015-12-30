@@ -210,6 +210,7 @@ public:
         actionGrammarWindow->setText(QApplication::translate("MainWindowClass", "Grammar Window", 0));
         actionViewGroundPlane->setText(QApplication::translate("MainWindowClass", "Ground Plane", 0));
         actionUndo->setText(QApplication::translate("MainWindowClass", "Undo", 0));
+        actionUndo->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+Z", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Edit", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
