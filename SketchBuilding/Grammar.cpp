@@ -76,16 +76,22 @@ void Rule::decodeSplitSizes(float size, const std::vector<Value>& sizes, const s
 	float regular_sum = 0.0f;
 	float floating_sum = 0.0f;
 	int repeat_count = 0;
+	float repeat_unit = 0.0f;
+	int repeat_num = 0;
+	float repeat_scale = 1.0f;
 
 	for (int i = 0; i < sizes.size(); ++i) {
 		if (sizes[i].repeat) {
 			repeat_count++;
-		} else {
+		}
+		else {
 			if (sizes[i].type == Value::TYPE_ABSOLUTE) {
 				regular_sum += grammar.evalFloat(sizes[i].value, shape);
-			} else if (sizes[i].type == Value::TYPE_RELATIVE) {
+			}
+			else if (sizes[i].type == Value::TYPE_RELATIVE) {
 				regular_sum += size * grammar.evalFloat(sizes[i].value, shape);
-			} else if (sizes[i].type == Value::TYPE_FLOATING) {
+			}
+			else if (sizes[i].type == Value::TYPE_FLOATING) {
 				floating_sum += grammar.evalFloat(sizes[i].value, shape);
 			}
 		}
@@ -96,25 +102,40 @@ void Rule::decodeSplitSizes(float size, const std::vector<Value>& sizes, const s
 		floating_scale = std::max(0.0f, size - regular_sum) / floating_sum;
 	}
 
+	if (repeat_count > 0) {
+		for (int i = 0; i < sizes.size(); ++i) {
+			if (sizes[i].repeat) {
+				repeat_unit += sizes[i].getEstimateValue(size - regular_sum - floating_sum * floating_scale, grammar, shape);
+			}
+		}
+
+		repeat_num = std::max(0.0f, (size - regular_sum - floating_sum * floating_scale) / repeat_unit + 0.5f);
+		if (repeat_num > 0) {
+			repeat_scale = std::max(0.0f, (size - regular_sum - floating_sum * floating_scale) / (float)repeat_num / repeat_unit);
+		}
+
+		floating_scale = std::max(0.0f, size - regular_sum - repeat_unit * repeat_scale * repeat_num) / floating_sum;
+	}
+
 	for (int i = 0; i < sizes.size(); ++i) {
 		if (sizes[i].repeat) {
-			//float s = sizes[i].getEstimateValue(size - regular_sum - floating_sum * floating_scale, grammar, shape);
-			float s = sizes[i].getEstimateValue(size, grammar, shape);
-			int num = (size - regular_sum - floating_sum * floating_scale) / s + 0.5;
-			//if (num <= 0) num = 1;
-			s = (size - regular_sum - floating_sum * floating_scale) / num;
-			for (int k = 0; k < num; ++k) {
+			float s = sizes[i].getEstimateValue(size - regular_sum - floating_sum * floating_scale, grammar, shape);
+			s *= repeat_scale;
+			for (int k = 0; k < repeat_num; ++k) {
 				decoded_sizes.push_back(s);
 				decoded_output_names.push_back(output_names[i]);
 			}
-		} else {
+		}
+		else {
 			if (sizes[i].type == Value::TYPE_ABSOLUTE) {
 				decoded_sizes.push_back(grammar.evalFloat(sizes[i].value, shape));
 				decoded_output_names.push_back(output_names[i]);
-			} else if (sizes[i].type == Value::TYPE_RELATIVE) {
+			}
+			else if (sizes[i].type == Value::TYPE_RELATIVE) {
 				decoded_sizes.push_back(grammar.evalFloat(sizes[i].value, shape) * size);
 				decoded_output_names.push_back(output_names[i]);
-			} else if (sizes[i].type == Value::TYPE_FLOATING) {
+			}
+			else if (sizes[i].type == Value::TYPE_FLOATING) {
 				decoded_sizes.push_back(grammar.evalFloat(sizes[i].value, shape) * floating_scale);
 				decoded_output_names.push_back(output_names[i]);
 			}
