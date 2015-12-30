@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	connect(ui.actionAddBuildingMass, SIGNAL(triggered()), this, SLOT(onAddBuildingMass()));
 	connect(ui.actionCopyBuildingMass, SIGNAL(triggered()), this, SLOT(onCopyBuildingMass()));
 	connect(ui.actionDeleteBuildingMass, SIGNAL(triggered()), this, SLOT(onDeleteBuildingMass()));
+	connect(ui.actionUndo, SIGNAL(triggered()), this, SLOT(onUndo()));
 	connect(ui.actionViewShadow, SIGNAL(triggered()), this, SLOT(onViewShadow()));
 	connect(ui.actionViewBasicRendering, SIGNAL(triggered()), this, SLOT(onViewRendering()));
 	connect(ui.actionViewSSAO, SIGNAL(triggered()), this, SLOT(onViewRendering()));
@@ -138,6 +139,9 @@ void MainWindow::onAddBuildingMass() {
 
 void MainWindow::onCopyBuildingMass() {
 	if (glWidget->scene.buildingSelector->isBuildingSelected()) {
+		// the selected building will be copied, so the history should be updated before copy
+		glWidget->scene.updateHistory();
+
 		glWidget->scene.buildingSelector->copy();
 		glWidget->generateGeometry();
 		glWidget->update();
@@ -146,10 +150,19 @@ void MainWindow::onCopyBuildingMass() {
 
 void MainWindow::onDeleteBuildingMass() {
 	if (glWidget->scene.buildingSelector->isBuildingSelected()) {
+		// the selected building will be removed, so the history should be updated before copy
+		glWidget->scene.updateHistory();
+
 		glWidget->scene.buildingSelector->remove();
 		glWidget->generateGeometry();
 		glWidget->update();
 	}
+}
+
+void MainWindow::onUndo() {
+	glWidget->scene.undo();
+	glWidget->generateGeometry();
+	glWidget->update();
 }
 
 void MainWindow::onViewShadow() {

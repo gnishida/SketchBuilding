@@ -174,6 +174,17 @@ void Scene::removeObject(int objectId) {
 	}
 }
 
+void Scene::updateHistory() {
+	_history.push_back(_objects);
+}
+
+void Scene::undo() {
+	if (_history.size() > 0) {
+		_objects = _history.back();
+		_history.pop_back();
+	}
+}
+
 void Scene::alignObjects(float threshold) {
 	alignObjects(_currentObject, 0, threshold);
 }

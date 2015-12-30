@@ -1039,6 +1039,9 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 	}
 	else if (mode == MODE_SELECT_BUILDING) {
 		if (selectBuildingControlPoint(glm::vec2(e->x(), e->y()))) {
+			// a building is selected, so update the history to prepare for undo in the future
+			scene.updateHistory();
+
 			updateGeometry();
 		}
 		renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);

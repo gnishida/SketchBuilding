@@ -42,6 +42,8 @@ public:
 	std::vector<SceneObject> _objects;
 	int _currentObject;
 
+	std::vector<std::vector<SceneObject> > _history;
+
 	FaceSelector* faceSelector;
 	BuildingSelector* buildingSelector;
 
@@ -55,6 +57,8 @@ public:
 	void clearCurrentObject();
 	void newObject();
 	void removeObject(int objectId);
+	void updateHistory();
+	void undo();
 	void alignObjects(float threshold);
 	void alignObjects(int currentObject, int controlPoint, float threshold);
 	void alignObjects(const glutils::Face& baseFace, float threshold);

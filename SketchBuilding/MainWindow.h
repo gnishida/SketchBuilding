@@ -35,6 +35,7 @@ public slots:
 	void onAddBuildingMass();
 	void onCopyBuildingMass();
 	void onDeleteBuildingMass();
+	void onUndo();
 	void onViewShadow();
 	void onViewRendering();
 	void onViewGroundPlane();

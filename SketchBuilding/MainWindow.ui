@@ -42,6 +42,8 @@
     <addaction name="actionAddBuildingMass"/>
     <addaction name="actionCopyBuildingMass"/>
     <addaction name="actionDeleteBuildingMass"/>
+    <addaction name="separator"/>
+    <addaction name="actionUndo"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -239,6 +241,11 @@
    </property>
    <property name="text">
     <string>Ground Plane</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
    </property>
   </action>
  </widget>

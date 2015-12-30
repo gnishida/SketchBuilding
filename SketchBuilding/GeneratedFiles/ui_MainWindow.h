@@ -49,6 +49,7 @@ public:
     QAction *actionDeleteBuildingMass;
     QAction *actionGrammarWindow;
     QAction *actionViewGroundPlane;
+    QAction *actionUndo;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -118,6 +119,8 @@ public:
         actionViewGroundPlane = new QAction(MainWindowClass);
         actionViewGroundPlane->setObjectName(QStringLiteral("actionViewGroundPlane"));
         actionViewGroundPlane->setCheckable(true);
+        actionUndo = new QAction(MainWindowClass);
+        actionUndo->setObjectName(QStringLiteral("actionUndo"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindowClass->setCentralWidget(centralWidget);
@@ -154,6 +157,8 @@ public:
         menuShape->addAction(actionAddBuildingMass);
         menuShape->addAction(actionCopyBuildingMass);
         menuShape->addAction(actionDeleteBuildingMass);
+        menuShape->addSeparator();
+        menuShape->addAction(actionUndo);
         menuView->addAction(actionViewShadow);
         menuView->addSeparator();
         menuView->addAction(actionViewBasicRendering);
@@ -204,6 +209,7 @@ public:
         actionDeleteBuildingMass->setShortcut(QApplication::translate("MainWindowClass", "Ctrl+X", 0));
         actionGrammarWindow->setText(QApplication::translate("MainWindowClass", "Grammar Window", 0));
         actionViewGroundPlane->setText(QApplication::translate("MainWindowClass", "Ground Plane", 0));
+        actionUndo->setText(QApplication::translate("MainWindowClass", "Undo", 0));
         menuFile->setTitle(QApplication::translate("MainWindowClass", "File", 0));
         menuShape->setTitle(QApplication::translate("MainWindowClass", "Edit", 0));
         menuView->setTitle(QApplication::translate("MainWindowClass", "View", 0));
