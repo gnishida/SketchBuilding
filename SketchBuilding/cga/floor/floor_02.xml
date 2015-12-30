@@ -43,7 +43,7 @@
 		</split>
 	</rule>
 	<rule name="BorderAndWindow_02">
-		<offset offsetDistance="-0.08" inside="Window_02" border="Border"/>
+		<offset offsetDistance="-z_window_border_size" inside="Window_02" border="Border"/>
 	</rule>
 	<rule name="BorderAndWindow2_02">
 		<offset offsetDistance="-z_window_border_size" inside="Window2_02" border="Border"/>
