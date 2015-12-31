@@ -114,7 +114,9 @@ void Rule::decodeSplitSizes(float size, const std::vector<Value>& sizes, const s
 			repeat_scale = std::max(0.0f, (size - regular_sum - floating_sum * floating_scale) / (float)repeat_num / repeat_unit);
 		}
 
-		floating_scale = std::max(0.0f, size - regular_sum - repeat_unit * repeat_scale * repeat_num) / floating_sum;
+		if (floating_sum > 0) {
+			floating_scale = std::max(0.0f, size - regular_sum - repeat_unit * repeat_scale * repeat_num) / floating_sum;
+		}
 	}
 
 	for (int i = 0; i < sizes.size(); ++i) {
