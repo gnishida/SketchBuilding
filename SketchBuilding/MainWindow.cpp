@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	renderingModeGroup->addAction(ui.actionViewSketchyRendering);
 
 	ui.actionViewShadow->setChecked(true);
-	ui.actionViewBasicRendering->setChecked(true);
+	ui.actionViewHatching->setChecked(true);
 	ui.actionViewGroundPlane->setChecked(true);
 
 	// add menu handlers
