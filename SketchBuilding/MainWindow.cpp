@@ -109,6 +109,7 @@ void MainWindow::onNew() {
 	glWidget->scene.buildingSelector->unselectBuilding();
 	glWidget->clearGeometry();
 	glWidget->renderManager.renderingMode = RenderManager::RENDERING_MODE_HATCHING;
+	glWidget->update();
 }
 
 void MainWindow::onClearSketch() {
