@@ -31,6 +31,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	align_threshold = 0.5;
 	pen_pressure = 0.5;
 	showGroundPlane = true;
+	camera_timer = NULL;
 
 	// this flag is for workaround.
 	// Qt should not call TabletEvent and MouseEvent at the same time, but it actually calls both events.
@@ -982,6 +983,8 @@ void GLWidget3D::changeMode(int new_mode) {
 void GLWidget3D::camera_update() {
 	if (intCamera.forward()) {
 		camera_timer->stop();
+		delete camera_timer;
+		camera_timer = NULL;
 	}
 
 	camera = intCamera.currentCamera();
