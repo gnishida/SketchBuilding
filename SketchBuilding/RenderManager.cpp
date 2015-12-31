@@ -93,22 +93,17 @@ void RenderManager::init(const std::string& vertex_file, const std::string& geom
 
 	// init program shader
 	// PASS 1
-	printf("PASS 1\n");
 	fragDataNamesP1.push_back("def_diffuse");
 	fragDataNamesP1.push_back("def_normal");
 	fragDataNamesP1.push_back("def_originPos");
 	fragDataNamesP1.push_back("def_intensity");
 	programs["pass1"] = shader.createProgram("shaders/lc_vert_pass1.glsl", "shaders/lc_frag_pass1.glsl", fragDataNamesP1);
 	// PASS 2
-	printf("PASS 2\n");
 	std::vector<QString> fragDataNamesP2;
 	fragDataNamesP2.push_back("def_AO");
 	programs["ssao"] = shader.createProgram("shaders/lc_vert_ssao.glsl", "shaders/lc_frag_ssao.glsl", fragDataNamesP2);
 	// PASS 3
-	printf("PASS 3\n");
-	std::vector<QString> fragDataNamesP3;//default
-	fragDataNamesP3.push_back("outputF");
-	programs["blur"] = shader.createProgram("shaders/lc_vert_blur.glsl", "shaders/lc_frag_blur.glsl", fragDataNamesP3);
+	programs["blur"] = shader.createProgram("shaders/lc_vert_blur.glsl", "shaders/lc_frag_blur.glsl");
 
 	// Line rendering
 	programs["line"] = shader.createProgram("shaders/lc_vert_line.glsl", "shaders/lc_frag_line.glsl");

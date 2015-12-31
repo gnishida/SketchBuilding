@@ -29,9 +29,13 @@ uint Shader::createProgram(const string& vertex_file, const string& fragment_fil
 }
 
 uint Shader::createProgram(const string& vertex_file, const string& fragment_file, const std::vector<QString>& fragDataNamesP1) {
+	std::cout << "Compiling " << vertex_file << std::endl;
+
 	std::string source;
 	loadTextFile(vertex_file, source);
 	GLuint vertex_shader = compileShader(source, GL_VERTEX_SHADER);
+
+	std::cout << "Compiling " << fragment_file << std::endl;
 
 	loadTextFile(fragment_file, source);
 	GLuint fragment_shader = compileShader(source, GL_FRAGMENT_SHADER);
