@@ -91,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 	grammarDialog = new GrammarDialog(this);
 	grammarDialog->show();
 	addDockWidget(Qt::RightDockWidgetArea, grammarDialog);
+
+	this->showMaximized();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* e) {

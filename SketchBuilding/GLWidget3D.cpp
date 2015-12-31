@@ -980,6 +980,12 @@ void GLWidget3D::changeMode(int new_mode) {
 	update();
 }
 
+glm::vec3 GLWidget3D::computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot) {
+	return glm::vec3(0,
+		downward * cosf(camera_xrot / 180.0f * M_PI),
+		downward * sinf(camera_xrot / 180.0f * M_PI) + distToCamera);
+}
+
 void GLWidget3D::camera_update() {
 	if (intCamera.forward()) {
 		camera_timer->stop();
@@ -990,12 +996,6 @@ void GLWidget3D::camera_update() {
 	camera = intCamera.currentCamera();
 	camera.updateMVPMatrix();
 	update();
-}
-
-glm::vec3 GLWidget3D::computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot) {
-	return glm::vec3(0,
-		downward * cosf(camera_xrot / 180.0f * M_PI),
-		downward * sinf(camera_xrot / 180.0f * M_PI) + distToCamera);
 }
 
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
