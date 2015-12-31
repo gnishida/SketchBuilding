@@ -116,12 +116,13 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["window"][7] = new Regression("models/window/deploy_8.prototxt", "models/window/window8_iter_80000.caffemodel");
 	regressions["window"][8] = new Regression("models/window/deploy_9.prototxt", "models/window/window9_iter_80000.caffemodel");
 
-	classifiers["ledge"] = new Classifier("models/ledge/deploy.prototxt", "models/ledge/train_iter_10000.caffemodel", "models/ledge/ledges_mean.binaryproto");
-	regressions["ledge"].resize(3);
-	regressions["ledge"][0] = new Regression("models/ledge/deploy_1.prototxt", "models/ledge/ledge1_iter_2000.caffemodel");
-	regressions["ledge"][1] = new Regression("models/ledge/deploy_2.prototxt", "models/ledge/ledge2_iter_2000.caffemodel");
-	regressions["ledge"][2] = new Regression("models/ledge/deploy_3.prototxt", "models/ledge/ledge3_iter_2000.caffemodel");
-	
+	classifiers["ledge"] = new Classifier("models/ledge/deploy.prototxt", "models/ledge/train_iter_20000.caffemodel", "models/ledge/ledges_mean.binaryproto");
+	regressions["ledge"].resize(4);
+	regressions["ledge"][0] = new Regression("models/ledge/deploy_1.prototxt", "models/ledge/ledge1_iter_80000.caffemodel");
+	regressions["ledge"][1] = new Regression("models/ledge/deploy_2.prototxt", "models/ledge/ledge2_iter_80000.caffemodel");
+	regressions["ledge"][2] = new Regression("models/ledge/deploy_3.prototxt", "models/ledge/ledge3_iter_80000.caffemodel");
+	regressions["ledge"][3] = new Regression("models/ledge/deploy_4.prototxt", "models/ledge/ledge4_iter_80000.caffemodel");
+
 	mcmc = new MCMC(this);
 }
 
@@ -814,12 +815,10 @@ void GLWidget3D::selectFaceForLedge() {
 	// compute appropriate camera distance for the selected face
 	float rot_y = -M_PI * 0.4 + atan2f(scene.faceSelector->selectedFace()->vertices[0].normal.x, scene.faceSelector->selectedFace()->vertices[0].normal.z);
 	glutils::Face rotatedFace = scene.faceSelector->selectedFace()->rotate(-rot_y, glm::vec3(0, 1, 0));
-	float d1 = rotatedFace.bbox.sx() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
-	float d2 = rotatedFace.bbox.sy() * 0.5f / tanf(camera.fovy * M_PI / 180.0f * 0.5f);
-	float d = std::max(d1, d2) * 1.5f;
+	float d = 6;
 
 	// turn the camera such that the selected face becomes parallel to the image plane.
-	intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.maxPt.z + d));
+	intCamera = InterpolationCamera(camera, 0, -rot_y / M_PI * 180, 0, glm::vec3(rotatedFace.bbox.center().x, rotatedFace.bbox.center().y, rotatedFace.bbox.center().z + d));
 
 	scene.faceSelector->selectedFace()->select();
 }

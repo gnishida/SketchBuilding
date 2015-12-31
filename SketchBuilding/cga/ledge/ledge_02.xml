@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="ledge" version="1.0" author="Gen Nishida">
-	<attr name="ledge_extrude_height1_ratio" value="0.2" range="0.1,0.3"/>
-	<attr name="ledge_extrude_height2_ratio" value="0.3" range="0.3,1.0"/>
+	<attr name="ledge_extrude_height1" value="0.1" range="0.05,0.3"/>
+	<attr name="ledge_extrude_height2" value="0.2" range="0.2,0.6"/>
 	
 	<rule name="Start">
 		<split splitAxis="y">
@@ -11,11 +11,11 @@
 	</rule>
 	<rule name="LedgeLayer1">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height1_ratio*scope.sy*2"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height1*2"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>
-		<extrude height="scope.sy*ledge_extrude_height1_ratio"/>
+		<extrude height="ledge_extrude_height1"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>
@@ -23,11 +23,11 @@
 	</rule>
 	<rule name="LedgeLayer2">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height2_ratio*scope.sy*2"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height2*2"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>
-		<extrude height="scope.sy*ledge_extrude_height2_ratio"/>
+		<extrude height="ledge_extrude_height2"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>

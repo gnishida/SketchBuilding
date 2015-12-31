@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="ledge" version="1.0" author="Gen Nishida">
 	<attr name="ledge_extrude_height1" value="0.1" range="0.1,0.3"/>
-	<attr name="ledge_extrude_height2" value="0.3" range="0.3,0.8"/>
-	<attr name="ledge_extrude_height3" value="0.35" range="0.8,1.5"/>
+	<attr name="ledge_extrude_height2" value="0.3" range="0.3,0.6"/>
 	
 	<rule name="Start">
 		<split splitAxis="y">
@@ -37,11 +36,11 @@
 	</rule>
 	<rule name="LedgeLayer3">
 		<size centered="true">
-			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height3*2"/>
+			<param name="xSize" type="absolute" value="scope.sx+ledge_extrude_height2*1.15*2"/>
 			<param name="ySize" type="relative" value="1"/>
 			<param name="zSize" type="relative" value="1"/>
 		</size>
-		<extrude height="ledge_extrude_height3"/>
+		<extrude height="ledge_extrude_height2*1.15"/>
 		<comp>
 			<param name="side" value="LedgeFace"/>
 			<param name="top" value="LedgeFace"/>
