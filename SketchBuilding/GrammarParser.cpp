@@ -620,18 +620,14 @@ boost::shared_ptr<Operator> parseTaperOperator(const QDomNode& node) {
 	if (!node.toElement().hasAttribute("height")) {
 		throw "taper node has to have height attribute.";
 	}
-
-	std::string height = node.toElement().attribute("height").toUtf8().constData();
-
-	std::string top_ratio;
-	if (node.toElement().hasAttribute("top_ratio")) {
-		top_ratio = node.toElement().attribute("top_ratio").toUtf8().constData();
-
-	} else {
-		top_ratio = "0.0";
+	if (!node.toElement().hasAttribute("slope")) {
+		throw "taper node has to have slope attribute.";
 	}
 
-	return boost::shared_ptr<Operator>(new TaperOperator(height, top_ratio));
+	std::string height = node.toElement().attribute("height").toUtf8().constData();
+	std::string slope = node.toElement().attribute("slope").toUtf8().constData();
+
+	return boost::shared_ptr<Operator>(new TaperOperator(height, slope));
 }
 
 boost::shared_ptr<Operator> parseTextureOperator(const QDomNode& node) {

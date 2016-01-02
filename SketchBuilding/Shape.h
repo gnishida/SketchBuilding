@@ -50,7 +50,7 @@ public:
 	virtual boost::shared_ptr<Shape> shapeU(const std::string& name, float frontWidth, float backDepth);
 	virtual void size(float xSize, float ySize, float zSize, bool centered);
 	virtual void split(int splitAxis, const std::vector<float>& sizes, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
-	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
+	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float slope);
 	void texture(const std::string& tex);
 	void translate(int mode, int coordSystem, float x, float y, float z);
 	virtual void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;

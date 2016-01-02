@@ -4,21 +4,21 @@
 
 namespace cga {
 
-TaperOperator::TaperOperator(const std::string& height, const std::string& top_ratio) {
+TaperOperator::TaperOperator(const std::string& height, const std::string& slope) {
 	this->name = "taper";
 	this->height = height;
-	this->top_ratio = top_ratio;
+	this->slope = slope;
 }
 
 boost::shared_ptr<Shape> TaperOperator::apply(boost::shared_ptr<Shape>& shape, const Grammar& grammar, std::list<boost::shared_ptr<Shape> >& stack) {
 	float actual_height = grammar.evalFloat(height, shape);
-	float actual_top_ratio = grammar.evalFloat(top_ratio, shape);
+	float actual_slope = grammar.evalFloat(slope, shape);
 	
-	return shape->taper(shape->_name, actual_height, actual_top_ratio);
+	return shape->taper(shape->_name, actual_height, actual_slope);
 }
 
 std::string TaperOperator::to_string() {
-	return "taper(" + height + ", " + top_ratio + ")";
+	return "taper(" + height + ", " + slope + ")";
 }
 
 }

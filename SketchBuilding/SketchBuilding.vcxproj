@@ -216,7 +216,11 @@
     <ClCompile Include="ColorOperator.cpp" />
     <ClCompile Include="CompOperator.cpp" />
     <ClCompile Include="CopyOperator.cpp" />
+    <ClCompile Include="CornerCutGableRoof.cpp" />
     <ClCompile Include="CornerCutOperator.cpp" />
+    <ClCompile Include="CornerCutPrism.cpp" />
+    <ClCompile Include="CornerCutRectangle.cpp" />
+    <ClCompile Include="CornerCutTaper.cpp" />
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="CylinderSide.cpp" />
@@ -393,6 +397,10 @@
     <ClInclude Include="CGA.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Classifier.h" />
+    <ClInclude Include="CornerCutGableRoof.h" />
+    <ClInclude Include="CornerCutPrism.h" />
+    <ClInclude Include="CornerCutRectangle.h" />
+    <ClInclude Include="CornerCutTaper.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="CylinderSide.h" />

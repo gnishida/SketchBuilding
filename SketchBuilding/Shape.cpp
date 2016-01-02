@@ -206,7 +206,7 @@ void Shape::split(int splitAxis, const std::vector<float>& sizes, const std::vec
 	throw "split() is not supported.";
 }
 
-boost::shared_ptr<Shape> Shape::taper(const std::string& name, float height, float top_ratio) {
+boost::shared_ptr<Shape> Shape::taper(const std::string& name, float height, float slope) {
 	throw "taper() is not supported.";
 }
 
