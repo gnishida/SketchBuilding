@@ -434,6 +434,9 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
 
+	params[0] = (params[0] - 0.5f) * 1.3f + 0.5f;
+	params[1] = (params[1] - 0.5f) * 1.3f + 0.5f;
+
 	// optimize the parameter values by MCMC
 	start = clock();
 	mcmc->optimize(grammars["building"][grammar_id], img, 10.0f, 10, current_z, params);
@@ -1135,7 +1138,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 				if (strokes.size() >= 3) updateBuildingOptions();
 			}
 			else if (stage == "roof") {
-				if (strokes.size() >= 2) updateRoofOptions();
+				updateRoofOptions();
 			}
 			else if (stage == "facade") {
 				updateFacadeOptions();
@@ -1144,7 +1147,7 @@ void GLWidget3D::mouseReleaseEvent(QMouseEvent* e) {
 				updateFloorOptions();
 			}
 			else if (stage == "window") {
-				if (strokes.size() >= 2) updateWindowOptions();
+				updateWindowOptions();
 			}
 			else if (stage == "ledge") {
 				updateLedgeOptions();
