@@ -176,6 +176,8 @@ void Rectangle::setupProjection(int axesSelector, float texWidth, float texHeigh
 		_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
 		_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
 		_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+
+		_textureEnabled = true;
 	}
 	else {
 		throw "Rectangle supports only scope.xy for setupProjection().";

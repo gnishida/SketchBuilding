@@ -211,6 +211,21 @@ boost::shared_ptr<Shape> CornerCutRectangle::roofHip(const std::string& name, fl
 	return boost::shared_ptr<Shape>(new HipRoof(name, _grammar_type, _pivot, _modelMat, points, angle, _color));
 }
 
+void CornerCutRectangle::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	if (axesSelector == AXES_SCOPE_XY) {
+		_texCoords.resize(4);
+		_texCoords[0] = glm::vec2(0, 0);
+		_texCoords[1] = glm::vec2(_scope.x / texWidth, 0);
+		_texCoords[2] = glm::vec2(_scope.x / texWidth, _scope.y / texHeight);
+		_texCoords[3] = glm::vec2(0, _scope.y / texHeight);
+
+		_textureEnabled = true;
+	}
+	else {
+		throw "Rectangle supports only scope.xy for setupProjection().";
+	}
+}
+
 void CornerCutRectangle::size(float xSize, float ySize, float zSize, bool centered) {
 	_prev_scope = _scope;
 
