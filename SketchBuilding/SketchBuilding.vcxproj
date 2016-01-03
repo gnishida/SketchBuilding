@@ -315,7 +315,6 @@
     <ClCompile Include="ShapeLOperator.cpp" />
     <ClCompile Include="ShapeUOperator.cpp" />
     <ClCompile Include="SizeOperator.cpp" />
-    <ClCompile Include="SketchyRenderingBuffer.cpp" />
     <ClCompile Include="SplitOperator.cpp" />
     <ClCompile Include="TaperOperator.cpp" />
     <ClCompile Include="TextureOperator.cpp" />
@@ -503,7 +502,6 @@
     <ClInclude Include="ShapeLOperator.h" />
     <ClInclude Include="ShapeUOperator.h" />
     <ClInclude Include="SizeOperator.h" />
-    <ClInclude Include="SketchyRenderingBuffer.h" />
     <ClInclude Include="SplitOperator.h" />
     <ClInclude Include="TaperOperator.h" />
     <ClInclude Include="TextureOperator.h" />
