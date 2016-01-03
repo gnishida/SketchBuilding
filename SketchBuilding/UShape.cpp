@@ -34,6 +34,15 @@ boost::shared_ptr<Shape> UShape::extrude(const std::string& name, float height) 
 	return boost::shared_ptr<Shape>(new UShapePrism(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, _front_width, _back_height, _color));
 }
 
+boost::shared_ptr<Shape> UShape::hemisphere(const std::string& name) {
+	std::vector<glm::vec2> points(4);
+	points[0] = glm::vec2(0, 0);
+	points[1] = glm::vec2(_scope.x, 0);
+	points[2] = glm::vec2(_scope.x, _scope.y);
+	points[3] = glm::vec2(0, _scope.y);
+	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), (_scope.x + _scope.y) * 0.25, 0, _color, _texture));
+}
+
 void UShape::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
 	// inner shape
 	if (!inside.empty()) {

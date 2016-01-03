@@ -34,6 +34,7 @@ void GrammarDialog::updateGrammar() {
 
 		QTreeWidgetItem* rootItem = new QTreeWidgetItem(treeWidget);
 		rootItem->setText(0, it->first.c_str());
+		rootItem->setExpanded(true);
 
 		for (auto it2 = it->second.attrs.begin(); it2 != it->second.attrs.end(); ++it2) {
 			// Hack: skip the grammar for the border
@@ -45,6 +46,7 @@ void GrammarDialog::updateGrammar() {
 			font.setBold(true);
 			childItem->setFont(0, font);
 			rootItem->addChild(childItem);
+			childItem->setExpanded(true);
 
 			QTreeWidgetItem* groundChildItem = new QTreeWidgetItem();
 			groundChildItem->setText(0, it2->second.value.c_str());
@@ -66,8 +68,6 @@ void GrammarDialog::updateGrammar() {
 			}
 		}
 	}
-
-	treeWidget->expandAll();
 }
 
 void GrammarDialog::updateCheckState(QTreeWidgetItem* item, int a) {
