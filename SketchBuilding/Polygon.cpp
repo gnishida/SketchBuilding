@@ -22,7 +22,7 @@ Polygon::Polygon(const std::string& name, const std::string& grammar_type, const
 			_points.push_back(points[i]);
 		}
 		else {
-			if (glm::length(points[i] - points[i - 1]) > 0.0f) {
+			if (glm::length(points[i] - points[i - 1]) > 0.001f) {
 				_points.push_back(points[i]);
 			}
 		}
