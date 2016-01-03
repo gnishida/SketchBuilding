@@ -5,6 +5,10 @@
 namespace cga {
 
 class Hemisphere : public Shape {
+private:
+	float _texWidth;
+	float _texHeight;
+
 public:
 	Hemisphere() {}
 	Hemisphere(const std::string& name, const std::string& grammar_type, const glm::mat4& pivot, const glm::mat4& modelMat, float width, float depth, const glm::vec3& color);

@@ -116,6 +116,12 @@ void Pyramid::comp(const std::map<std::string, std::string>& name_map, std::vect
 	}
 }
 
+void Pyramid::setupProjection(int axesSelector, float texWidth, float texHeight) {
+	_texWidth = texWidth;
+	_texHeight = texHeight;
+	_textureEnabled = true;
+}
+
 void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
 	if (!_active) return;
 
@@ -128,6 +134,9 @@ void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 		glm::vec4 p1(_points.back(), 0, 1);
 		p1 = _pivot * _modelMat * p1;
 
+		glm::vec2 t0(0.5, _height / _texHeight);
+		glm::vec2 t1(0, 0);
+
 		for (int i = 0; i < _points.size(); ++i) {
 			glm::vec4 p2(_points[i], 0, 1);
 			p2 = _pivot * _modelMat * p2;
@@ -138,10 +147,28 @@ void Pyramid::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 			vertices[i * 3 + 1] = Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity), glm::vec2(0, 0));
 			vertices[i * 3 + 2] = Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), glm::vec2(0, 0));
 
+			if (_textureEnabled) {
+				glm::vec2 t2(glm::length(p2 - p1) / _texWidth, 0);
+				
+				vertices[i * 3] = Vertex(glm::vec3(p0), normal, glm::vec4(_color, opacity), t0);
+				vertices[i * 3 + 1] = Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity), t1);
+				vertices[i * 3 + 2] = Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), t2);
+			}
+			else {
+				vertices[i * 3] = Vertex(glm::vec3(p0), normal, glm::vec4(_color, opacity));
+				vertices[i * 3 + 1] = Vertex(glm::vec3(p1), normal, glm::vec4(_color, opacity));
+				vertices[i * 3 + 2] = Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity));
+			}
+
 			p1 = p2;
 		}
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		if (_textureEnabled) {
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		}
+		else {
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		}
 	} else {
 		std::vector<Vertex> vertices(_points.size() * 6);
 

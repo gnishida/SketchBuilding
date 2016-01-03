@@ -84,7 +84,9 @@ void Hemisphere::comp(const std::map<std::string, std::string>& name_map, std::v
 }
 
 void Hemisphere::setupProjection(int axesSelector, float texWidth, float texHeight) {
-
+	this->_texWidth = texWidth;
+	this->_texHeight = texHeight;
+	this->_textureEnabled = true;
 }
 
 void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
@@ -123,19 +125,31 @@ void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >
 			n3 = glm::vec3(_pivot * _modelMat * glm::vec4(n3, 0));
 			n4 = glm::vec3(_pivot * _modelMat * glm::vec4(n4, 0));
 
-			glm::vec2 t1((float)j / slices, (float)i / stacks);
-			glm::vec2 t2((float)(j + 1) / slices, (float)i / stacks);
-			glm::vec2 t3((float)(j + 1) / slices, (float)(i + 1) / stacks);
-			glm::vec2 t4((float)j / slices, (float)(i + 1) / stacks);
+			if (_textureEnabled) {
+				glm::vec2 t1((float)j / slices * radius * 2.0f * M_PI / _texWidth, (float)i / stacks * radius * 2.0f * M_PI * 0.25f / _texHeight);
+				glm::vec2 t2((float)(j + 1) / slices * radius * 2.0f * M_PI / _texWidth, (float)i / stacks * radius * 2.0f * M_PI * 0.25f / _texHeight);
+				glm::vec2 t3((float)(j + 1) / slices * radius * 2.0f * M_PI / _texWidth, (float)(i + 1) / stacks * radius * 2.0f * M_PI * 0.25f / _texHeight);
+				glm::vec2 t4((float)j / slices * radius * 2.0f * M_PI / _texWidth, (float)(i + 1) / stacks * radius * 2.0f * M_PI * 0.25f / _texHeight);
 
-			std::vector<Vertex> vertices;
-			vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
-			vertices.push_back(Vertex(p2, n2, glm::vec4(_color, opacity), t2));
-			vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
-			vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
-			vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
-			vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity), t4));
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+				std::vector<Vertex> vertices;
+				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
+				vertices.push_back(Vertex(p2, n2, glm::vec4(_color, opacity), t2));
+				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
+				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
+				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
+				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity), t4));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+			}
+			else {
+				std::vector<Vertex> vertices;
+				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity)));
+				vertices.push_back(Vertex(p2, n2, glm::vec4(_color, opacity)));
+				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity)));
+				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity)));
+				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity)));
+				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity)));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			}
 		}
 	}
 }

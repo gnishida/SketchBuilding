@@ -17,6 +17,10 @@
 	</rule>
 	<rule name="RoofOffsetTopOffset_07">
 		<hemisphere/>
-		<copy name="RoofWall_07"/>
+		<comp>
+			<param name="side" value="RoofWall_07"/>
+			<param name="top" value="RoofWall_07"/>
+		</comp>
+		<!--<copy name="RoofWall_07"/>-->
 	</rule>
 </grammar>
