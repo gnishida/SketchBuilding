@@ -9,10 +9,16 @@
 	</rule>
 	<rule name="RoofInside_06">
 		<hemisphere/>
-		<copy name="RoofWall_06"/>
+		<copy name="RoofInsideCopy_06"/>
 		<comp>
 			<param name="side" value="RoofPanel_06"/>
 			<param name="top" value="RoofTopFace_06"/>
+		</comp>
+	</rule>
+	<rule name="RoofInsideCopy_06">
+		<comp>
+			<param name="side" value="RoofWall_06"/>
+			<param name="top" value="RoofWall_06"/>
 		</comp>
 	</rule>
 	<rule name="RoofPanel_06">
