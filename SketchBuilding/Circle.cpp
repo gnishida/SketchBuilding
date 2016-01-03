@@ -106,7 +106,9 @@ void Circle::setupProjection(int axesSelector, float texWidth, float texHeight) 
 	}
 }
 
-boost::shared_ptr<Shape> Circle::taper(const std::string& name, float height, float top_ratio) {
+boost::shared_ptr<Shape> Circle::taper(const std::string& name, float height, float slope) {
+	float top_ratio = std::min(1.0f, std::max(0.0f, 1.0f - height * 2.0f / tanf(slope / 180.0f * M_PI) / std::min(_scope.x, _scope.y)));
+
 	std::vector<glm::vec2> points;
 	for (int i = 0; i < CIRCLE_SLICES; ++i) {
 		float theta = (float)i / CIRCLE_SLICES * M_PI * 2.0f;
