@@ -89,6 +89,12 @@ boost::shared_ptr<Shape> CornerCutRectangle::hemisphere(const std::string& name)
 }
 
 void CornerCutRectangle::offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes) {
+	float max_offset;
+	if (_cut_type == CORNER_CUT_CURVE) {
+	}
+	else if (_cut_type == CORNER_CUT_STRAIGHT) {
+	}
+
 	// inner shape
 	if (!inside.empty()) {
 		float offset_width = _scope.x + offsetDistance * 2.0f;
@@ -114,45 +120,57 @@ void CornerCutRectangle::offset(const std::string& name, float offsetDistance, c
 	}
 
 	// border shape
-	if (!border.empty() && offsetDistance < 0) {
-		{
+	if (!border.empty() && offsetDistance < 0.0f) {
+		if (_cut_type == CORNER_CUT_CURVE) {
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, _modelMat, _scope.x - _cut_length, -offsetDistance, _color)));
+
+			glm::mat4 mat = glm::translate(_modelMat, glm::vec3(_scope.x - _cut_length, 0, 0));
+			int slices = CIRCLE_SLICES / 4;
+			for (int i = 0; i < slices; ++i) {
+				float theta1 = (float)i / slices * M_PI * 0.5f - M_PI * 0.5f;
+				float theta2 = (float)(i + 1) / slices * M_PI * 0.5f - M_PI * 0.5f;
+
+				std::vector<glm::vec2> pts;
+				pts.push_back(glm::vec2(_cut_length * cosf(theta1), _cut_length + _cut_length * sinf(theta1)));
+				pts.push_back(glm::vec2(_cut_length * cosf(theta2), _cut_length + _cut_length * sinf(theta2)));
+				pts.push_back(glm::vec2((_cut_length + offsetDistance) * cosf(theta2), _cut_length + (_cut_length + offsetDistance) * sinf(theta2)));
+				pts.push_back(glm::vec2((_cut_length + offsetDistance) * cosf(theta1), _cut_length + (_cut_length + offsetDistance) * sinf(theta1)));
+				shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, mat, pts, _color, _texture)));
+			}
+
+			mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _cut_length, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, mat, _scope.y - _cut_length + offsetDistance, -offsetDistance, _color)));
+		}
+		else if (_cut_type == CORNER_CUT_STRAIGHT) {
 			std::vector<glm::vec2> pts;
 			pts.push_back(glm::vec2(0, 0));
 			pts.push_back(glm::vec2(_scope.x - _cut_length, 0));
 			pts.push_back(glm::vec2(_scope.x - _cut_length + offsetDistance * tanf(M_PI * 0.125f), -offsetDistance));
 			pts.push_back(glm::vec2(0, -offsetDistance));
 			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, _modelMat, pts, _color, _texture)));
-		}
 
-		{
 			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _cut_length, 0, 0)), M_PI * 0.25f, glm::vec3(0, 0, 1));
-			std::vector<glm::vec2> pts;
+			pts.clear();
 			pts.push_back(glm::vec2(0, 0));
-			pts.push_back(glm::vec2(_cut_length, 0));
-			pts.push_back(glm::vec2(_cut_length + offsetDistance * tanf(M_PI * 0.125f), -offsetDistance));
+			pts.push_back(glm::vec2(_cut_length * sqrt(2.0f), 0));
+			pts.push_back(glm::vec2(_cut_length * sqrt(2.0f) + offsetDistance * tanf(M_PI * 0.125f), -offsetDistance));
 			pts.push_back(glm::vec2(-offsetDistance * tanf(M_PI * 0.125f), -offsetDistance));
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, _modelMat, pts, _color, _texture)));
-		}
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, mat, pts, _color, _texture)));
 
-		{
-			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _cut_length, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
-			std::vector<glm::vec2> pts;
+			mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _cut_length, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1));
+			pts.clear();
 			pts.push_back(glm::vec2(0, 0));
 			pts.push_back(glm::vec2(_scope.y - _cut_length + offsetDistance, 0));
 			pts.push_back(glm::vec2(_scope.y - _cut_length + offsetDistance, -offsetDistance));
 			pts.push_back(glm::vec2(-offsetDistance * tanf(M_PI * 0.125f), -offsetDistance));
-			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, _modelMat, pts, _color, _texture)));
+			shapes.push_back(boost::shared_ptr<Shape>(new Polygon(border, _grammar_type, _pivot, mat, pts, _color, _texture)));
 		}
 
-		{
-			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, _modelMat, _scope.x, -offsetDistance, _color)));
-		}
-
-		{
-			glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1));
-			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, _modelMat, _scope.y + offsetDistance * 2.0f, -offsetDistance, _color)));
-		}
+		glm::mat4 mat = glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, mat, _scope.x, -offsetDistance, _color)));
+		
+		mat = glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y + offsetDistance, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1));
+		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(border, _grammar_type, _pivot, mat, _scope.y + offsetDistance * 2.0f, -offsetDistance, _color)));
 	}
 }
 

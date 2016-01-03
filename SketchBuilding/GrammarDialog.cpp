@@ -68,6 +68,8 @@ void GrammarDialog::updateGrammar() {
 			}
 		}
 	}
+
+	//treeWidget->expandAll();
 }
 
 void GrammarDialog::updateCheckState(QTreeWidgetItem* item, int a) {
