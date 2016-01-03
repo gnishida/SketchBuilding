@@ -21,6 +21,7 @@
 		<roofHip angle="roof_slope"/>
 		<comp>
 			<param name="top" value="RoofTop"/>
+			<param name="side" value="RoofTop"/>
 		</comp>
 	</rule>
 </grammar>
