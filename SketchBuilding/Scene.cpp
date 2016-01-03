@@ -4,6 +4,7 @@
 #include <iostream>
 #include "GrammarParser.h"
 #include <boost/lexical_cast.hpp>
+#include "OBJWriter.h"
 
 namespace sc {
 
@@ -519,34 +520,7 @@ void Scene::updateGeometry(RenderManager* renderManager, const std::string& stag
 }
 
 void Scene::saveGeometry(const std::string& filename) {
-	FILE* fp = fopen(filename.c_str(), "w");
-
-	for (int i = 0; i < _objects.size(); ++i) {
-		for (int j = 0; j < _objects[i].faces.size(); ++j) {
-			for (int k = 0; k < _objects[i].faces[j]->vertices.size(); ++k) {
-				fprintf(fp, "v %lf %lf %lf\n", _objects[i].faces[j]->vertices[k].position.x, _objects[i].faces[j]->vertices[k].position.y, _objects[i].faces[j]->vertices[k].position.z);
-			}
-		}
-	}
-	fprintf(fp, "\n");
-
-	int vertexId = 1;
-	for (int i = 0; i < _objects.size(); ++i) {
-		for (int j = 0; j < _objects[i].faces.size(); ++j) {
-			for (int k = 0; k < _objects[i].faces[j]->vertices.size() / 3; ++k) {
-				fprintf(fp, "f ");
-				for (int l = 0; l < 3; ++l) {
-					if (l > 0) {
-						fprintf(fp, " ");
-					}
-					fprintf(fp, "%d", vertexId++);
-				}
-				fprintf(fp, "\n");
-			}
-		}
-	}
-
-	fclose(fp);
+	OBJWriter::write(_objects, filename);
 }
 
 void Scene::loadDefaultGrammar(const std::string& default_grammar_file) {

@@ -272,6 +272,7 @@
     <ClCompile Include="MCMC.cpp" />
     <ClCompile Include="NumberEval.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
+    <ClCompile Include="OBJWriter.cpp" />
     <ClCompile Include="OffsetOperator.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Prism.cpp" />
@@ -464,6 +465,7 @@
     <ClInclude Include="MCMC.h" />
     <ClInclude Include="NumberEval.h" />
     <ClInclude Include="OBJLoader.h" />
+    <ClInclude Include="OBJWriter.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="Prism.h" />
     <ClInclude Include="Pyramid.h" />
