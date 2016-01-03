@@ -1,7 +1,6 @@
 #include "RectangleTaper.h"
 #include "GLUtils.h"
 #include "Cuboid.h"
-#include "CornerCutRectangle.h"
 #include "CylinderSide.h"
 #include "Polygon.h"
 #include "Rectangle.h"
@@ -37,8 +36,10 @@ void RectangleTaper::comp(const std::map<std::string, std::string>& name_map, st
 	
 	// top face
 	if (name_map.find("top") != name_map.end() && name_map.at("top") != "NIL") {
-		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(offset, offset, _scope.z));
-		shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _grammar_type, _pivot, mat, _scope.x - offset * 2, _scope.y - offset * 2, _color)));
+		if (_scope.x > offset * 2 && _scope.y > offset * 2) {
+			glm::mat4 mat = glm::translate(_modelMat, glm::vec3(offset, offset, _scope.z));
+			shapes.push_back(boost::shared_ptr<Shape>(new Rectangle(name_map.at("top"), _grammar_type, _pivot, mat, _scope.x - offset * 2, _scope.y - offset * 2, _color)));
+		}
 	}
 
 	// side faces
@@ -48,7 +49,9 @@ void RectangleTaper::comp(const std::map<std::string, std::string>& name_map, st
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.x, 0));
 		points.push_back(glm::vec2(_scope.x - offset, offset / cosf(_slope / 180.0f * M_PI)));
-		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		if (_scope.x > offset * 2) {
+			points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		}
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, points, _color, _texture)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
@@ -56,7 +59,9 @@ void RectangleTaper::comp(const std::map<std::string, std::string>& name_map, st
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.y, 0));
 		points.push_back(glm::vec2(_scope.y - offset, offset / cosf(_slope / 180.0f * M_PI)));
-		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		if (_scope.y > offset * 2) {
+			points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		}
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, points, _color, _texture)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
@@ -64,7 +69,9 @@ void RectangleTaper::comp(const std::map<std::string, std::string>& name_map, st
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.x, 0));
 		points.push_back(glm::vec2(_scope.x - offset, offset / cosf(_slope / 180.0f * M_PI)));
-		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		if (_scope.x > offset * 2) {
+			points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		}
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, points, _color, _texture)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
@@ -72,7 +79,9 @@ void RectangleTaper::comp(const std::map<std::string, std::string>& name_map, st
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.y, 0));
 		points.push_back(glm::vec2(_scope.y - offset, offset / cosf(_slope / 180.0f * M_PI)));
-		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		if (_scope.y > offset * 2) {
+			points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
+		}
 		shapes.push_back(boost::shared_ptr<Shape>(new Polygon(name_map.at("side"), _grammar_type, _pivot, mat, points, _color, _texture)));
 	}
 }
@@ -97,7 +106,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 	// top face
 	{
 		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, _scope.z));
+		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, _scope.z));
 		glutils::drawQuad(_scope.x - offset * 2, _scope.y - offset * 2, glm::vec4(_color, opacity), mat, vertices);
 		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
 	}
@@ -105,7 +114,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 	// side faces
 	{
 		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::rotate(_modelMat, _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
+		glm::mat4 mat = _pivot * glm::rotate(_modelMat, _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
 		std::vector<glm::vec2> points;
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.x, 0));
@@ -117,7 +126,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 
 	{
 		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
+		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, 0, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
 		std::vector<glm::vec2> points;
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.y, 0));
@@ -129,7 +138,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 
 	{
 		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
+		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y, 0)), M_PI, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
 		std::vector<glm::vec2> points;
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.x, 0));
@@ -141,7 +150,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 
 	{
 		std::vector<Vertex> vertices;
-		glm::mat4 mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
+		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y, 0)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), _slope / 180.0f * M_PI, glm::vec3(1, 0, 0));
 		std::vector<glm::vec2> points;
 		points.push_back(glm::vec2(0, 0));
 		points.push_back(glm::vec2(_scope.y, 0));
