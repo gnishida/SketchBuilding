@@ -268,6 +268,7 @@
     <ClCompile Include="LeftWindowItemWidget.cpp" />
     <ClCompile Include="LShape.cpp" />
     <ClCompile Include="LShapePrism.cpp" />
+    <ClCompile Include="LShapeTaper.cpp" />
     <ClCompile Include="MCMC.cpp" />
     <ClCompile Include="NumberEval.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
@@ -277,6 +278,7 @@
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="PyramidOperator.cpp" />
     <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="RectangleTaper.cpp" />
     <ClCompile Include="Regression.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -319,6 +321,7 @@
     <ClCompile Include="TranslateOperator.cpp" />
     <ClCompile Include="UShape.cpp" />
     <ClCompile Include="UShapePrism.cpp" />
+    <ClCompile Include="UShapeTaper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\caffelib\caffelib.vcxproj">
@@ -457,6 +460,7 @@
     </CustomBuild>
     <ClInclude Include="LShape.h" />
     <ClInclude Include="LShapePrism.h" />
+    <ClInclude Include="LShapeTaper.h" />
     <ClInclude Include="MCMC.h" />
     <ClInclude Include="NumberEval.h" />
     <ClInclude Include="OBJLoader.h" />
@@ -465,6 +469,7 @@
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="PyramidOperator.h" />
     <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="RectangleTaper.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RoofGableOperator.h" />
     <ClInclude Include="RoofHipOperator.h" />
@@ -503,6 +508,7 @@
     <ClInclude Include="TranslateOperator.h" />
     <ClInclude Include="UShape.h" />
     <ClInclude Include="UShapePrism.h" />
+    <ClInclude Include="UShapeTaper.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="CenterOperator.h" />
     <ClInclude Include="ColorOperator.h" />

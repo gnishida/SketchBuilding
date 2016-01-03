@@ -1,12 +1,14 @@
 ﻿#include "Rectangle.h"
 #include "GLUtils.h"
 #include "Circle.h"
+#include "CornerCutRectangle.h"
 #include "LShape.h"
 #include "Pyramid.h"
 #include "HipRoof.h"
 #include "GableRoof.h"
 #include "Prism.h"
 #include "Polygon.h"
+#include "RectangleTaper.h"
 #include "Cuboid.h"
 #include "SemiCircle.h"
 #include "UShape.h"
@@ -54,6 +56,9 @@ boost::shared_ptr<Shape> Rectangle::clone(const std::string& name) const {
 boost::shared_ptr<Shape> Rectangle::cornerCut(const std::string& name, int type, float length) {
 	length = std::min(std::min(length, _scope.x), _scope.y);
 
+	return boost::shared_ptr<Shape>(new CornerCutRectangle(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, type, length, _color));
+
+	/*
 	std::vector<glm::vec2> points;
 	points.push_back(glm::vec2(0, 0));
 	points.push_back(glm::vec2(_scope.x - length, 0));
@@ -75,6 +80,7 @@ boost::shared_ptr<Shape> Rectangle::cornerCut(const std::string& name, int type,
 	points.push_back(glm::vec2(_scope.x, _scope.y));
 	points.push_back(glm::vec2(0, _scope.y));
 	return boost::shared_ptr<Shape>(new Polygon(name, _grammar_type, _pivot, _modelMat, points, _color, _texture));
+	*/
 }
 
 boost::shared_ptr<Shape> Rectangle::extrude(const std::string& name, float height) {
@@ -230,13 +236,8 @@ void Rectangle::split(int splitAxis, const std::vector<float>& sizes, const std:
 	}
 }
 
-boost::shared_ptr<Shape> Rectangle::taper(const std::string& name, float height, float top_ratio) {
-	std::vector<glm::vec2> points(4);
-	points[0] = glm::vec2(0, 0);
-	points[1] = glm::vec2(_scope.x, 0);
-	points[2] = glm::vec2(_scope.x, _scope.y);
-	points[3] = glm::vec2(0, _scope.y);
-	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, top_ratio, _color, _texture));
+boost::shared_ptr<Shape> Rectangle::taper(const std::string& name, float height, float slope) {
+	return boost::shared_ptr<Shape>(new RectangleTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _color));
 }
 
 void Rectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {

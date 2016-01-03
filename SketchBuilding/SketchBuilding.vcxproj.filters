@@ -241,6 +241,15 @@
     <ClCompile Include="CornerCutTaper.cpp">
       <Filter>Source Files\shape</Filter>
     </ClCompile>
+    <ClCompile Include="LShapeTaper.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="UShapeTaper.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangleTaper.cpp">
+      <Filter>Source Files\shape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -523,6 +532,15 @@
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="CornerCutTaper.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="LShapeTaper.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="UShapeTaper.h">
+      <Filter>Source Files\shape</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangleTaper.h">
       <Filter>Source Files\shape</Filter>
     </ClInclude>
   </ItemGroup>

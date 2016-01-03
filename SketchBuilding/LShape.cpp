@@ -4,6 +4,7 @@
 #include "HipRoof.h"
 #include "GableRoof.h"
 #include "LShapePrism.h"
+#include "LShapeTaper.h"
 #include "Cuboid.h"
 #include "Rectangle.h"
 #include "CGA.h"
@@ -130,6 +131,10 @@ void LShape::size(float xSize, float ySize, float zSize, bool centered) {
 	_scope.x = xSize;
 	_scope.y = ySize;
 	_scope.z = zSize;
+}
+
+boost::shared_ptr<Shape> LShape::taper(const std::string& name, float height, float slope) {
+	return boost::shared_ptr<Shape>(new LShapeTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _front_width, _right_width, _color));
 }
 
 void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {

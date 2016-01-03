@@ -6,6 +6,7 @@
 #include "UShapePrism.h"
 #include "Cuboid.h"
 #include "Rectangle.h"
+#include "UShapeTaper.h"
 #include "CGA.h"
 
 namespace cga {
@@ -137,6 +138,10 @@ void UShape::size(float xSize, float ySize, float zSize, bool centered) {
 	_scope.x = xSize;
 	_scope.y = ySize;
 	_scope.z = zSize;
+}
+
+boost::shared_ptr<Shape> UShape::taper(const std::string& name, float height, float slope) {
+	return boost::shared_ptr<Shape>(new UShapeTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _front_width, _back_height, _color));
 }
 
 void UShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
