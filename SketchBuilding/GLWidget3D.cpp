@@ -250,6 +250,8 @@ void GLWidget3D::updateGeometry() {
 		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
 		renderManager.addObject("grid", "", vertices, false);
 	}
+
+	renderManager.updateShadowMap(this, light_dir, light_mvpMatrix);
 }
 
 void GLWidget3D::selectOption(int option_index) {
