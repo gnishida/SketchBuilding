@@ -157,7 +157,7 @@ void MainWindow::onDeleteBuildingMass() {
 		glWidget->scene.updateHistory();
 
 		glWidget->scene.buildingSelector->remove();
-		glWidget->generateGeometry();
+		glWidget->updateGeometry();
 		glWidget->update();
 	}
 }

@@ -300,7 +300,7 @@ void BuildingSelector::resize(const glm::vec2& mousePt, bool conflictAllowed, bo
 		}
 	}
 	else if (_selectedBuildingControlPoint == 4) {
-		float diff = _scene->_objects[_selectedBuilding].object_depth - _scene->_objects[_selectedBuilding].object_width;
+		float diff = glm::dot(mousePt - _mouseStartPt, _controlPointDir) / glm::length(_controlPointDir) / glm::length(_controlPointDir);
 		if (!sameWidthDepth) {
 			_scene->_objects[_selectedBuilding].object_depth += diff;
 		}

@@ -116,9 +116,6 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 	}
 	
 	system->generateGeometry(faces);
-
-	//renderManager->addFaces(faces);
-	updateGeometry(renderManager, stage);
 }
 
 /**
@@ -177,6 +174,9 @@ void Scene::removeObject(int objectId) {
 
 void Scene::updateHistory() {
 	_history.push_back(_objects);
+	if (_history.size() > 10) {
+		_history.erase(_history.begin());
+	}
 }
 
 void Scene::undo() {
@@ -455,11 +455,6 @@ std::pair<int, boost::shared_ptr<glutils::Face> > Scene::findFace(const std::vec
  * Generate geometry by the grammars, and send the geometry to GPU memory.
  */
 void Scene::generateGeometry(RenderManager* renderManager, const std::string& stage) {
-	renderManager->removeObjects();
-
-	// Since the geometry will be updated, the pointer to a face will not be valid any more.
-	//faceSelector->unselect();
-
 	if (stage == "final" || stage == "peek_final") {
 		// facadeのfloor border sizeを0にする
 		if (default_grammars.find("Facade") != default_grammars.end()) {
@@ -491,9 +486,61 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 		}
 	}
 
-
 	for (int i = 0; i < _objects.size(); ++i) {
 		_objects[i].generateGeometry(&system, renderManager, stage);
+	}
+
+	renderManager->removeObjects();
+	for (int i = 0; i < _objects.size(); ++i) {
+		_objects[i].updateGeometry(renderManager, stage);
+	}
+
+	// if a building is selected, add its control spheres
+	if (buildingSelector->isBuildingSelected()) {
+		buildingSelector->generateGeometry(renderManager);
+	}
+}
+
+/**
+* Generate geometry by the grammars, and send the geometry to GPU memory.
+*/
+void Scene::generateGeometry(RenderManager* renderManager, const std::string& stage, int currentObject) {
+	if (stage == "final" || stage == "peek_final") {
+		// facadeのfloor border sizeを0にする
+		if (default_grammars.find("Facade") != default_grammars.end()) {
+			if (default_grammars["Facade"].attrs.find("z_floor_border_size") != default_grammars["Facade"].attrs.end()) {
+				default_grammars["Facade"].attrs["z_floor_border_size"].value = "0";
+			}
+		}
+
+		// floorのwindowのborder sizeを0にする
+		if (default_grammars.find("Floor") != default_grammars.end()) {
+			if (default_grammars["Floor"].attrs.find("z_window_border_size") != default_grammars["Floor"].attrs.end()) {
+				default_grammars["Floor"].attrs["z_window_border_size"].value = "0";
+			}
+		}
+	}
+	else {
+		// facadeのfloor border sizeを0.08にする
+		if (default_grammars.find("Facade") != default_grammars.end()) {
+			if (default_grammars["Facade"].attrs.find("z_floor_border_size") != default_grammars["Facade"].attrs.end()) {
+				default_grammars["Facade"].attrs["z_floor_border_size"].value = "0.08";
+			}
+		}
+
+		// floorのwindowのborder sizeを0.03にする
+		if (default_grammars.find("Floor") != default_grammars.end()) {
+			if (default_grammars["Floor"].attrs.find("z_window_border_size") != default_grammars["Floor"].attrs.end()) {
+				default_grammars["Floor"].attrs["z_window_border_size"].value = "0.03";
+			}
+		}
+	}
+	
+	_objects[currentObject].generateGeometry(&system, renderManager, stage);
+
+	renderManager->removeObjects();
+	for (int i = 0; i < _objects.size(); ++i) {
+		_objects[i].updateGeometry(renderManager, stage);
 	}
 
 	// if a building is selected, add its control spheres

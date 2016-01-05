@@ -66,6 +66,7 @@ public:
 	int mode;
 	float align_threshold;
 	time_t mouse_pressed_time;
+	time_t mouse_moved_time;
 	std::map<std::string, std::vector<Regression*> > regressions;
 	std::map<std::string, Classifier*> classifiers;
 	MCMC* mcmc;
@@ -92,6 +93,7 @@ public:
 	void drawScene();
 	void loadCGA(char* filename);
 	void generateGeometry();
+	void generateGeometry(int selectedBuilding);
 	void updateGeometry();
 	void selectOption(int option_index);
 

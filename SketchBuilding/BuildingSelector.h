@@ -28,6 +28,7 @@ public:
 	BuildingSelector(sc::Scene* scene);
 
 	bool isBuildingSelected();
+	int selectedBuilding() { return _selectedBuilding; }
 	bool isBuildingControlPointSelected();
 	int selectBuilding(const glm::vec3& cameraPos, const glm::vec3& viewDir);
 	int selectBuildingControlPoint(const glm::vec3& cameraPos, const glm::vec3& viewDir, const glm::vec2& mousePt, const glm::mat4& mvpMatrix, int screen_width, int screen_height);
