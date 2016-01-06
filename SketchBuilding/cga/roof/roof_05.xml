@@ -2,7 +2,7 @@
 <grammar type="roof" version="1.0" author="Gen Nishida">
 	<attr name="overhang" value="0.4" range="0.05,1"/>
 	<attr name="roof_taper_height" value="3" range="1.5,6"/>
-	<attr name="roof_taper_slope" value="40" range="30,80"/>
+	<attr name="roof_taper_slope" value="70" range="50,80"/>
 	
 	<rule name="Start">
 		<offset offsetDistance="overhang*0.5" inside="TopFaceOffset"/>
