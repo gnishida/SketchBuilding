@@ -163,6 +163,8 @@ void MainWindow::onDeleteBuildingMass() {
 }
 
 void MainWindow::onUndo() {
+	glWidget->userStatistics.numUndos++;
+	ui.statusBar->showMessage(glWidget->userStatistics.to_string().c_str());
 	glWidget->scene.undo();
 	glWidget->generateGeometry();
 	glWidget->update();
@@ -266,6 +268,8 @@ void MainWindow::onModeChanged() {
 		actionModes["select_building"]->setChecked(true);
 	}
 	else if (actionModes["eraser"]->isChecked()) {
+		glWidget->userStatistics.numErases++;
+		ui.statusBar->showMessage(glWidget->userStatistics.to_string().c_str());
 		glWidget->changeMode(GLWidget3D::MODE_ERASER);
 
 		actionModes["sketch"]->setChecked(true);

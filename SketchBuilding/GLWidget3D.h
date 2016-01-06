@@ -36,6 +36,22 @@ const int BUILDING_MASS_MIN_DEPTH = 4;
 const int BUILDING_MASS_MAX_WIDTH = 28;
 const int BUILDING_MASS_MAX_DEPTH = 28;
 
+class UserStatistics {
+public:
+	int numClicks;
+	int numUndos;
+	int numErases;
+	int numNonBestSelected;
+
+public:
+	UserStatistics() : numClicks(0), numUndos(0), numErases(0), numNonBestSelected(0) {}
+	std::string to_string() {
+		std::stringstream ss;
+		ss << "#clicks: " << numClicks << ", #undos: " << numUndos << ", #erases: " << numErases << ", #non best selected: " << numNonBestSelected;
+		return ss.str();
+	}
+};
+
 class GLWidget3D : public QGLWidget {
 public:
 	static enum { STAGE_BUILDING = 0, STAGE_ROOF, STAGE_FACADE, STAGE_WINDOW, STAGE_LEDGE };
@@ -75,6 +91,7 @@ public:
 	sc::Scene scene;
 	float current_z;
 	bool showGroundPlane;
+	UserStatistics userStatistics;
 
 	Camera camera;
 	glm::vec3 light_dir;
