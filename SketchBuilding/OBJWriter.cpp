@@ -1,6 +1,7 @@
 #include "OBJWriter.h"
 #include <fstream>
 #include <sstream>
+#include <boost/filesystem.hpp>
 
 bool Material::equals(const Material& other) {
 	if (type != other.type) return false;
@@ -48,7 +49,9 @@ void OBJWriter::write(const std::vector<sc::SceneObject>& objects, const std::st
 	std::ofstream file(filename);
 	std::ofstream mat_file(filename + ".mtl");
 
-	file << "mtllib " << filename + ".mtl" << std::endl;
+	boost::filesystem::path p(filename + ".mtl");
+
+	file << "mtllib " << p.filename().string() << std::endl;
 	file << std::endl;
 
 	file << "# List of geometric vertices" << std::endl;
@@ -64,9 +67,10 @@ void OBJWriter::write(const std::vector<sc::SceneObject>& objects, const std::st
 	file << "# List of texture coordinates" << std::endl;
 	for (int i = 0; i < objects.size(); ++i) {
 		for (int j = 0; j < objects[i].faces.size(); ++j) {
-			for (int k = 0; k < objects[i].faces[j]->vertices.size(); ++k) {
-				if (objects[i].faces[j]->vertices[k].texCoord.x == 0 && objects[i].faces[j]->vertices[k].texCoord.y == 0 && objects[i].faces[j]->vertices[k + 1].texCoord.x == 0 && objects[i].faces[j]->vertices[k + 1].texCoord.y == 0 && objects[i].faces[j]->vertices[k + 2].texCoord.x == 0 && objects[i].faces[j]->vertices[k + 2].texCoord.y == 0) continue;
+			if (objects[i].faces[j]->vertices.size() < 3) continue;
+			if (objects[i].faces[j]->vertices[0].texCoord.x == 0 && objects[i].faces[j]->vertices[0].texCoord.y == 0 && objects[i].faces[j]->vertices[1].texCoord.x == 0 && objects[i].faces[j]->vertices[1].texCoord.y == 0 && objects[i].faces[j]->vertices[2].texCoord.x == 0 && objects[i].faces[j]->vertices[2].texCoord.y == 0) continue;
 
+			for (int k = 0; k < objects[i].faces[j]->vertices.size(); ++k) {
 				file << "vt " << objects[i].faces[j]->vertices[k].texCoord.x << " " << objects[i].faces[j]->vertices[k].texCoord.y << std::endl;
 			}
 		}
@@ -90,6 +94,8 @@ void OBJWriter::write(const std::vector<sc::SceneObject>& objects, const std::st
 	Material material;
 	for (int i = 0; i < objects.size(); ++i) {
 		for (int j = 0; j < objects[i].faces.size(); ++j) {
+			if (objects[i].faces[j]->vertices.size() < 3) continue;
+
 			bool textureEnabled = true;
 			if (objects[i].faces[j]->texture.empty()) {
 				textureEnabled = false;

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+	<default_grammar type="Material" file="cga/material/paris3_material.xml"/>
+	<default_grammar type="Roof" file="cga/roof/roof_05.xml"/>
+	<default_grammar type="Facade" file="cga/facade/facade_03.xml"/>
+	<default_grammar type="Floor" file="cga/floor/floor_02.xml"/>
+	<default_grammar type="Window" file="cga/window/window_07.xml"/>
+	<default_grammar type="Window2" file="cga/window/window_04.xml"/>
+	<default_grammar type="Ledge" file="cga/ledge/ledge_03.xml"/>
+</config>
