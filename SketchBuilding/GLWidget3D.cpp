@@ -17,6 +17,9 @@
 #include "LeftWindowItemWidget.h"
 #include "Scene.h"
 #include "LayoutExtractor.h"
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
 
 #ifndef M_PI
 #define M_PI	3.141592653
@@ -125,6 +128,21 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["ledge"][3] = new Regression("models/ledge/deploy_4.prototxt", "models/ledge/ledge4_iter_80000.caffemodel");
 
 	mcmc = new MCMC(this);
+}
+
+GLWidget3D::~GLWidget3D() {
+	QFile statsFile("stats.txt");
+	if (statsFile.open(QIODevice::Append)) {
+		std::cout << "ERROR: cannot open " << statsFile.fileName().toUtf8().constData() << std::endl;
+	}
+
+	QDateTime dt = QDateTime::currentDateTime();
+
+	QTextStream out(&statsFile);
+	out << dt.toString("yyyy/MM/dd HH:mm:ss ") << userStatistics.to_string().c_str() << "\n";
+	out.flush();
+
+	statsFile.close();
 }
 
 void GLWidget3D::drawLineTo(const QPoint &endPoint, float width) {
@@ -256,7 +274,7 @@ void GLWidget3D::updateGeometry() {
 
 void GLWidget3D::selectOption(int option_index) {
 	userStatistics.numNonBestSelected++;
-	mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
+	updateStats();
 
 	if (stage == "building") {
 		predictBuilding(option_index);
@@ -1019,6 +1037,10 @@ void GLWidget3D::camera_update() {
 	update();
 }
 
+void GLWidget3D::updateStats() {
+	mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
+}
+
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
 	shiftPressed = false;
@@ -1068,12 +1090,12 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 	}
 	else if (mode == MODE_SELECT) {
 		userStatistics.numClicks++;
-		mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
+		updateStats();
 		// do nothing
 	}
 	else if (mode == MODE_SELECT_BUILDING) {
 		userStatistics.numClicks++;
-		mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
+		updateStats();
 		if (selectBuildingControlPoint(glm::vec2(e->x(), e->y()))) {
 			// a building is selected, so update the history to prepare for undo in the future
 			scene.updateHistory();
@@ -1085,7 +1107,7 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 	}
 	else {
 		userStatistics.numClicks++;
-		mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
+		updateStats();
 		if (e->buttons() & Qt::RightButton) {
 			// start drawing a lasso
 			lastPos = e->pos();

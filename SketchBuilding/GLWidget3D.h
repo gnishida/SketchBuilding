@@ -103,6 +103,7 @@ public:
 
 public:
 	GLWidget3D(QWidget* parent);
+	~GLWidget3D();
 	void drawLineTo(const QPoint& endPoint, float width);
 	void drawLassoLineTo(const QPoint& endPoint, float width);
 	void clearSketch();
@@ -145,6 +146,8 @@ public:
 	void changeMode(int new_mode);
 	glm::vec3 computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot);
 	void camera_update();
+	void updateStats();
+
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
 
