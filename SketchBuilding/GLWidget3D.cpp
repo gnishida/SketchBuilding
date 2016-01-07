@@ -132,7 +132,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 
 GLWidget3D::~GLWidget3D() {
 	QFile statsFile("stats.txt");
-	if (statsFile.open(QIODevice::Append)) {
+	if (!statsFile.open(QIODevice::Append)) {
 		std::cout << "ERROR: cannot open " << statsFile.fileName().toUtf8().constData() << std::endl;
 	}
 
