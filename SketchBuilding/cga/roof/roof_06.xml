@@ -2,23 +2,17 @@
 <grammar type="roof" version="1.0" author="Gen Nishida">
 	<attr name="inset" value="0.4" range="0.05,1"/>
 	<attr name="roof_panel_extrusion_height" value="0.1" range="0.02,0.2"/>
-	<attr name="roof_top_extrusion_height" value="0.38" range="0.1,0.5"/>
+	<attr name="roof_top_extrusion_height" value="0.38" range="0.1,0.8"/>
 
 	<rule name="Start">
 		<offset offsetDistance="-inset" inside="RoofInside_06" border="RoofWall_06"/>
 	</rule>
 	<rule name="RoofInside_06">
 		<hemisphere/>
-		<copy name="RoofInsideCopy_06"/>
+		<copy name="RoofWall_06"/>
 		<comp>
 			<param name="side" value="RoofPanel_06"/>
 			<param name="top" value="RoofTopFace_06"/>
-		</comp>
-	</rule>
-	<rule name="RoofInsideCopy_06">
-		<comp>
-			<param name="side" value="RoofWall_06"/>
-			<param name="top" value="RoofWall_06"/>
 		</comp>
 	</rule>
 	<rule name="RoofPanel_06">

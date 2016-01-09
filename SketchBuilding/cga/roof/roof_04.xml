@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <grammar type="roof" version="1.0" author="Gen Nishida">
 	<attr name="overhang" value="0.3" range="0.05,1"/>
-	<attr name="roof_pyramid_height" value="3" range="1,6"/>
+	<attr name="roof_pyramid_height" value="3" range="1,12"/>
 	
 	<rule name="Start">
 		<offset offsetDistance="overhang" inside="TopFaceOffset"/>
