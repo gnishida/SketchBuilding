@@ -88,15 +88,6 @@ void Camera::updateMVPMatrix() {
 
 	// create model view projection matrix
 	mvpMatrix = pMatrix * mvMatrix;
-
-	glm::vec4 p1(0, 0, 0, 1);
-	glm::vec4 p2(-16, 0, 0, 1);
-	glm::vec4 p3(0, 22, 0, 1);
-	glm::vec4 p4(-16, 22, 0, 1);
-	p1 = mvpMatrix * p1;
-	p2 = mvpMatrix * p2;
-	p3 = mvpMatrix * p3;
-	p4 = mvpMatrix * p4;
 }
 
 glm::vec3 Camera::cameraPosInWorld() {
