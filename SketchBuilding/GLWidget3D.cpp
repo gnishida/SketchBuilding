@@ -98,7 +98,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["building"][4] = new Regression("models/building/deploy_5.prototxt", "models/building/building5_iter_80000.caffemodel");
 	regressions["building"][5] = new Regression("models/building/deploy_6.prototxt", "models/building/building6_iter_80000.caffemodel");
 
-	classifiers["roof"] = new Classifier("models/roof/deploy.prototxt", "models/roof/train_iter_10000.caffemodel", "models/roof/roofs_mean.binaryproto");
+	classifiers["roof"] = new Classifier("models/roof/deploy.prototxt", "models/roof/train_iter_20000.caffemodel", "models/roof/roofs_mean.binaryproto");
 	regressions["roof"].resize(7);
 	regressions["roof"][0] = new Regression("models/roof/deploy_1.prototxt", "models/roof/roof1_iter_80000.caffemodel");
 	regressions["roof"][1] = new Regression("models/roof/deploy_2.prototxt", "models/roof/roof2_iter_80000.caffemodel");
@@ -780,7 +780,7 @@ bool GLWidget3D::selectStageAndFace(const glm::vec2& mouse_pos) {
 
 void GLWidget3D::selectFaceForBuilding() {
 	// shift the camera such that the selected face becomes a ground plane.
-	intCamera = InterpolationCamera(camera, 30, -45, 0, computeDownwardedCameraPos(scene.faceSelector->selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, intCamera.camera_end.xrot));
+	intCamera = InterpolationCamera(camera, 30, -45, 0, computeDownwardedCameraPos(scene.faceSelector->selectedFace()->vertices[0].position.y + CAMERA_DEFAULT_HEIGHT, CAMERA_DEFAULT_DEPTH, 30.0f));
 	current_z = scene.faceSelector->selectedFace()->vertices[0].position.y;
 
 	scene.faceSelector->selectedFace()->select();
@@ -813,7 +813,6 @@ void GLWidget3D::selectFaceForRoof() {
 	float dx = center.x * cosf(-yrot / 180.0f * M_PI) - center.z * sinf(-yrot / 180.0f * M_PI);
 	float dy = center.y * cosf(xrot / 180.0f * M_PI) - K * sinf(xrot / 180.0f * M_PI);
 	float dz = K * cosf(xrot / 180.0f * M_PI) + center.y * sinf(xrot / 180.0f * M_PI);
-
 	intCamera = InterpolationCamera(camera, xrot, yrot, 0.0, glm::vec3(dx, dy, dz + CAMERA_DEFAULT_DEPTH));
 	current_z = scene.faceSelector->selectedFace()->vertices[0].position.y;
 
