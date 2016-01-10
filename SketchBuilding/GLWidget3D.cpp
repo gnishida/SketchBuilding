@@ -108,7 +108,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["roof"][5] = new Regression("models/roof/deploy_6.prototxt", "models/roof/roof6_iter_80000.caffemodel");
 	regressions["roof"][6] = new Regression("models/roof/deploy_7.prototxt", "models/roof/roof7_iter_80000.caffemodel");
 
-	classifiers["window"] = new Classifier("models/window/deploy.prototxt", "models/window/train_iter_10000.caffemodel", "models/window/windows_mean.binaryproto");
+	classifiers["window"] = new Classifier("models/window/deploy.prototxt", "models/window/train_iter_20000.caffemodel", "models/window/windows_mean.binaryproto");
 	regressions["window"].resize(9);
 	regressions["window"][0] = new Regression("models/window/deploy_1.prototxt", "models/window/window1_iter_80000.caffemodel");
 	regressions["window"][1] = new Regression("models/window/deploy_2.prototxt", "models/window/window2_iter_80000.caffemodel");
@@ -607,6 +607,14 @@ void GLWidget3D::predictWindow(int grammar_id) {
 
 	time_t end = clock();
 	std::cout << "Duration of regression: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
+
+	// optimize the parameter values by MCMC
+	start = clock();
+	mcmc->optimizeRoof(grammars["window"][grammar_id], scene.faceSelector->_selectedFaceShape, img, 10.0f, 10, params);
+	debug("Window MCMC: ", params);
+	end = clock();
+	std::cout << "Duration of MCMC: " << (double)(end - start) / CLOCKS_PER_SEC << "sec." << std::endl;
+
 
 	// set parameter values
 	scene.currentObject().setGrammar(scene.faceSelector->selectedFaceName(), grammars["window"][grammar_id], params, true);
