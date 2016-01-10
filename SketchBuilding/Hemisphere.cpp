@@ -89,7 +89,7 @@ void Hemisphere::setupProjection(int axesSelector, float texWidth, float texHeig
 	this->_textureEnabled = true;
 }
 
-void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	int slices = 20;
@@ -138,7 +138,7 @@ void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >
 				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity), t1));
 				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity), t3));
 				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity), t4));
-				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 			}
 			else {
 				std::vector<Vertex> vertices;
@@ -148,7 +148,7 @@ void Hemisphere::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >
 				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity)));
-				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 			}
 		}
 	}

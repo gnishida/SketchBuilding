@@ -53,7 +53,7 @@ public:
 	virtual boost::shared_ptr<Shape> taper(const std::string& name, float height, float slope);
 	void texture(const std::string& tex);
 	void translate(int mode, int coordSystem, float x, float y, float z);
-	virtual void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
+	virtual void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity);
 
 protected:
 	//void drawAxes(RenderManager* renderManager, const glm::mat4& modelMat) const;

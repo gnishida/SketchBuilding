@@ -21,7 +21,7 @@ public:
 	void offset(const std::string& name, float offsetDistance, const std::string& inside, const std::string& border, std::vector<boost::shared_ptr<Shape> >& shapes);
 	void size(float xSize, float ySize, float zSize, bool centered);
 	void split(int splitAxis, const std::vector<float>& sizes, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
-	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
+	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity);
 };
 
 }

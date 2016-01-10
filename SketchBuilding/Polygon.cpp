@@ -193,7 +193,7 @@ boost::shared_ptr<Shape> Polygon::taper(const std::string& name, float height, f
 	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, _points, _center, height, top_ratio, _color, _texture));
 }
 
-void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	bool valid = true;
@@ -207,13 +207,13 @@ void Polygon::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 			std::vector<Vertex> vertices;
 			glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _texCoords, _pivot * _modelMat, vertices);
 
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 		}
 		else {
 			std::vector<Vertex> vertices;
 			glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
 
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 		}
 
 	}

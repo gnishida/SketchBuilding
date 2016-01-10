@@ -157,7 +157,7 @@ void CylinderSide::split(int splitAxis, const std::vector<float>& sizes, const s
 	}
 }
 
-void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	int slices = _angle / M_PI / 2.0f * CIRCLE_SLICES;
@@ -213,9 +213,9 @@ void CylinderSide::generateGeometry(std::vector<boost::shared_ptr<glutils::Face>
 	}
 
 	if (!_texture.empty() && _texCoords.size() >= 4) {
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	} else {
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

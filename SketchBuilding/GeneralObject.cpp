@@ -83,17 +83,17 @@ void GeneralObject::size(float xSize, float ySize, float zSize) {
 	}
 }
 
-void GeneralObject::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void GeneralObject::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	for (int i = 0; i < _points.size(); ++i) {
 		std::vector<Vertex> vertices;
 		if (_textureEnabled) {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _texCoords[i], _pivot * _modelMat, vertices);
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 		} else {
 			glutils::drawPolygon(_points[i], glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 		}
 	}
 }

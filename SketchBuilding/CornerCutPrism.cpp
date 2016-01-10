@@ -201,7 +201,7 @@ void CornerCutPrism::split(int splitAxis, const std::vector<float>& sizes, const
 	}
 }
 
-void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	// top
@@ -231,7 +231,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(0, _scope.y));
 
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 
 	// base
@@ -262,7 +262,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(0, _scope.y));
 
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 
 	// front
@@ -274,7 +274,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3((_scope.x - _cut_length) * 0.5f, 0, _scope.z * 0.5f)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x - _cut_length, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// back
@@ -286,7 +286,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y, _scope.z * 0.5)), M_PI, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// corner
@@ -328,7 +328,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity)));
-				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 			}
 		}
 		else if (_cut_type == CORNER_CUT_NEGATIVE_CURVE) {
@@ -362,13 +362,13 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 				vertices.push_back(Vertex(p1, n1, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p3, n3, glm::vec4(_color, opacity)));
 				vertices.push_back(Vertex(p4, n4, glm::vec4(_color, opacity)));
-				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+				faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 			}
 		}
 		else {
 			glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x - _cut_length * 0.5f, _cut_length * 0.5, _scope.z * 0.5)), M_PI * 0.25f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 			glutils::drawQuad(_cut_length * sqrt(2.0f), _scope.z, glm::vec4(_color, opacity), mat, vertices);
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 		}
 	}
 
@@ -382,7 +382,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, (_scope.y + _cut_length) * 0.5f, _scope.z * 0.5)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y - _cut_length, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// left
@@ -394,7 +394,7 @@ void CornerCutPrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y * 0.5f, _scope.z * 0.5f)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

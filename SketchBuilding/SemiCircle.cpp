@@ -37,7 +37,7 @@ void SemiCircle::offset(const std::string& name, float offsetDistance, const std
 	}
 }
 
-void SemiCircle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void SemiCircle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	std::vector<Vertex> vertices;
@@ -69,7 +69,7 @@ void SemiCircle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >
 		}
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 }
 
 }

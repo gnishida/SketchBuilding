@@ -156,7 +156,7 @@ void LShapePrism::split(int splitAxis, const std::vector<float>& sizes, const st
 	}
 }
 
-void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	// top
@@ -164,7 +164,7 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, _scope.z)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, _scope.z)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 
 	// base
@@ -173,7 +173,7 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_scope.x, _right_width, glm::vec4(_color, opacity), glm::translate(mat, glm::vec3(_scope.x * 0.5f, _right_width * 0.5f, 0)), vertices);
 		glutils::drawQuad(_front_width, _scope.y - _right_width, glm::vec4(_color, opacity), glm::translate(mat, glm::vec3(_front_width * 0.5f, _scope.y - _right_width * 0.5f, 0)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 
 	// front
@@ -185,17 +185,17 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width * 0.5f, 0, _scope.z * 0.5f)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_front_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_front_width, (_scope.y - _right_width) * 0.5f, _scope.z * 0.5f)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y - _right_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 
 		vertices.clear();
 		mat = _pivot * glm::rotate(glm::translate(_modelMat, glm::vec3((_scope.x +_front_width) * 0.5f, _scope.y - _right_width, _scope.z * 0.5f)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x - _front_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// back
@@ -207,7 +207,7 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x * 0.5, _scope.y, _scope.z * 0.5)), M_PI, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.x, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// right
@@ -219,7 +219,7 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _scope.y - _right_width * 0.5, _scope.z * 0.5)), M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_right_width, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// left
@@ -231,7 +231,7 @@ void LShapePrism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> 
 		}
 		glm::mat4 mat = _pivot * glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(0, _scope.y * 0.5f, _scope.z * 0.5f)), -M_PI * 0.5f, glm::vec3(0, 0, 1)), rot_angle, glm::vec3(1, 0, 0));
 		glutils::drawQuad(_scope.y, _scope.z, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

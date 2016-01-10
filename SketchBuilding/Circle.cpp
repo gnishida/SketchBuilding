@@ -117,7 +117,7 @@ boost::shared_ptr<Shape> Circle::taper(const std::string& name, float height, fl
 	return boost::shared_ptr<Shape>(new Pyramid(name, _grammar_type, _pivot, _modelMat, points, glm::vec2(_scope.x * 0.5, _scope.y * 0.5), height, top_ratio, _color, _texture));
 }
 
-void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	std::vector<Vertex> vertices;
@@ -125,11 +125,11 @@ void Circle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fa
 	glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, 0));
 	if (!_texture.empty() && _textureEnabled) {
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, _texWidth, _texHeight, mat, vertices, CIRCLE_SLICES);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 	else {
 		glutils::drawCircle(_scope.x * 0.5f, _scope.y * 0.5f, glm::vec4(_color, opacity), mat, vertices, CIRCLE_SLICES);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

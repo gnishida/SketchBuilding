@@ -120,7 +120,7 @@ void CornerCutGableRoof::size(float xSize, float ySize, float zSize, bool center
 	}
 }
 
-void CornerCutGableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void CornerCutGableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	float longer_slope = _scope.y * 0.5f / cosf(_slope / 180.0f * M_PI);
@@ -146,7 +146,7 @@ void CornerCutGableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils:
 		points.push_back(glm::vec2(_scope.y * 0.5f, _scope.z));
 
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 
 		mat = glm::rotate(glm::rotate(glm::translate(_modelMat, glm::vec3(_scope.x, _cut_length, 0)), M_PI * 0.5f, glm::vec3(0, 0, 1)), M_PI * 0.5f, glm::vec3(1, 0, 0));
 		points.clear();
@@ -154,7 +154,7 @@ void CornerCutGableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils:
 		points.push_back(glm::vec2(_scope.y - _cut_length, 0));
 		points.push_back(glm::vec2(short_side_half, short_height));
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

@@ -98,7 +98,7 @@ void RectangleTaper::size(float xSize, float ySize, float zSize, bool centered) 
 	_scope.z = zSize;
 }
 
-void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	float offset = _scope.z / tanf(_slope / 180.0f * M_PI);
@@ -108,7 +108,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		std::vector<Vertex> vertices;
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(_scope.x * 0.5f, _scope.y * 0.5f, _scope.z));
 		glutils::drawQuad(_scope.x - offset * 2, _scope.y - offset * 2, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// side faces
@@ -121,7 +121,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(_scope.x - offset, offset / cosf(_slope / 180.0f * M_PI)));
 		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	{
@@ -133,7 +133,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(_scope.y - offset, offset / cosf(_slope / 180.0f * M_PI)));
 		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	{
@@ -145,7 +145,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(_scope.x - offset, offset / cosf(_slope / 180.0f * M_PI)));
 		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	{
@@ -157,7 +157,7 @@ void RectangleTaper::generateGeometry(std::vector<boost::shared_ptr<glutils::Fac
 		points.push_back(glm::vec2(_scope.y - offset, offset / cosf(_slope / 180.0f * M_PI)));
 		points.push_back(glm::vec2(offset, offset / cosf(_slope / 180.0f * M_PI)));
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

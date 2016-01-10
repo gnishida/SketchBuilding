@@ -128,9 +128,10 @@ bool BoundingBox::contains(const glm::vec3& point, float threshold) {
 	return true;
 }
 
-Face::Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices) {
+Face::Face(const std::string& name, const std::string& grammar_type, cga::Shape* shape, const std::vector<Vertex>& vertices) {
 	this->name = name;
 	this->grammar_type = grammar_type;
+	this->shape = shape;
 	this->vertices = vertices;
 
 	for (int i = 0; i < vertices.size(); ++i) {
@@ -138,9 +139,10 @@ Face::Face(const std::string& name, const std::string& grammar_type, const std::
 	}
 }
 
-Face::Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices, const std::string& texture) {
+Face::Face(const std::string& name, const std::string& grammar_type, cga::Shape* shape, const std::vector<Vertex>& vertices, const std::string& texture) {
 	this->name = name;
 	this->grammar_type = grammar_type;
+	this->shape = shape;
 	this->vertices = vertices;
 	this->texture = texture;
 
@@ -178,7 +180,7 @@ Face Face::rotate(float rad, const glm::vec3& axis) {
 		rotatedVertices[i].position = glm::vec3(mat * glm::vec4(vertices[i].position, 1));
 	}
 
-	return Face(name, grammar_type, rotatedVertices, texture);
+	return Face(name, grammar_type, shape, rotatedVertices, texture);
 }
 
 /**

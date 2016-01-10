@@ -242,7 +242,7 @@ boost::shared_ptr<Shape> Rectangle::taper(const std::string& name, float height,
 	return boost::shared_ptr<Shape>(new RectangleTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _color));
 }
 
-void Rectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Rectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	std::vector<Vertex> vertices;
@@ -251,10 +251,10 @@ void Rectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >&
 
 	if (!_texture.empty() && _texCoords.size() >= 4) {
 		glutils::drawQuad(_scope.x, _scope.y, _texCoords[0], _texCoords[1], _texCoords[2], _texCoords[3], mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	} else {
 		glutils::drawQuad(_scope.x, _scope.y, glm::vec4(_color, opacity), mat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

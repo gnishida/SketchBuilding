@@ -18,7 +18,7 @@ public:
 	boost::shared_ptr<Shape> clone(const std::string& name) const;
 	void comp(const std::map<std::string, std::string>& name_map, std::vector<boost::shared_ptr<Shape> >& shapes);
 	void size(float xSize, float ySize, float zSize, bool centered);
-	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
+	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity);
 };
 
 }

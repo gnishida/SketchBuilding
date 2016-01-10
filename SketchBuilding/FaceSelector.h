@@ -5,18 +5,21 @@
 #include <glm/gtx/string_cast.hpp>
 #include "GLUtils.h"
 #include <boost/shared_ptr.hpp>
+#include "Shape.h"
 
 namespace sc {
 
 class Scene;
 
 class FaceSelector {
-private:
+public:
 	sc::Scene* _scene;
 	bool _selected;
 	boost::shared_ptr<glutils::Face> _selectedFace;
 	glutils::Face _selectedFaceCopy;
 	std::string _selectedFaceName;
+
+	boost::shared_ptr<cga::Shape> _selectedFaceShape;
 
 public:
 	FaceSelector(sc::Scene* scene);

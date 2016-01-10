@@ -235,7 +235,7 @@ void Shape::translate(int mode, int coordSystem, float x, float y, float z) {
 	}
 }
 
-void Shape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Shape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	throw "render() is not supported.";
 }
 

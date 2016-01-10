@@ -284,7 +284,7 @@ boost::shared_ptr<Shape> CornerCutRectangle::taper(const std::string& name, floa
 	return boost::shared_ptr<Shape>(new CornerCutTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _cut_type, _cut_length, _color));
 }
 
-void CornerCutRectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void CornerCutRectangle::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	std::vector<Vertex> vertices;
@@ -317,10 +317,10 @@ void CornerCutRectangle::generateGeometry(std::vector<boost::shared_ptr<glutils:
 			texs.push_back(glm::vec2(points[i].x / _scope.x * (_texCoords[1].x - _texCoords[0].x) + _texCoords[0].x, points[i].y / _scope.y * (_texCoords[2].y - _texCoords[0].y) + _texCoords[0].y));
 		}
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), texs, _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	} else {
 		glutils::drawPolygon(points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 }
 

@@ -109,7 +109,7 @@ void HipRoof::comp(const std::map<std::string, std::string>& name_map, std::vect
 	}
 }
 
-void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	std::vector<Vertex> vertices;
@@ -180,7 +180,7 @@ void HipRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& f
 		}
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 }
 
 }

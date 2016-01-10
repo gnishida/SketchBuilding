@@ -26,7 +26,7 @@ public:
 	void setupProjection(int axesSelector, float texWidth, float texHeight);
 	void size(float xSize, float ySize, float zSize, bool centered);
 	boost::shared_ptr<Shape> taper(const std::string& name, float height, float slope);
-	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
+	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity);
 };
 
 }

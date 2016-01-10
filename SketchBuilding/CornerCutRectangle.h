@@ -30,7 +30,7 @@ public:
 	void size(float xSize, float ySize, float zSize, bool centered);
 	void split(int splitAxis, const std::vector<float>& ratios, const std::vector<std::string>& names, std::vector<boost::shared_ptr<Shape> >& objects);
 	boost::shared_ptr<Shape> taper(const std::string& name, float height, float top_ratio = 0.0f);
-	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const;
+	void generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity);
 };
 
 }

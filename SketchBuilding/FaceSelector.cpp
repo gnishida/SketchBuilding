@@ -60,6 +60,7 @@ bool FaceSelector::selectFace(const glm::vec3& cameraPos, const glm::vec3& viewD
 					if (dist < min_dist) {
 						min_dist = dist;
 						_selectedFace = _scene->_objects[i].faces[j];
+						_selectedFaceShape = _scene->_objects[i].faces[j]->shape->clone("Start");
 						_scene->_currentObject = i;
 					}
 				}
@@ -86,6 +87,7 @@ void FaceSelector::selectFace(int object_id, const boost::shared_ptr<glutils::Fa
 
 	_scene->_currentObject = object_id;
 	_selectedFace = face;
+	_selectedFaceShape = face->shape->clone("Start");
 	_selectedFaceCopy = *_selectedFace;
 	_selectedFaceName = _selectedFace->name;
 	_selected = true;

@@ -146,20 +146,20 @@ boost::shared_ptr<Shape> LShape::taper(const std::string& name, float height, fl
 	return boost::shared_ptr<Shape>(new LShapeTaper(name, _grammar_type, _pivot, _modelMat, _scope.x, _scope.y, height, slope, _front_width, _right_width, _color));
 }
 
-void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void LShape::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	if (_textureEnabled) {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, _texCoords[0], _texCoords[1], _texCoords[2], (_texCoords[0] + _texCoords[5]) * 0.5f, glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, (_texCoords[0] + _texCoords[5]) * 0.5f, _texCoords[3], _texCoords[4], _texCoords[5], glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 	else {
 		std::vector<Vertex> vertices;
 		glutils::drawQuad(_front_width, _scope.y - _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_front_width * 0.5f, (_scope.y - _right_width) * 0.5f, 0)), vertices);
 		glutils::drawQuad(_scope.x, _right_width, glm::vec4(_color, opacity), glm::translate(_pivot * _modelMat, glm::vec3(_scope.x * 0.5, _scope.y - _right_width * 0.5, 0)), vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices, _texture)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices, _texture)));
 	}
 }
 

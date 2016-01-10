@@ -140,7 +140,7 @@ void Prism::split(int splitAxis, const std::vector<float>& sizes, const std::vec
 	}
 }
 
-void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	if (!_active) return;
 
 	// top
@@ -149,14 +149,14 @@ void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fac
 		glm::mat4 mat = _pivot * glm::translate(_modelMat, glm::vec3(0, 0, _scope.z));
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), mat, vertices);
 
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// bottom
 	{
 		std::vector<Vertex> vertices;
 		glutils::drawConcavePolygon(_points, glm::vec4(_color, opacity), _pivot * _modelMat, vertices);
-		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+		faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 	}
 
 	// side
@@ -184,7 +184,7 @@ void Prism::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& fac
 			vertices.push_back(Vertex(glm::vec3(p4), normal, glm::vec4(_color, opacity)));
 			vertices.push_back(Vertex(glm::vec3(p2), normal, glm::vec4(_color, opacity), 1));
 
-			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+			faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 
 			p1 = p3;
 			p2 = p4;

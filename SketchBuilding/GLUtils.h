@@ -5,6 +5,13 @@
 #include <glm/gtx/string_cast.hpp>
 #include "Vertex.h"
 #include <vector>
+#include <boost/shared_ptr.hpp>
+
+namespace cga {
+
+class Shape;
+
+}
 
 namespace glutils {
 
@@ -36,11 +43,12 @@ public:
 	glm::vec4 backupColor;
 	BoundingBox bbox;
 	std::string grammar_type;
+	cga::Shape* shape;
 
 public:
 	Face() {}
-	Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices);
-	Face(const std::string& name, const std::string& grammar_type, const std::vector<Vertex>& vertices, const std::string& texture);
+	Face(const std::string& name, const std::string& grammar_type, cga::Shape* shape, const std::vector<Vertex>& vertices);
+	Face(const std::string& name, const std::string& grammar_type, cga::Shape* shape, const std::vector<Vertex>& vertices, const std::string& texture);
 
 	void select();
 	void unselect();

@@ -184,7 +184,7 @@ void GableRoof::comp(const std::map<std::string, std::string>& name_map, std::ve
 	}
 }
 
-void GableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) const {
+void GableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >& faces, float opacity) {
 	std::vector<Vertex> vertices;
 
 	Polygon_2 poly;
@@ -279,7 +279,7 @@ void GableRoof::generateGeometry(std::vector<boost::shared_ptr<glutils::Face> >&
 		} while ((edge = edge->next()) != edge0);
 	}
 
-	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, vertices)));
+	faces.push_back(boost::shared_ptr<glutils::Face>(new glutils::Face(_name, _grammar_type, this, vertices)));
 }
 
 }
