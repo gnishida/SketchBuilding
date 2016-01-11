@@ -108,7 +108,7 @@ GLWidget3D::GLWidget3D(QWidget *parent) : QGLWidget(QGLFormat(QGL::SampleBuffers
 	regressions["roof"][5] = new Regression("models/roof/deploy_6.prototxt", "models/roof/roof6_iter_80000.caffemodel");
 	regressions["roof"][6] = new Regression("models/roof/deploy_7.prototxt", "models/roof/roof7_iter_80000.caffemodel");
 
-	classifiers["window"] = new Classifier("models/window/deploy.prototxt", "models/window/train_iter_20000.caffemodel", "models/window/windows_mean.binaryproto");
+	classifiers["window"] = new Classifier("models/window/deploy.prototxt", "models/window/train_iter_10000.caffemodel", "models/window/windows_mean.binaryproto");
 	regressions["window"].resize(9);
 	regressions["window"][0] = new Regression("models/window/deploy_1.prototxt", "models/window/window1_iter_80000.caffemodel");
 	regressions["window"][1] = new Regression("models/window/deploy_2.prototxt", "models/window/window2_iter_80000.caffemodel");
@@ -465,6 +465,16 @@ void GLWidget3D::predictBuilding(int grammar_id) {
 	time_t start = clock();
 	cv::Mat img;
 	convertSketch(true, img);
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
+	/*
+	QDir dir("sketches/building");
+	if (!dir.exists()) {
+		dir.mkpath(".");
+	}
+	QDateTime dt = QDateTime::currentDateTime();
+	cv::imwrite(QString("sketches/building/sketch_" + dt.toString("yyyyMMdd_HHmmss") + ".jpg").toUtf8().constData(), img);
+	*/
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
 	std::vector<float> params = regressions["building"][grammar_id]->Predict(img);
 	debug("Building regression: ", params);
 	time_t end = clock();
@@ -602,6 +612,16 @@ void GLWidget3D::predictWindow(int grammar_id) {
 	// predict parameter values by deep learning
 	cv::Mat img;
 	convertSketch(true, img);
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
+	/*
+	QDir dir("sketches/window");
+	if (!dir.exists()) {
+		dir.mkpath(".");
+	}
+	QDateTime dt = QDateTime::currentDateTime();
+	cv::imwrite(QString("sketches/window/sketch_" + dt.toString("yyyyMMdd_HHmmss") + ".jpg").toUtf8().constData(), img);
+	*/
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
 	std::vector<float> params = regressions["window"][grammar_id]->Predict(img);
 	debug("Window regression", params);
 
@@ -639,6 +659,17 @@ void GLWidget3D::predictLedge(int grammar_id) {
 	// predict parameter values by deep learning
 	cv::Mat img;
 	convertSketch(true, img);
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
+	/*
+	QDir dir("sketches/ledge");
+	if (!dir.exists()) {
+		dir.mkpath(".");
+	}
+	QDateTime dt = QDateTime::currentDateTime();
+	cv::imwrite(QString("sketches/ledge/sketch_" + dt.toString("yyyyMMdd_HHmmss") + ".jpg").toUtf8().constData(), img);
+	*/
+	/////////////////////////////////////////////////// DEBUG ///////////////////////////////////////////////////
+
 	std::vector<float> params = regressions["ledge"][grammar_id]->Predict(img);
 	debug("Ledge regression", params);
 
