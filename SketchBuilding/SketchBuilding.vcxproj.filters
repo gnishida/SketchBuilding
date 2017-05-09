@@ -250,6 +250,9 @@
     <ClCompile Include="OBJWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VBOUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files">
@@ -541,6 +544,9 @@
       <Filter>Source Files\shape</Filter>
     </ClInclude>
     <ClInclude Include="OBJWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VBOUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

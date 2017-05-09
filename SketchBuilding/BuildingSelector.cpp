@@ -81,10 +81,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[i].offset_x;
 			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
-			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+			glm::vec3 p = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(x, y, z, 1));
 
 			glm::vec3 dir = p - cameraPos;
-			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(-1, 0, 0, 0));
+			glm::vec3 n = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(-1, 0, 0, 0));
 			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
@@ -94,7 +94,7 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 
 					// compute the projected direction vector for this control point
 					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x - 1, y, z, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[i].system.modelMat * glm::vec4(x - 1, y, z, 1);
 					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
@@ -104,10 +104,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[i].offset_x + _scene->_objects[i].object_width;
 			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
-			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+			glm::vec3 p = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(x, y, z, 1));
 
 			glm::vec3 dir = p - cameraPos;
-			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(1, 0, 0, 0));
+			glm::vec3 n = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(1, 0, 0, 0));
 			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
@@ -117,7 +117,7 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 
 					// compute the projected direction vector for this control point
 					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x + 1, y, z, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[i].system.modelMat * glm::vec4(x + 1, y, z, 1);
 					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
@@ -127,10 +127,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[i].offset_x + _scene->_objects[i].object_width * 0.5;
 			float y = _scene->_objects[i].offset_y;
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
-			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+			glm::vec3 p = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(x, y, z, 1));
 
 			glm::vec3 dir = p - cameraPos;
-			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, -1, 0, 0));
+			glm::vec3 n = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(0, -1, 0, 0));
 			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
@@ -140,7 +140,7 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 
 					// compute the projected direction vector for this control point
 					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y - 1, z, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[i].system.modelMat * glm::vec4(x, y - 1, z, 1);
 					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
@@ -150,10 +150,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[i].offset_x + _scene->_objects[i].object_width * 0.5;
 			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth;
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height * 0.5;
-			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+			glm::vec3 p = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(x, y, z, 1));
 
 			glm::vec3 dir = p - cameraPos;
-			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 1, 0, 0));
+			glm::vec3 n = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(0, 1, 0, 0));
 			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
@@ -163,7 +163,7 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 
 					// compute the projected direction vector for this control point
 					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y + 1, z, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[i].system.modelMat * glm::vec4(x, y + 1, z, 1);
 					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
@@ -173,10 +173,10 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[i].offset_x + _scene->_objects[i].object_width * 0.5;
 			float y = _scene->_objects[i].offset_y + _scene->_objects[i].object_depth * 0.5;
 			float z = _scene->_objects[i].offset_z + _scene->_objects[i].height;
-			glm::vec3 p = glm::vec3(_scene->system.modelMat * glm::vec4(x, y, z, 1));
+			glm::vec3 p = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(x, y, z, 1));
 
 			glm::vec3 dir = p - cameraPos;
-			glm::vec3 n = glm::vec3(_scene->system.modelMat * glm::vec4(0, 0, 1, 0));
+			glm::vec3 n = glm::vec3(_scene->_objects[i].system.modelMat * glm::vec4(0, 0, 1, 0));
 			if (glm::dot(glm::normalize(dir), n) < 0.2 && hitTestForControlPoint(p, mousePt, mvpMatrix, screen_width, screen_height)) {
 				float dist = glm::dot(glm::normalize(viewDir), dir);
 				if (dist < min_dist) {
@@ -186,7 +186,7 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 
 					// compute the projected direction vector for this control point
 					glm::vec4 screen_p1 = mvpMatrix * glm::vec4(p, 1);
-					glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y, z + 1, 1);
+					glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[i].system.modelMat * glm::vec4(x, y, z + 1, 1);
 					_controlPointDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 				}
 			}
@@ -204,9 +204,9 @@ int BuildingSelector::selectBuildingControlPoint(const glm::vec3& cameraPos, con
 			float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
 			float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
 			float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-			glm::vec4 screen_p1 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y, z, 1);
-			glm::vec4 screen_p2 = mvpMatrix * _scene->system.modelMat * glm::vec4(x + 1, y, z, 1);
-			glm::vec4 screen_p3 = mvpMatrix * _scene->system.modelMat * glm::vec4(x, y + 1, z, 1);
+			glm::vec4 screen_p1 = mvpMatrix * _scene->_objects[_selectedBuilding].system.modelMat * glm::vec4(x, y, z, 1);
+			glm::vec4 screen_p2 = mvpMatrix * _scene->_objects[_selectedBuilding].system.modelMat * glm::vec4(x + 1, y, z, 1);
+			glm::vec4 screen_p3 = mvpMatrix * _scene->_objects[_selectedBuilding].system.modelMat * glm::vec4(x, y + 1, z, 1);
 
 			_xDir = glm::vec2((screen_p2.x / screen_p2.w + 1.0) * 0.5f * screen_width, (1 - screen_p2.y / screen_p2.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
 			_yDir = glm::vec2((screen_p3.x / screen_p3.w + 1.0) * 0.5f * screen_width, (1 - screen_p3.y / screen_p3.w) * 0.5 * screen_height) - glm::vec2((screen_p1.x / screen_p1.w + 1.0) * 0.5 * screen_width, (1 - screen_p1.y / screen_p1.w) * 0.5 * screen_height);
@@ -357,7 +357,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		float x = _scene->_objects[_selectedBuilding].offset_x;
 		float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
 		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-		glm::mat4 mat = glm::translate(_scene->system.modelMat, glm::vec3(x, y, z));
+		glm::mat4 mat = glm::translate(_scene->_objects[_selectedBuilding].system.modelMat, glm::vec3(x, y, z));
 		if (_selectedBuildingControlPoint == 1) {
 			glutils::drawSphere(CONTROL_POINT_SIZE, glm::vec4(1, 0, 0, 1), mat, vertices);
 		}
@@ -370,7 +370,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width;
 		float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
 		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-		glm::mat4 mat = glm::translate(_scene->system.modelMat, glm::vec3(x, y, z));
+		glm::mat4 mat = glm::translate(_scene->_objects[_selectedBuilding].system.modelMat, glm::vec3(x, y, z));
 		if (_selectedBuildingControlPoint == 2) {
 			glutils::drawSphere(CONTROL_POINT_SIZE, glm::vec4(1, 0, 0, 1), mat, vertices);
 		}
@@ -383,7 +383,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
 		float y = _scene->_objects[_selectedBuilding].offset_y;
 		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-		glm::mat4 mat = glm::translate(_scene->system.modelMat, glm::vec3(x, y, z));
+		glm::mat4 mat = glm::translate(_scene->_objects[_selectedBuilding].system.modelMat, glm::vec3(x, y, z));
 		if (_selectedBuildingControlPoint == 3) {
 			glutils::drawSphere(CONTROL_POINT_SIZE, glm::vec4(1, 0, 0, 1), mat, vertices);
 		}
@@ -396,7 +396,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
 		float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth;
 		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height * 0.5;
-		glm::mat4 mat = glm::translate(_scene->system.modelMat, glm::vec3(x, y, z));
+		glm::mat4 mat = glm::translate(_scene->_objects[_selectedBuilding].system.modelMat, glm::vec3(x, y, z));
 		if (_selectedBuildingControlPoint == 4) {
 			glutils::drawSphere(CONTROL_POINT_SIZE, glm::vec4(1, 0, 0, 1), mat, vertices);
 		}
@@ -409,7 +409,7 @@ void BuildingSelector::generateGeometry(RenderManager* renderManager) {
 		float x = _scene->_objects[_selectedBuilding].offset_x + _scene->_objects[_selectedBuilding].object_width * 0.5;
 		float y = _scene->_objects[_selectedBuilding].offset_y + _scene->_objects[_selectedBuilding].object_depth * 0.5;
 		float z = _scene->_objects[_selectedBuilding].offset_z + _scene->_objects[_selectedBuilding].height;
-		glm::mat4 mat = glm::translate(_scene->system.modelMat, glm::vec3(x, y, z));
+		glm::mat4 mat = glm::translate(_scene->_objects[_selectedBuilding].system.modelMat, glm::vec3(x, y, z));
 		if (_selectedBuildingControlPoint == 5) {
 			glutils::drawSphere(CONTROL_POINT_SIZE, glm::vec4(1, 0, 0, 1), mat, vertices);
 		}

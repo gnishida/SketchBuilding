@@ -9,6 +9,8 @@
 namespace sc {
 
 SceneObject::SceneObject(Scene* scene) : scene(scene), offset_x(0), offset_y(0), offset_z(0), object_width(0), object_depth(0), height(0) {
+	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
+
 	// set the default grammar for Window, Ledge, and Wall
 	try {
 		cga::parseGrammar("cga/default_border.xml", grammars["Border"]);
@@ -66,7 +68,7 @@ void SceneObject::setGrammar(const std::string& name, const cga::Grammar& gramma
 	}
 }
 
-void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage) {
+void SceneObject::generateGeometry(RenderManager* renderManager, const std::string& stage) {
 	faces.clear();
 
 	// if no building mass is created, don't generate geometry.
@@ -105,17 +107,17 @@ void SceneObject::generateGeometry(cga::CGA* system, RenderManager* renderManage
 
 	// footprint
 	cga::Rectangle* footprint = new cga::Rectangle("Start", "building", glm::translate(glm::rotate(glm::mat4(), -3.141592f * 0.5f, glm::vec3(1, 0, 0)), glm::vec3(offset_x, offset_y, offset_z)), glm::mat4(), object_width, object_depth, glm::vec3(1, 1, 1));
-	system->stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
+	system.stack.push_back(boost::shared_ptr<cga::Shape>(footprint));
 
 	//system->derive(grammar, true);
 	if (stage == "final" || stage == "peek_final") {
-		system->derive(grammars, scene->default_grammars, true, true);
+		system.derive(grammars, scene->default_grammars, true, true);
 	}
 	else {
-		system->derive(grammars, scene->default_grammars, false, true);
+		system.derive(grammars, scene->default_grammars, false, true);
 	}
 	
-	system->generateGeometry(faces);
+	system.generateGeometry(faces);
 }
 
 /**
@@ -133,7 +135,6 @@ void SceneObject::updateGeometry(RenderManager* renderManager, const std::string
 }
 
 Scene::Scene() {
-	system.modelMat = glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0));
 	_objects.push_back(SceneObject(this));
 	_currentObject = 0;
 
@@ -487,7 +488,7 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 	}
 
 	for (int i = 0; i < _objects.size(); ++i) {
-		_objects[i].generateGeometry(&system, renderManager, stage);
+		_objects[i].generateGeometry(renderManager, stage);
 	}
 
 	renderManager->removeObjects();
@@ -536,7 +537,7 @@ void Scene::generateGeometry(RenderManager* renderManager, const std::string& st
 		}
 	}
 	
-	_objects[currentObject].generateGeometry(&system, renderManager, stage);
+	_objects[currentObject].generateGeometry(renderManager, stage);
 
 	renderManager->removeObjects();
 	for (int i = 0; i < _objects.size(); ++i) {

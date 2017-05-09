@@ -21,24 +21,24 @@ public:
 	float object_depth;
 	float height;
 	
+	cga::CGA system;
 	std::map<std::string, cga::Grammar> grammars;
 	std::vector<boost::shared_ptr<glutils::Face> > faces;
 
 public:
 	SceneObject(Scene* scene);
-	SceneObject(Scene* scene, float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
+	//SceneObject(Scene* scene, float offset_x, float offset_y, float offset_width, float offset_depth, float height, const cga::Grammar& grammar);
 	void setFootprint(float offset_x, float offset_y, float offset_z, float object_width, float object_depth);
 	void setHeight(float height);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar);
 	void setGrammar(const std::string& name, const cga::Grammar& grammar, const std::vector<float>& params, bool normalized);
 
-	void generateGeometry(cga::CGA* system, RenderManager* renderManager, const std::string& stage);
+	void generateGeometry(RenderManager* renderManager, const std::string& stage);
 	void updateGeometry(RenderManager* renderManager, const std::string& stage);
 };
 
 class Scene {
 public:
-	cga::CGA system;
 	std::vector<SceneObject> _objects;
 	int _currentObject;
 

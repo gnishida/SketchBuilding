@@ -20,6 +20,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
+#include "VBOUtil.h"
 
 #ifndef M_PI
 #define M_PI	3.141592653
@@ -219,7 +220,7 @@ void GLWidget3D::loadCGA(char* filename) {
 		//so.setGrammar(grammar, params);
 
 		cga::CGA system;
-		so.generateGeometry(&system, &renderManager, "");
+		so.generateGeometry(&renderManager, "");
 	}
 	catch (const std::string& ex) {
 		std::cout << "ERROR:" << std::endl << ex << std::endl;
@@ -239,7 +240,7 @@ void GLWidget3D::generateGeometry() {
 	// add a ground plane
 	if (showGroundPlane) {
 		std::vector<Vertex> vertices;
-		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
+		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0)), vertices);
 		renderManager.addObject("grid", "", vertices, false);
 	}
 
@@ -252,7 +253,7 @@ void GLWidget3D::generateGeometry(int selectedBuilding) {
 	// add a ground plane
 	if (showGroundPlane) {
 		std::vector<Vertex> vertices;
-		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
+		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0)), vertices);
 		renderManager.addObject("grid", "", vertices, false);
 	}
 
@@ -265,7 +266,7 @@ void GLWidget3D::updateGeometry() {
 	// add a ground plane
 	if (showGroundPlane) {
 		std::vector<Vertex> vertices;
-		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), scene.system.modelMat, vertices);
+		glutils::drawGrid(50, 50, 2.5, glm::vec4(0.521, 0.815, 0.917, 1), glm::vec4(0.898, 0.933, 0.941, 1), glm::rotate(glm::mat4(), -3.1415926f * 0.5f, glm::vec3(1, 0, 0)), vertices);
 		renderManager.addObject("grid", "", vertices, false);
 	}
 
@@ -1096,30 +1097,100 @@ void GLWidget3D::updateStats() {
 	mainWin->ui.statusBar->showMessage(userStatistics.to_string().c_str());
 }
 
+void GLWidget3D::clearStats() {
+	userStatistics.clear();
+}
+
+void GLWidget3D::saveStats() {
+	QFile statsFile("stats.txt");
+	if (!statsFile.open(QIODevice::Append)) {
+		std::cout << "ERROR: cannot open " << statsFile.fileName().toUtf8().constData() << std::endl;
+	}
+
+	QDateTime dt = QDateTime::currentDateTime();
+
+	QTextStream out(&statsFile);
+	out << dt.toString("yyyy/MM/dd HH:mm:ss ") << userStatistics.to_string().c_str() << "\n";
+	out.flush();
+}
+
+#define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048
+#define GL_GPU_MEM_INFO_CURRENT_AVAILABLE_MEM_NVX 0x9049
+
+void GLWidget3D::warmup() {
+	return;
+
+	//disaplay_memory_usage();
+
+	std::cout << "Start warming up..." << std::endl;
+
+	cv::Mat img;
+	convertSketch(false, img);
+	classifiers["building"]->Classify(img, 10);
+	classifiers["roof"]->Classify(img, 10);
+	classifiers["window"]->Classify(img, 10);
+	classifiers["ledge"]->Classify(img, 10);
+
+	//disaplay_memory_usage();
+
+	cv::Mat img2;
+	convertSketch(true, img2);
+	for (int i = 0; i < regressions["building"].size(); ++i) {
+		regressions["building"][i]->Predict(img2);
+	}
+
+	for (int i = 0; i < regressions["roof"].size(); ++i) {
+		regressions["roof"][i]->Predict(img2);
+	}
+
+	for (int i = 0; i < regressions["window"].size(); ++i) {
+		regressions["window"][i]->Predict(img2);
+	}
+
+	for (int i = 0; i < regressions["ledge"].size(); ++i) {
+		regressions["ledge"][i]->Predict(img2);
+	}
+
+	disaplay_memory_usage();
+
+	std::cout << "Warming up is done." << std::endl;
+}
+
 void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 	ctrlPressed = false;
 	shiftPressed = false;
 	altPressed = false;
 
-	switch (e->key()) {
-	case Qt::Key_Control:
+	if (e->modifiers() & Qt::ControlModifier) {
 		ctrlPressed = true;
-		break;
-	case Qt::Key_Shift:
+	}
+	if (e->modifiers() & Qt::ShiftModifier) {
 		shiftPressed = true;
-		break;
-	case Qt::Key_Alt:
+	}
+	if (e->modifiers() & Qt::AltModifier) {
 		altPressed = true;
-		break;
+	}
+
+	switch (e->key()) {
 	default:
 		break;
 	}
 }
 
 void GLWidget3D::keyReleaseEvent(QKeyEvent* e) {
-	ctrlPressed = false;
-	shiftPressed = false;
-	altPressed = false;
+	switch (e->key()) {
+	case Qt::Key_Control:
+		ctrlPressed = false;
+		break;
+	case Qt::Key_Shift:
+		shiftPressed = false;
+		break;
+	case Qt::Key_Alt:
+		altPressed = false;
+		break;
+	default:
+		break;
+	}
 }
 
 void GLWidget3D::tabletEvent(QTabletEvent *e) {
@@ -1174,6 +1245,11 @@ void GLWidget3D::mousePressEvent(QMouseEvent* e) {
 			stroke_widths.resize(stroke_widths.size() + 1);
 		}
 	}
+}
+
+void GLWidget3D::wheelEvent(QWheelEvent* e) {
+	camera.zoom(e->delta());
+	update();
 }
 
 /**
@@ -1270,14 +1346,13 @@ void GLWidget3D::mouseMoveEvent(QMouseEvent* e) {
 
 	if (dragging) {
 		if (mode == MODE_CAMERA) {
-			if (e->buttons() & Qt::RightButton) { // Zoom
-				camera.zoom(e->x(), e->y());
-			}
-			else if (e->buttons() & Qt::MidButton) { // Move
-				camera.move(e->x(), e->y());
-			}
-			else if (e->buttons() & Qt::LeftButton) { // Rotate
-				camera.rotate(e->x(), e->y());
+			if (e->buttons() & Qt::LeftButton) { // Rotate
+				if (shiftPressed) {
+					camera.move(e->x(), e->y());
+				}
+				else {
+					camera.rotate(e->x(), e->y());
+				}
 			}
 			clearSketch();
 		}
@@ -1401,6 +1476,8 @@ void GLWidget3D::initializeGL() {
 	generateGeometry();
 
 	setMouseTracking(true);
+
+	warmup();
 }
 
 /**

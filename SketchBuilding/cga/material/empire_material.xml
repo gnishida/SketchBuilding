@@ -53,7 +53,7 @@
 			<param name="texWidth" type="relative" value="1"/>
 			<param name="texHeight" type="relative" value="1"/>
 		</setupProjection>
-		<texture texturePath="textures/window.9.tif"/>
+		<texture texturePath="textures/window.jpg"/>
 	</rule>
 	<rule name="Door">
 		<color s="#000000"/>

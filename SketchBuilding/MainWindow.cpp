@@ -107,6 +107,9 @@ void MainWindow::keyReleaseEvent(QKeyEvent* e) {
  * This is called when the user clicks [File] -> [New].
  */
 void MainWindow::onNew() {
+	glWidget->saveStats();
+	glWidget->clearStats();
+
 	glWidget->clearSketch();
 	glWidget->scene.buildingSelector->unselectBuilding();
 	glWidget->clearGeometry();

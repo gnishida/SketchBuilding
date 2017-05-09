@@ -50,6 +50,12 @@ public:
 		ss << "#clicks: " << numClicks << ", #undos: " << numUndos << ", #erases: " << numErases << ", #non best selected: " << numNonBestSelected;
 		return ss.str();
 	}
+	void clear() {
+		numClicks = 0;
+		numUndos = 0;
+		numErases = 0;
+		numNonBestSelected = 0;
+	}
 };
 
 class GLWidget3D : public QGLWidget {
@@ -147,6 +153,9 @@ public:
 	glm::vec3 computeDownwardedCameraPos(float downward, float distToCamera, float camera_xrot);
 	void camera_update();
 	void updateStats();
+	void clearStats();
+	void saveStats();
+	void warmup();
 
 	void keyPressEvent(QKeyEvent* e);
 	void keyReleaseEvent(QKeyEvent* e);
@@ -155,6 +164,7 @@ protected:
 	void tabletEvent(QTabletEvent* e);
 	void mousePressEvent(QMouseEvent* e);
 	void mouseMoveEvent(QMouseEvent* e);
+	void wheelEvent(QWheelEvent* e);
 	void mouseReleaseEvent(QMouseEvent* e);
 	void initializeGL();
 	void resizeGL(int width, int height);

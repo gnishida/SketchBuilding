@@ -64,14 +64,14 @@
 			<param name="texWidth" type="relative" value="1"/>
 			<param name="texHeight" type="relative" value="1"/>
 		</setupProjection>
-		<texture texturePath="textures/window.5.tif"/>
+		<texture texturePath="textures/window.jpg"/>
 	</rule>
 	<rule name="WindowGlass_08">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="relative" value="1"/>
 			<param name="texHeight" type="relative" value="1"/>
 		</setupProjection>
-		<texture texturePath="textures/window.5.tif"/>
+		<texture texturePath="textures/window.jpg"/>
 	</rule>
 	<rule name="WindowFrame">
 		<color s="#f0f0f0"/>

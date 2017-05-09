@@ -23,60 +23,71 @@
 		<texture texturePath="textures/roof_paris.png"/>
 	</rule>
 	<rule name="RoofLedge">
-		<color s="#f2f2c5"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	<rule name="RoofLedge_05">
-		<color s="#f2f2c5"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	
 	<!-- wall -->
 	<rule name="Wall">
-		<texture texturePath="textures/wall_paris2.png"/>
+		<texture texturePath="textures/wall_paris.png"/>
 	</rule>
 	<rule name="Wall_04">
-		<texture texturePath="textures/wall_paris2.png"/>
+		<texture texturePath="textures/wall_paris.png"/>
 	</rule>
 	<rule name="Wall_05">
-		<texture texturePath="textures/wall_paris2.png"/>
+		<texture texturePath="textures/wall_paris.png"/>
 	</rule>
 	<rule name="WallColumn">
-		<color s="#f2f2c5"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	
 	<!-- ledge -->
 	<rule name="LedgeFace">
-		<texture texturePath="textures/wall_paris2.png"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	<rule name="LedgeFace_03">
-		<texture texturePath="textures/wall_paris2.png"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	
 	<!-- window -->
 	<rule name="WindowFrame">
-		<color s="#e0e0e0"/>
-	</rule>
-	<rule name="WindowSill">
-		<color s="#e0e0e0"/>
-	</rule>
-	<rule name="WindowShutterFrame">
-		<color s="#e0e0e0"/>
+		<color s="#e5d2ba"/>
 	</rule>
 	<rule name="WindowFrame_06">
-		<color s="#e0e0e0"/>
+		<color s="#e5d2ba"/>
+	</rule>
+	<rule name="WindowSill">
+		<color s="#e5d2ba"/>
 	</rule>
 	<rule name="WindowGlass">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="relative" value="1"/>
 			<param name="texHeight" type="relative" value="1"/>
 		</setupProjection>
-		<texture texturePath="textures/window.jpg"/>
+		<texture texturePath="textures/window_glass.png"/>
+	</rule>
+	<rule name="WindowGlass_01">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window_glass.png"/>
 	</rule>
 	<rule name="WindowGlass_06">
 		<setupProjection axesSelector="scope.xy">
 			<param name="texWidth" type="relative" value="1"/>
 			<param name="texHeight" type="relative" value="1"/>
 		</setupProjection>
-		<texture texturePath="textures/window.jpg"/>
+		<texture texturePath="textures/window_glass.png"/>
+	</rule>
+	<rule name="WindowGlass_08">
+		<setupProjection axesSelector="scope.xy">
+			<param name="texWidth" type="relative" value="1"/>
+			<param name="texHeight" type="relative" value="1"/>
+		</setupProjection>
+		<texture texturePath="textures/window_glass.png"/>
 	</rule>
 	<rule name="Door">
 		<color s="#000000"/>
