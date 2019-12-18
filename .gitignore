@@ -35,6 +35,8 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+GeneratedFiles/
+
 *_i.c
 *_p.c
 *_i.h
@@ -77,14 +79,17 @@ ipch/
 *.vspx
 
 # 3rd party libraries
-3rdparty/
-lib/
-caffelib/
+#3rdparty/
+#lib/
+#caffelib/
+#src/
+#include/
 
 # models
 models/
+models.bak/
 
-bin/
+#bin/
 
 # TFS 2012 Local Workspace
 $tf/
